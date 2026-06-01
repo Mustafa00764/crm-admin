@@ -44,7 +44,7 @@ const sidebarItems = [
 //   { title: 'Websites', href: 'websites', icon: Globe2 },
 //   { title: 'Bots', href: 'bots', icon: Bot },
   { title: 'AI Agents', href: 'ai-agents', icon: Brain },
-
+// Dashboard, Conversations, Clients, Deals, Orders, Payments, Products, Product Categories, AI Agents
 //   { title: 'Analytics', href: 'analytics', icon: BarChart3 },
 //   { title: 'Tasks', href: 'tasks', icon: ListChecks },
 //   { title: 'Notifications', href: 'notifications', icon: Bell },
