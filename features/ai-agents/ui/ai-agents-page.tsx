@@ -122,7 +122,7 @@ export function AIAgentsPage() {
   }, [selectedAgentIds, deleteAiAgent])
 
   return (
-    <div className="cf-page min-h-screen">
+    <div className="cf-page flex flex-col min-h-screen">
       <AdminPageHeader
         title="Dashboard - AI Agents"
         actions={
@@ -183,8 +183,8 @@ export function AIAgentsPage() {
         }
       />
 
-      <div className="h-[calc(100vh-52px)] px-5 py-3">
-        <main className="flex min-w-0 flex-col gap-3">
+      <div className="h-full flex-1 flex flex-col px-5 py-3">
+        <main className="flex min-w-0 flex-1 flex-col gap-3">
           <AIAgentsFilters onChange={resetPage} />
 
           {selectedFilteredAgentIds.length > 0 ? (
