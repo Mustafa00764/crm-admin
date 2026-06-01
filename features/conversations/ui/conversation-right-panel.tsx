@@ -35,7 +35,7 @@ export function ConversationRightPanel({
   const client = conversation.client
 
   return (
-    <aside className="cf-panel hidden min-h-0 overflow-hidden xl:flex xl:flex-col">
+    <aside className="cf-panel flex min-h-0 overflow-hidden xl:flex flex-col">
       <div className="border-b border-[var(--cf-border)] p-3">
         <div className="text-[13px] font-semibold text-[var(--cf-text)]">
           Client / AI panel
