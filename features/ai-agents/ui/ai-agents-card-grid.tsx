@@ -26,7 +26,7 @@ export function AIAgentsCardGrid({
   }
 
   return (
-    <section className="grid grid-cols-3 gap-3 pb-4 2xl:grid-cols-4">
+    <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 pb-4 2xl:grid-cols-4">
       {agents.map(agent => {
         const checked = selectedAgentIds.includes(agent.id)
 

@@ -34,7 +34,7 @@ export function ProductCategoriesCardGrid({
   }
 
   return (
-    <section className="grid grid-cols-3 gap-3 pb-4 flex-1 2xl:grid-cols-4">
+    <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 pb-4 flex-1 2xl:grid-cols-4">
       {categories.map(category => {
         const checked = selectedCategoryIds.includes(category.id)
         const productCount = productCountByCategoryId[category.id] ?? 0
