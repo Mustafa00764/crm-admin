@@ -1,26 +1,448 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-inter);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 6px;
+
+  --cf-bg: #f4f4f5;
+  --cf-text: #303034;
+  --cf-text-soft: rgba(48, 48, 52, 0.72);
+  --cf-text-muted: rgba(48, 48, 52, 0.48);
+  --cf-border: rgba(48, 48, 52, 0.12);
+  --cf-element: rgba(48, 48, 52, 0.05);
+  --cf-element-hover: rgba(48, 48, 52, 0.09);
+  --cf-button: rgba(48, 48, 52, 0.12);
+  --cf-icon: rgba(48, 48, 52, 0.65);
+  --cf-panel: #ffffff;
+  --cf-panel-soft: #f0f0f1;
+  --cf-table-row: #ffffff;
+  --cf-table-row-alt: #eeeeef;
+  --cf-table-text: #303034;
+
+  --cf-green: #5ccf45;
+  --cf-yellow: #f5bb24;
+  --cf-red: #ef1748;
+  --cf-blue: #08b7ef;
+  --cf-orange: #ff880e;
+
+  --background: var(--cf-bg);
+  --foreground: var(--cf-text);
+
+  --card: var(--cf-panel);
+  --card-foreground: var(--cf-text);
+
+  --popover: var(--cf-panel);
+  --popover-foreground: var(--cf-text);
+
+  --primary: var(--cf-text);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--cf-element);
+  --secondary-foreground: var(--cf-text);
+
+  --muted: var(--cf-element);
+  --muted-foreground: var(--cf-text-muted);
+
+  --accent: var(--cf-element-hover);
+  --accent-foreground: var(--cf-text);
+
+  --destructive: var(--cf-red);
+
+  --border: var(--cf-border);
+  --input: var(--cf-border);
+  --ring: rgba(48, 48, 52, 0.35);
+
+  --chart-1: var(--cf-blue);
+  --chart-2: var(--cf-green);
+  --chart-3: var(--cf-yellow);
+  --chart-4: var(--cf-red);
+  --chart-5: var(--cf-orange);
+
+  --sidebar: var(--cf-bg);
+  --sidebar-foreground: var(--cf-text);
+  --sidebar-primary: var(--cf-text);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--cf-element);
+  --sidebar-accent-foreground: var(--cf-text);
+  --sidebar-border: var(--cf-border);
+  --sidebar-ring: rgba(48, 48, 52, 0.35);
+
+  --cf-table-row-hover: #dedee0;
+  --cf-table-row-selected: #d6edf8;
+}
+
+.dark {
+  --cf-bg: #101014;
+  --cf-text: rgba(255, 255, 255, 1);
+  --cf-text-soft: rgba(255, 255, 255, 0.72);
+  --cf-text-muted: rgba(255, 255, 255, 0.48);
+  --cf-border: rgba(255, 255, 255, 0.1);
+  --cf-element: rgba(255, 255, 255, 0.05);
+  --cf-element-hover: rgba(255, 255, 255, 0.09);
+  --cf-button: rgba(255, 255, 255, 0.15);
+  --cf-icon: rgba(255, 255, 255, 0.65);
+  --cf-panel: #17171b;
+  --cf-panel-soft: #1c1c21;
+  --cf-table-row: #f5f5f5;
+  --cf-table-row-alt: #e8e8e8;
+  --cf-table-text: #303034;
+
+  --cf-green: #5ccf45;
+  --cf-yellow: #f5bb24;
+  --cf-red: #ef1748;
+  --cf-blue: #08b7ef;
+  --cf-orange: #ff880e;
+
+  --background: var(--cf-bg);
+  --foreground: var(--cf-text);
+
+  --card: var(--cf-panel);
+  --card-foreground: var(--cf-text);
+
+  --popover: var(--cf-panel);
+  --popover-foreground: var(--cf-text);
+
+  --primary: var(--cf-text);
+  --primary-foreground: #101014;
+
+  --secondary: var(--cf-element);
+  --secondary-foreground: var(--cf-text);
+
+  --muted: var(--cf-element);
+  --muted-foreground: var(--cf-text-muted);
+
+  --accent: var(--cf-element-hover);
+  --accent-foreground: var(--cf-text);
+
+  --destructive: var(--cf-red);
+
+  --border: var(--cf-border);
+  --input: var(--cf-border);
+  --ring: rgba(255, 255, 255, 0.35);
+
+  --chart-1: var(--cf-blue);
+  --chart-2: var(--cf-green);
+  --chart-3: var(--cf-yellow);
+  --chart-4: var(--cf-red);
+  --chart-5: var(--cf-orange);
+
+  --sidebar: var(--cf-bg);
+  --sidebar-foreground: var(--cf-text);
+  --sidebar-primary: var(--cf-text);
+  --sidebar-primary-foreground: #101014;
+  --sidebar-accent: var(--cf-element);
+  --sidebar-accent-foreground: var(--cf-text);
+  --sidebar-border: var(--cf-border);
+  --sidebar-ring: rgba(255, 255, 255, 0.35);
+
+  --cf-table-row-hover: #dcdcdc;
+  --cf-table-row-selected: #d6edf8;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    @apply border-border outline-ring/50 ;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    font-family:
+      var(--font-inter),
+      Inter,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+
+  button {
+    cursor: pointer;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+.cf-page {
+  min-height: 100vh;
+  background: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-sidebar {
+  background: var(--cf-bg);
+  border-right: 1px solid var(--cf-border);
+}
+
+.cf-panel {
+  background: var(--cf-panel);
+  border: 1px solid var(--cf-border);
+  border-radius: 8px;
+}
+
+.cf-panel-soft {
+  background: var(--cf-panel-soft);
+  border: 1px solid var(--cf-border);
+  border-radius: 8px;
+}
+
+.cf-control {
+  height: 31px;
+  border: 1px solid var(--cf-border);
+  border-radius: 6px;
+  background: var(--cf-element);
+  color: var(--cf-text);
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.cf-control:hover {
+  background: var(--cf-element-hover);
+}
+
+.cf-control:focus,
+.cf-control:focus-visible {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.cf-icon-button {
+  height: 34px;
+  width: 34px;
+  border: 1px solid var(--cf-border);
+  border-radius: 7px;
+  background: var(--cf-button);
+  color: var(--cf-icon);
+  box-shadow: none;
+}
+
+.cf-icon-button:hover {
+  background: var(--cf-element-hover);
+  color: var(--cf-text);
+}
+
+.cf-card-hover {
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+.cf-card-hover:hover {
+  background: var(--cf-element-hover);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.cf-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cf-border) transparent;
+}
+
+.cf-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cf-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--cf-border);
+  border-radius: 999px;
+}
+
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.48);
+  stroke-dasharray: 2 3;
+}
+
+.recharts-text {
+  fill: var(--cf-text-muted);
+  font-size: 10px;
+}
+
+.recharts-default-tooltip {
+  background: var(--cf-panel) !important;
+  border: 1px solid var(--cf-border) !important;
+  border-radius: 7px !important;
+  color: var(--cf-text) !important;
+}
+
+.clients-table-scroll {
+  overflow: auto;
+  position: relative;
+}
+
+.clients-table {
+  width: max-content;
+  min-width: 1480px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.clients-table-head-cell {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 36px;
+  background: var(--cf-panel-soft);
+  padding: 0 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--cf-text-muted);
+  white-space: nowrap;
+}
+
+.clients-table-cell {
+  height: 42px;
+  padding: 0 12px;
+  background: var(--cf-table-row);
+  color: var(--cf-table-text);
+  font-size: 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(48, 48, 52, 0.08);
+  transition: background-color 120ms ease;
+}
+
+.clients-table-row:nth-child(even) .clients-table-cell {
+  background: var(--cf-table-row-alt);
+}
+
+.clients-table-row:hover .clients-table-cell {
+  background: var(--cf-table-row-hover);
+}
+
+.clients-table-row.is-selected .clients-table-cell {
+  background: var(--cf-table-row-selected);
+}
+
+.clients-sticky-left-check {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  width: 52px;
+  min-width: 52px;
+  box-shadow: 10px 0 16px rgba(0, 0, 0, 0.12);
+}
+
+.clients-sticky-left-number {
+  position: sticky;
+  left: 52px;
+  z-index: 20;
+  width: 56px;
+  min-width: 56px;
+  box-shadow: 2px 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.clients-sticky-right-options {
+  position: sticky;
+  right: 0;
+  z-index: 20;
+  width: 74px;
+  min-width: 74px;
+  text-align: center;
+  box-shadow: -2px 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.clients-table-head-cell.clients-sticky-left-check,
+.clients-table-head-cell.clients-sticky-left-number,
+.clients-table-head-cell.clients-sticky-right-options {
+  z-index: 50;
+  background: var(--cf-panel-soft);
+}
+
+.transform-gpu {
+  transform: translateZ(0);
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.orders-table-scroll {
+  max-height: calc(100vh - 190px);
+}
+
+.orders-table-scroll table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: var(--cf-panel);
 }
