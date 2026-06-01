@@ -60,7 +60,7 @@ export function ConversationsPage() {
         }
       />
 
-      <div className="grid h-[calc(100vh-52px)] grid-cols-1 gap-3 px-5 py-3 xl:grid-cols-[330px_minmax(0,1fr)_380px]">
+      <div className="grid h-auto grid-cols-1 gap-3 px-5 py-3 xl:h-[calc(100vh-52px)] xl:grid-cols-[330px_minmax(0,1fr)_380px]">
         <ConversationsList
           conversations={conversations}
           selectedConversationId={selectedConversationId}

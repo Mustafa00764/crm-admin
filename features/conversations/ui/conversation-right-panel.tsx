@@ -25,7 +25,7 @@ export function ConversationRightPanel({
 }: ConversationRightPanelProps) {
   if (!conversation) {
     return (
-      <aside className="cf-panel hidden items-center justify-center text-[12px] text-[var(--cf-text-muted)] xl:flex">
+      <aside className="cf-panel flex items-center justify-center text-[12px] text-[var(--cf-text-muted)] xl:flex">
         Нет выбранного клиента
       </aside>
     )
