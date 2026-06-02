@@ -26,6 +26,7 @@ export function PublicChatWidget({
   const [opened, setOpened] = React.useState(false)
   const [input, setInput] = React.useState('')
   const [pending, setPending] = React.useState(false)
+  const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const [messages, setMessages] = React.useState<PublicChatMessage[]>([
     {
       id: uid(),
@@ -100,6 +101,7 @@ export function PublicChatWidget({
           }))
         })
       })
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
 
       if (response.ok) {
         const phone = extractPhone(text)
@@ -197,7 +199,7 @@ export function PublicChatWidget({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-3 overflow-auto p-3">
+      <div ref={messagesEndRef} className="min-h-0 flex-1 space-y-3 overflow-auto p-3">
         {messages.map(message => (
           <div
             key={message.id}
