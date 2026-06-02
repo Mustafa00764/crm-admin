@@ -274,8 +274,9 @@ export function ConversationComposer({
             editingMessage ? 'Изменить сообщение...' : 'Написать сообщение...'
           }
           className="min-h-[58px] max-h-[140px] resize-none border-[var(--cf-border)] bg-[var(--cf-element)] text-[12px] text-[var(--cf-text)] placeholder:text-[var(--cf-text-muted)]"
+          
           onKeyDown={event => {
-            if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            if (event.key === 'Enter' && !event.shiftKey) { //  && (event.metaKey || event.ctrlKey)
               event.preventDefault()
               void send()
             }
