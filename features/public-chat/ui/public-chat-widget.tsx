@@ -126,7 +126,7 @@ export function PublicChatWidget({
   return (
     <div
       className={cn(
-        'max-w-120 min-h-180 max-h-180 flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-white/10',
+        'max-w-120 min-h-155 max-h-155 flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-white/10',
         theme === 'light'
           ? 'bg-white text-slate-950'
           : 'bg-[#090b10] text-white',
