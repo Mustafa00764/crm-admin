@@ -8,7 +8,7 @@
   var position = currentScript.getAttribute('data-position') || 'right'
   var theme = currentScript.getAttribute('data-theme') || 'dark'
 
-  var closedSize = 64
+  var closedSize = 56
   var openedWidth = 380
   var openedHeight = 620
   var offset = 20
@@ -20,6 +20,7 @@
   container.style.zIndex = '2147483647'
   container.style.width = closedSize + 'px'
   container.style.height = closedSize + 'px'
+  container.style.borderRadius = '50%'
   container.style.border = '0'
   container.style.overflow = 'hidden'
   container.style.background = 'transparent'

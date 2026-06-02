@@ -141,7 +141,10 @@ export function PublicChatWidget({
 
         <button
           type="button"
-          onClick={() => setOpened(false)}
+          onClick={() => {
+            setOpened(false)
+            notifyParent('close')
+          }}
           className="rounded-md p-2 opacity-70 hover:bg-white/10 hover:opacity-100"
         >
           <X className="h-4 w-4" />
