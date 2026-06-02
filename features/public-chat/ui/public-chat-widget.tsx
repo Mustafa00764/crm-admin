@@ -155,6 +155,18 @@ export function PublicChatWidget({
     }
   }, [input, pending, siteId, pageUrl, messages])
 
+  const scrollToBottom = () => {
+    const el = messagesEndRef.current
+
+    if (!el) return
+
+    el.scrollTop = el.scrollHeight
+  }
+
+  React.useEffect(() => {
+    requestAnimationFrame(scrollToBottom)
+  }, [messages])
+
   if (!opened) {
     return (
       <button
@@ -202,7 +214,7 @@ export function PublicChatWidget({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-3 overflow-auto p-3">
+      <div ref={messagesEndRef} className="min-h-0 flex-1 space-y-3 overflow-auto p-3">
         {messages.map(message => (
           <div
             key={message.id}
@@ -229,7 +241,6 @@ export function PublicChatWidget({
         {pending ? (
           <div className="text-xs opacity-60">AI печатает...</div>
         ) : null}
-        <div ref={messagesEndRef} />
       </div>
 
       <div className="border-t border-white/10 p-3">
