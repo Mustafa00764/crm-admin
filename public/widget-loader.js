@@ -88,7 +88,7 @@
 
     container.style.width = openedWidth + 'px'
     container.style.height = openedHeight + 'px'
-    container.style.borderRadius = '18px'
+    container.style.borderRadius = '17.5px'
     applyPosition()
   }
 
