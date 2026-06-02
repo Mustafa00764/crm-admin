@@ -126,10 +126,10 @@ export function PublicChatWidget({
   return (
     <div
       className={cn(
-        'max-w-120 min-h-155 max-h-155 flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-white/10',
+        'max-w-120 min-h-155 max-h-155 flex h-full w-full flex-col overflow-hidden rounded-[18px] border',
         theme === 'light'
-          ? 'bg-white text-slate-950'
-          : 'bg-[#090b10] text-white',
+          ? 'bg-white text-slate-950 border-black/10'
+          : 'bg-[#090b10] text-white border-white/10',
       )}
     >
       <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">

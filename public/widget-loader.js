@@ -16,7 +16,6 @@
   var container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
 
-  document.querySelector('body').style.backgroundColor = 'white'
   container.style.position = 'fixed'
   container.style.zIndex = '2147483647'
   container.style.width = closedSize + 'px'
@@ -64,6 +63,8 @@
   }
 
   function setClosedSize() {
+    document.querySelector('body').style.backgroundColor = 'white'
+
     container.style.width = closedSize + 'px'
     container.style.height = closedSize + 'px'
     container.style.borderRadius = '56px'
@@ -72,6 +73,8 @@
   }
 
   function setOpenedSize() {
+    document.querySelector('body').style.backgroundColor = 'white'
+
     if (position === 'full') {
       container.style.left = '0'
       container.style.right = '0'
