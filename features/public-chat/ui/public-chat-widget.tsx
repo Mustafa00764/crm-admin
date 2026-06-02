@@ -45,6 +45,31 @@ export function PublicChatWidget({
     )
   }
 
+  function extractPhone(text: string): string | null {
+    const phoneRegex =
+      /(?:\+?\s*998[\s\-()]*)?(?:\d{2}[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2})/
+
+    const match = text.match(phoneRegex)
+
+    if (!match) {
+      return null
+    }
+
+    const digits = match[0].replace(/\D/g, '')
+
+    // Формат: +998901234567
+    if (digits.startsWith('998') && digits.length === 12) {
+      return `+${digits}`
+    }
+
+    // Формат: 901234567 или 90 123 45 67
+    if (digits.length === 9) {
+      return `+998${digits}`
+    }
+
+    return null
+  }
+
   const sendMessage = React.useCallback(async () => {
     const text = input.trim()
 
@@ -75,6 +100,23 @@ export function PublicChatWidget({
           }))
         })
       })
+
+      if (response.ok) {
+        const phone = extractPhone(text)
+
+        if (phone) {
+          await fetch('/api/send-lead', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              phone,
+              comment: userMessage
+            })
+          })
+        }
+      }
 
       const data = (await response.json()) as {
         text?: string
