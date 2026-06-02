@@ -129,10 +129,15 @@ export function PublicChatWidget({
         'max-w-120 min-h-155 max-h-155 flex h-full w-full flex-col overflow-hidden rounded-[18px] border',
         theme === 'light'
           ? 'bg-white text-slate-950 border-black/10'
-          : 'bg-[#090b10] text-white border-white/10',
+          : 'bg-[#090b10] text-white border-white/10'
       )}
     >
-      <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">
+      <div
+        className={cn(
+          'flex h-14 items-center justify-between border-b border-white/10 px-4',
+          theme === 'light' ? 'border-black/10' : 'border-white/10'
+        )}
+      >
         <div>
           <div className="text-sm font-semibold">AI Assistant</div>
           <div className="text-xs opacity-60">Онлайн-консультант</div>
