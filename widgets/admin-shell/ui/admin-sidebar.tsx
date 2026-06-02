@@ -17,7 +17,8 @@ import {
   ShieldAlert,
   ListChecks,
   BadgeRussianRuble,
-  Box
+  Box,
+  BotMessageSquare
 } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { Separator } from '@/shared/ui/separator'
@@ -44,6 +45,11 @@ const sidebarItems = [
   { title: 'Websites', href: 'websites', icon: Globe2 },
   { title: 'Bots', href: 'bots', icon: Bot },
   { title: 'AI Agents', href: 'ai-agents', icon: Brain },
+  {
+    title: 'AI Workspace',
+    href: 'ai-workspace',
+    icon: BotMessageSquare
+  },
 
   { title: 'Analytics', href: 'analytics', icon: BarChart3 },
   { title: 'Tasks', href: 'tasks', icon: ListChecks },
@@ -74,7 +80,7 @@ export function AdminSidebar() {
 
           return (
             <div key={item.title} className="flex flex-col items-center">
-              {[3, 6, 11, 15].includes(index) ? (
+              {[3, 6, 12, 15].includes(index) ? (
                 <Separator className="my-2 w-7 bg-[var(--cf-border)]" />
               ) : null}
               <Tooltip>

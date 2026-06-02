@@ -1,10 +1,11 @@
-import type {
-  AIAgent,
-  AIAgentContextFlag,
-  AIAgentFilters,
-  AIAgentStatus,
-  CreateAIAgentPayload,
-  UpdateAIAgentPayload
+import {
+  defaultAIAgentVoiceSettings,
+  type AIAgent,
+  type AIAgentContextFlag,
+  type AIAgentFilters,
+  type AIAgentStatus,
+  type CreateAIAgentPayload,
+  type UpdateAIAgentPayload
 } from '@/features/ai-agents/model/ai-agents-types'
 
 const AI_AGENTS_STORAGE_KEY = 'crm.mock.ai-agents'
@@ -69,6 +70,7 @@ const seedAIAgents: AIAgent[] = [
     useOrdersContext: true,
     fallbackToManager: true,
     minConfidenceToAutoReply: 82,
+    voiceSettings: defaultAIAgentVoiceSettings,
     createdAt: '2026-05-30T09:00:00.000Z',
     updatedAt: '2026-05-30T09:00:00.000Z'
   },
@@ -101,6 +103,7 @@ const seedAIAgents: AIAgent[] = [
     useOrdersContext: false,
     fallbackToManager: true,
     minConfidenceToAutoReply: 88,
+    voiceSettings: defaultAIAgentVoiceSettings,
     createdAt: '2026-05-30T09:15:00.000Z',
     updatedAt: '2026-05-30T09:15:00.000Z'
   },
@@ -134,6 +137,7 @@ const seedAIAgents: AIAgent[] = [
     useOrdersContext: true,
     fallbackToManager: true,
     minConfidenceToAutoReply: 90,
+    voiceSettings: defaultAIAgentVoiceSettings,
     createdAt: '2026-05-30T09:30:00.000Z',
     updatedAt: '2026-05-30T09:30:00.000Z'
   },
@@ -166,6 +170,7 @@ const seedAIAgents: AIAgent[] = [
     useOrdersContext: false,
     fallbackToManager: true,
     minConfidenceToAutoReply: 80,
+    voiceSettings: defaultAIAgentVoiceSettings,
     createdAt: '2026-05-30T09:45:00.000Z',
     updatedAt: '2026-05-30T09:45:00.000Z'
   }
@@ -189,7 +194,11 @@ function normalizeAIAgent(agent: AIAgent): AIAgent {
     useWebsiteEvents: Boolean(agent.useWebsiteEvents),
     useDealsContext: Boolean(agent.useDealsContext),
     useOrdersContext: Boolean(agent.useOrdersContext),
-    fallbackToManager: Boolean(agent.fallbackToManager)
+    fallbackToManager: Boolean(agent.fallbackToManager),
+    voiceSettings: {
+      ...defaultAIAgentVoiceSettings,
+      ...(agent.voiceSettings ?? {})
+    }
   }
 }
 

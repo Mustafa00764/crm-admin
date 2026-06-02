@@ -56,6 +56,8 @@ export type AIAgent = {
   useDealsContext: boolean
   useOrdersContext: boolean
 
+  voiceSettings: AIAgentVoiceSettings
+
   fallbackToManager: boolean
   minConfidenceToAutoReply: number
 
@@ -107,11 +109,40 @@ export type CreateAIAgentPayload = {
   useDealsContext: boolean
   useOrdersContext: boolean
 
+  voiceSettings: AIAgentVoiceSettings
+
   fallbackToManager: boolean
   minConfidenceToAutoReply: number
 }
 
 export type UpdateAIAgentPayload = Partial<CreateAIAgentPayload>
+
+export type AIAgentVoiceReplyMode = 'text' | 'voice' | 'both'
+
+export type AIAgentTTSVoice =
+  | 'alloy'
+  | 'ash'
+  | 'ballad'
+  | 'coral'
+  | 'echo'
+  | 'fable'
+  | 'nova'
+  | 'onyx'
+  | 'sage'
+  | 'shimmer'
+  | 'verse'
+  | 'marin'
+  | 'cedar'
+
+export type AIAgentVoiceSettings = {
+  supportsVoiceInput: boolean
+  supportsVoiceOutput: boolean
+  voiceReplyMode: AIAgentVoiceReplyMode
+  transcribeModel: string
+  ttsModel: string
+  ttsVoice: AIAgentTTSVoice
+  ttsInstructions: string
+}
 
 export const aiAgentProviders: Array<{
   value: AIAgentProvider
@@ -166,4 +197,43 @@ export const initialAIAgentFilters: AIAgentFilters = {
   supportsTools: 'all',
   fallbackToManager: 'all',
   contextFlag: 'all'
+}
+
+export const aiAgentVoiceReplyModes: Array<{
+  value: AIAgentVoiceReplyMode
+  label: string
+}> = [
+  { value: 'text', label: 'Text only' },
+  { value: 'voice', label: 'Voice only' },
+  { value: 'both', label: 'Text + voice' }
+]
+
+export const aiAgentTTSVoices: Array<{
+  value: AIAgentTTSVoice
+  label: string
+}> = [
+  { value: 'alloy', label: 'Alloy' },
+  { value: 'ash', label: 'Ash' },
+  { value: 'ballad', label: 'Ballad' },
+  { value: 'coral', label: 'Coral' },
+  { value: 'echo', label: 'Echo' },
+  { value: 'fable', label: 'Fable' },
+  { value: 'nova', label: 'Nova' },
+  { value: 'onyx', label: 'Onyx' },
+  { value: 'sage', label: 'Sage' },
+  { value: 'shimmer', label: 'Shimmer' },
+  { value: 'verse', label: 'Verse' },
+  { value: 'marin', label: 'Marin' },
+  { value: 'cedar', label: 'Cedar' }
+]
+
+export const defaultAIAgentVoiceSettings: AIAgentVoiceSettings = {
+  supportsVoiceInput: true,
+  supportsVoiceOutput: true,
+  voiceReplyMode: 'both',
+  transcribeModel: 'gpt-4o-mini-transcribe',
+  ttsModel: 'gpt-4o-mini-tts',
+  ttsVoice: 'marin',
+  ttsInstructions:
+    'Говори спокойно, уверенно и естественно. Не ускоряй речь. Используй деловой тон.'
 }
