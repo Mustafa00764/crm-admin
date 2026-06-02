@@ -23,7 +23,7 @@
   container.style.borderRadius = closedSize + 'px'
   container.style.border = '0'
   container.style.overflow = 'hidden'
-  container.style.background = 'transparent'
+  container.style.background = 'white'
   container.style.transition = 'width .2s ease, height .2s ease'
 
   function applyPosition() {
@@ -63,6 +63,7 @@
   }
 
   function setClosedSize() {
+    document.querySelector('body').style.backgroundColor = 'white'
     container.style.width = closedSize + 'px'
     container.style.height = closedSize + 'px'
     container.style.borderRadius = '56px'
