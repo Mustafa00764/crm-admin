@@ -14,7 +14,7 @@ export default async function Page({ searchParams }: WidgetChatPageProps) {
   return (
     <PublicChatWidget
       siteId={params.siteId ?? 'default'}
-      theme={params.theme ?? 'dark'}
+      theme={params.theme ?? 'light'}
       pageUrl={params.pageUrl ?? ''}
     />
   )
