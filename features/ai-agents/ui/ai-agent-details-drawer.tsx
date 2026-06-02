@@ -136,12 +136,8 @@ function AIAgentFormPanel({
   const { createAiAgent, updateAiAgent } = useCRMStore()
 
   const [name, setName] = React.useState(agent?.name ?? '')
-  const [description, setDescription] = React.useState(
-    agent?.description ?? ''
-  )
-  const [role, setRole] = React.useState<AIAgentRole>(
-    agent?.role ?? 'sales'
-  )
+  const [description, setDescription] = React.useState(agent?.description ?? '')
+  const [role, setRole] = React.useState<AIAgentRole>(agent?.role ?? 'sales')
   const [version, setVersion] = React.useState(agent?.version ?? 'v1.0')
   const [provider, setProvider] = React.useState<AIAgentProvider>(
     agent?.provider ?? 'OpenAI'
@@ -242,6 +238,16 @@ function AIAgentFormPanel({
       useDealsContext,
       useOrdersContext,
       fallbackToManager,
+      voiceSettings: agent?.voiceSettings ?? {
+        supportsVoiceInput: true,
+        supportsVoiceOutput: true,
+        voiceReplyMode: 'both',
+        transcribeModel: 'gpt-4o-mini-transcribe',
+        ttsModel: 'gpt-4o-mini-tts',
+        ttsVoice: 'marin',
+        ttsInstructions:
+          'Говори спокойно, уверенно и естественно. Не ускоряй речь. Используй деловой тон.'
+      },
       minConfidenceToAutoReply: clamp(
         Math.round(numberValue(minConfidenceToAutoReply, 85)),
         0,
