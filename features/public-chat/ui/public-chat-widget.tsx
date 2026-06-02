@@ -101,7 +101,10 @@ export function PublicChatWidget({
           }))
         })
       })
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      messagesEndRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      })
 
       if (response.ok) {
         const phone = extractPhone(text)
@@ -199,7 +202,7 @@ export function PublicChatWidget({
         </button>
       </div>
 
-      <div ref={messagesEndRef} className="min-h-0 flex-1 space-y-3 overflow-auto p-3">
+      <div className="min-h-0 flex-1 space-y-3 overflow-auto p-3">
         {messages.map(message => (
           <div
             key={message.id}
@@ -226,6 +229,7 @@ export function PublicChatWidget({
         {pending ? (
           <div className="text-xs opacity-60">AI печатает...</div>
         ) : null}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="border-t border-white/10 p-3">
