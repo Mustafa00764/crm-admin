@@ -60,7 +60,8 @@ export async function POST(request: Request) {
 
   const body = (await request.json()) as ChatRequestBody
 
-  const model = body.model || process.env.OPENAI_DEFAULT_CHAT_MODEL || 'gpt-5.4-mini'
+  const model =
+    body.model || process.env.OPENAI_DEFAULT_CHAT_MODEL || 'gpt-5.4-mini'
 
   const lastUserMessage = [...body.messages]
     .reverse()
@@ -114,8 +115,7 @@ export async function POST(request: Request) {
             content: [
               {
                 type: 'input_text',
-                text:
-                  'Пользователь также приложил изображения. Проанализируй их, если это важно для ответа.'
+                text: 'Пользователь также приложил изображения. Проанализируй их, если это важно для ответа.'
               },
               ...imageInputs
             ]
