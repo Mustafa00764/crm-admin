@@ -49,7 +49,7 @@ export function ClientRowActionsMenu({ client }: ClientRowActionsMenuProps) {
             window.open(`https://t.me/${telegramUsername}`, "_blank")
           }}
         >
-          <UserRound className="mr-2 h-4 w-4 text-[var(--cf-icon)]" />
+          <UserRound className="mr-2 h-4 w-4 text-(--cf-icon)" />
           Просмотреть профиль в Telegram
         </DropdownMenuItem>
 
@@ -60,7 +60,7 @@ export function ClientRowActionsMenu({ client }: ClientRowActionsMenuProps) {
             window.open(`https://t.me/${telegramUsername}`, "_blank")
           }}
         >
-          <Send className="mr-2 h-4 w-4 text-[var(--cf-icon)]" />
+          <Send className="mr-2 h-4 w-4 text-(--cf-icon)" />
           Написать в Telegram
         </DropdownMenuItem>
 
@@ -69,25 +69,25 @@ export function ClientRowActionsMenu({ client }: ClientRowActionsMenuProps) {
             router.push(`/conversations?clientId=${client.id}`)
           }}
         >
-          <MessageSquare className="mr-2 h-4 w-4 text-[var(--cf-icon)]" />
+          <MessageSquare className="mr-2 h-4 w-4 text-(--cf-icon)" />
           Написать в чате админки
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-[var(--cf-border)]" />
+        <DropdownMenuSeparator className="bg-(--cf-border)" />
 
         <DropdownMenuItem
           onClick={() => {
             router.push(`/clients/${client.id}`)
           }}
         >
-          <ExternalLink className="mr-2 h-4 w-4 text-[var(--cf-icon)]" />
+          <ExternalLink className="mr-2 h-4 w-4 text-(--cf-icon)" />
           Открыть карточку клиента
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-[var(--cf-border)]" />
+        <DropdownMenuSeparator className="bg-(--cf-border)" />
 
         <DropdownMenuItem
-          className="text-[var(--cf-red)]"
+          className="text-(--cf-red)"
           onClick={() => void deleteClient(client.id)}
         >
           <Trash2 className="mr-2 h-4 w-4" />
