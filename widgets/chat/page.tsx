@@ -1,4 +1,4 @@
-import { PublicChatWidget } from '@/features/public-chat/ui/public-chat-widget'
+import { PublicChatWidget } from "@/features/public-chat/public-chat-widget"
 
 export default function Page({
   searchParams
