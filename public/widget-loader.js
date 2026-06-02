@@ -24,7 +24,7 @@
   container.style.border = '0'
   container.style.overflow = 'hidden'
   container.style.background = 'white'
-  container.style.transition = 'width .2s ease, height .2s ease'
+//   container.style.transition = 'width .2s ease, height .2s ease'
 
   function applyPosition() {
     container.style.left = 'auto'
@@ -63,7 +63,7 @@
   }
 
   function setClosedSize() {
-    document.querySelector('body').style.backgroundColor = 'white'
+    // document.querySelector('body').style.backgroundColor = 'white'
 
     container.style.width = closedSize + 'px'
     container.style.height = closedSize + 'px'
