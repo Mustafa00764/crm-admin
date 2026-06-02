@@ -130,7 +130,6 @@ export function PublicChatWidget({
         theme === 'light'
           ? 'bg-white text-slate-950'
           : 'bg-[#090b10] text-white',
-        !opened || 'bg-transparent'
       )}
     >
       <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">
