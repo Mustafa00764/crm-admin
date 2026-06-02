@@ -20,7 +20,6 @@
   container.style.zIndex = '2147483647'
   container.style.width = closedSize + 'px'
   container.style.height = closedSize + 'px'
-  container.style.borderRadius = '56px'
   container.style.border = '0'
   container.style.overflow = 'hidden'
   container.style.background = 'transparent'
@@ -65,6 +64,8 @@
   function setClosedSize() {
     container.style.width = closedSize + 'px'
     container.style.height = closedSize + 'px'
+    container.style.borderRadius = '56px'
+
     applyPosition()
   }
 
@@ -82,6 +83,7 @@
 
     container.style.width = openedWidth + 'px'
     container.style.height = openedHeight + 'px'
+    container.style.borderRadius = '18px'
     applyPosition()
   }
 
