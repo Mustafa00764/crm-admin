@@ -1,4 +1,4 @@
-(function () {
+;(function () {
   var currentScript = document.currentScript
 
   if (!currentScript) return
@@ -13,7 +13,6 @@
 
   container.style.position = 'fixed'
   container.style.zIndex = '2147483647'
-  container.style.bottom = '20px'
   container.style.width = '380px'
   container.style.height = '620px'
   container.style.border = '0'
@@ -21,8 +20,47 @@
 
   if (position === 'left') {
     container.style.left = '20px'
-  } else {
+    container.style.right = 'auto'
+    container.style.bottom = '20px'
+    container.style.top = 'auto'
+  }
+
+  if (position === 'right') {
     container.style.right = '20px'
+    container.style.left = 'auto'
+    container.style.bottom = '20px'
+    container.style.top = 'auto'
+  }
+
+  if (position === 'top-left') {
+    container.style.left = '20px'
+    container.style.right = 'auto'
+    container.style.top = '20px'
+    container.style.bottom = 'auto'
+  }
+
+  if (position === 'top-right') {
+    container.style.right = '20px'
+    container.style.left = 'auto'
+    container.style.top = '20px'
+    container.style.bottom = 'auto'
+  }
+
+  if (position === 'center') {
+    container.style.left = '50%'
+    container.style.top = '50%'
+    container.style.right = 'auto'
+    container.style.bottom = 'auto'
+    container.style.transform = 'translate(-50%, -50%)'
+  }
+
+  if (position === 'full') {
+    container.style.left = '0'
+    container.style.right = '0'
+    container.style.top = '0'
+    container.style.bottom = '0'
+    container.style.width = '100vw'
+    container.style.height = '100vh'
   }
 
   var iframe = document.createElement('iframe')
