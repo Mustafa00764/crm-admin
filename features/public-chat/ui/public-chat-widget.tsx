@@ -103,7 +103,7 @@ export function PublicChatWidget({
       <button
         type="button"
         onClick={() => setOpened(true)}
-        className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-xl"
+        className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white"
       >
         <Bot className="h-6 w-6" />
       </button>
@@ -113,10 +113,11 @@ export function PublicChatWidget({
   return (
     <div
       className={cn(
-        'max-w-120 min-h-180 max-h-180 flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-white/10 shadow-2xl',
+        'max-w-120 min-h-180 max-h-180 flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-white/10',
         theme === 'light'
           ? 'bg-white text-slate-950'
-          : 'bg-[#090b10] text-white'
+          : 'bg-[#090b10] text-white',
+        !opened || 'bg-transparent'
       )}
     >
       <div className="flex h-14 items-center justify-between border-b border-white/10 px-4">
