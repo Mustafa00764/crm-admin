@@ -15,6 +15,7 @@
   container.style.zIndex = '2147483647'
   container.style.width = '380px'
   container.style.height = '620px'
+  container.style.background = 'transparent'
   container.style.border = '0'
   container.style.overflow = 'hidden'
 
