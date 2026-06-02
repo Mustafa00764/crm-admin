@@ -72,6 +72,8 @@
   }
 
   function setOpenedSize() {
+    document.querySelector('body').style.backgroundColor = 'white'
+
     if (position === 'full') {
       container.style.left = '0'
       container.style.right = '0'
