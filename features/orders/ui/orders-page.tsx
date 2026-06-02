@@ -247,7 +247,7 @@ export function OrdersPage() {
         </main>
       </div>
 
-      <PublicChatWidget siteId={'default'} theme={'light'} pageUrl={''} />
+      {/* <PublicChatWidget siteId={'default'} theme={'light'} pageUrl={''} /> */}
       <OrderDetailsDrawer
         open={isOrderDrawerOpen}
         order={selectedOrder}

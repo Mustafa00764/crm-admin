@@ -27,6 +27,7 @@ export default function RootLayout({
       <body className="h-full bg-[var(--cf-bg)] text-[var(--cf-text)]">
         <Providers>{children}</Providers>
       </body>
+
     </html>
   )
 }
