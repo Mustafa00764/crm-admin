@@ -770,7 +770,7 @@ export function AIWorkspacePage() {
           </div>
         </aside>
 
-        <main className="cf-panel flex min-h-[70vh] flex-col max-h-[70vh]">
+        <main className="cf-panel flex min-h-[70vh] flex-col max-h-[70vh] lg:max-h-full">
           <div className="flex items-center justify-between gap-3 border-b border-[var(--cf-border)] p-3">
             <div className="min-w-0">
               <div className="truncate text-[13px] font-semibold text-[var(--cf-text)]">
