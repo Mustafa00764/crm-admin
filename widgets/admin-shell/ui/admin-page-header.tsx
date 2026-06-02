@@ -1,6 +1,11 @@
-"use client"
+'use client'
 
-import { useEffect, useState, type ReactNode } from "react"
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode
+} from 'react'
 
 type AdminPageHeaderProps = {
   title: string
@@ -27,12 +32,44 @@ export function AdminPageHeader({ title, actions }: AdminPageHeaderProps) {
 
         <div className="flex items-center gap-2">
           <div className="hidden text-[12px] text-[var(--cf-text-muted)] xl:block">
-            server time: {time.toLocaleString("ru-RU")}
+            server time: <ClientHeaderClock />
           </div>
 
           {actions}
         </div>
       </div>
     </header>
+  )
+}
+
+function subscribeClock(onStoreChange: () => void) {
+  const timeoutId = window.setTimeout(onStoreChange, 0)
+  const intervalId = window.setInterval(onStoreChange, 1000)
+
+  return () => {
+    window.clearTimeout(timeoutId)
+    window.clearInterval(intervalId)
+  }
+}
+
+function getClockSnapshot() {
+  return new Date().toLocaleString('ru-RU')
+}
+
+function getServerClockSnapshot() {
+  return '--.--.----, --:--:--'
+}
+
+function ClientHeaderClock() {
+  const time = useSyncExternalStore(
+    subscribeClock,
+    getClockSnapshot,
+    getServerClockSnapshot
+  )
+
+  return (
+    <div className="hidden text-[12px] text-[var(--cf-text-muted)] md:block">
+      {time}
+    </div>
   )
 }

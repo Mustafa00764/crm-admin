@@ -653,46 +653,46 @@ export function AIWorkspacePage() {
   }, [])
 
   if (!isHydrated) {
-    return (
-      <div className="cf-page min-h-screen">
-        <AdminPageHeader
-          title="Dashboard - AI Workspace"
-          actions={
-            <>
-              <ThemeToggle />
-            </>
-          }
-        />
-
-        <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
-          <aside className="cf-panel flex min-h-0 flex-col">
-            <div className="border-b border-[var(--cf-border)] p-3">
-              <div className="h-9 rounded-md bg-[var(--cf-button)]" />
-            </div>
-
-            <div className="p-4 text-[12px] text-[var(--cf-text-muted)]">
-              Loading chats...
-            </div>
-          </aside>
-
-          <main className="cf-panel flex min-h-0 items-center justify-center">
-            <div className="text-[12px] text-[var(--cf-text-muted)]">
-              Loading AI Workspace...
-            </div>
-          </main>
-
-          <aside className="cf-panel min-h-0 p-3">
-            <div className="text-[13px] font-semibold text-[var(--cf-text)]">
-              Agent settings
-            </div>
-          </aside>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="cf-page min-h-screen">
+      <AdminPageHeader
+        title="Dashboard - AI Workspace"
+        actions={
+          <>
+            <ThemeToggle />
+          </>
+        }
+      />
+
+      <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
+        <aside className="cf-panel flex min-h-0 flex-col">
+          <div className="border-b border-[var(--cf-border)] p-3">
+            <div className="h-9 rounded-md bg-[var(--cf-button)]" />
+          </div>
+
+          <div className="p-4 text-[12px] text-[var(--cf-text-muted)]">
+            Loading chats...
+          </div>
+        </aside>
+
+        <main className="cf-panel flex min-h-0 items-center justify-center">
+          <div className="text-[12px] text-[var(--cf-text-muted)]">
+            Loading AI Workspace...
+          </div>
+        </main>
+
+        <aside className="cf-panel min-h-0 p-3">
+          <div className="text-[13px] font-semibold text-[var(--cf-text)]">
+            Agent settings
+          </div>
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+  return (
+    <div className="cf-page min-h-screen ">
       <AdminPageHeader
         title="Dashboard - AI Workspace"
         actions={
@@ -711,7 +711,7 @@ export function AIWorkspacePage() {
         }
       />
 
-      <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
+      <div className="grid h-auto lg:h-[calc(100vh-52px)] grid-cols-1 lg:grid-cols-[280px_1fr_310px] gap-3 p-3">
         <aside className="cf-panel flex min-h-0 flex-col">
           <div className="border-b border-[var(--cf-border)] p-3">
             <Button
@@ -770,7 +770,7 @@ export function AIWorkspacePage() {
           </div>
         </aside>
 
-        <main className="cf-panel flex min-h-0 flex-col">
+        <main className="cf-panel flex min-h-[70vh] flex-col max-h-[70vh]">
           <div className="flex items-center justify-between gap-3 border-b border-[var(--cf-border)] p-3">
             <div className="min-w-0">
               <div className="truncate text-[13px] font-semibold text-[var(--cf-text)]">
