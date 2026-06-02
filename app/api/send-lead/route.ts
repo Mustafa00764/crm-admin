@@ -1,41 +1,45 @@
 // app/api/send-lead/route.ts
 
-import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { NextResponse } from 'next/server'
+import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend('re_YgAC8nyx_4Z7afDC8nvzramb4MPj4Gkcj')
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json()
 
-    const phone = body.phone;
+    if (!resend) {
+      return NextResponse.json(
+        { error: 'RESEND_API_KEY is not configured' },
+        { status: 500 }
+      )
+    }
+
+    const phone = body.phone
 
     if (!phone) {
-      return NextResponse.json(
-        { error: "Телефон обязателен" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Телефон обязателен' }, { status: 400 })
     }
 
     await resend.emails.send({
-      from: "Заявки сайта profnastilvtashkente.uz",
-      to: "eshchanov9@gmail.com",
-      subject: "Новая заявка с сайта profnastilvtashkente",
+      from: 'Заявки сайта profnastilvtashkente.uz',
+      to: 'eshchanov9@gmail.com',
+      subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
         <h2>Новая заявка</h2>
         <p><b>Телефон:</b> ${phone}</p>
-        <p><b>Товар:</b> ${body.product || "Не указан"}</p>
-        <p><b>Комментарий:</b> ${body.comment || "Не указан"}</p>
-        <p><b>Город:</b> ${body.deliveryCity || "Не указан"}</p>
-      `,
-    });
+        <p><b>Товар:</b> ${body.product || 'Не указан'}</p>
+        <p><b>Комментарий:</b> ${body.comment || 'Не указан'}</p>
+        <p><b>Город:</b> ${body.deliveryCity || 'Не указан'}</p>
+      `
+    })
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json(
-      { error: "Ошибка отправки заявки" },
+      { error: 'Ошибка отправки заявки' },
       { status: 500 }
-    );
+    )
   }
 }
