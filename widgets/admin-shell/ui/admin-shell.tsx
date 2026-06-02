@@ -1,5 +1,5 @@
-import { AdminNavMenu } from "./admin-nav-menu"
-import { AdminSidebar } from "./admin-sidebar"
+import { AdminNavMenu } from './admin-nav-menu'
+import { AdminSidebar } from './admin-sidebar'
 
 type AdminShellProps = {
   children: React.ReactNode

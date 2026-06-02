@@ -22,6 +22,7 @@ import { OrdersTableSkeleton } from './orders-table-skeleton'
 import type { CRMOrder, OrderFilters } from '../model/orders-types'
 import { usePaginatedList } from '@/shared/hooks/use-paginated-list'
 import { ListPagination } from '@/shared/ui/list-pagination'
+import { PublicChatWidget } from '@/features/public-chat/ui/public-chat-widget'
 
 export function OrdersPage() {
   const {
@@ -246,6 +247,7 @@ export function OrdersPage() {
         </main>
       </div>
 
+      <PublicChatWidget siteId={'default'} theme={'dark'} pageUrl={''} />
       <OrderDetailsDrawer
         open={isOrderDrawerOpen}
         order={selectedOrder}
