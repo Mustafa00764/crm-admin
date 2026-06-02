@@ -58,7 +58,6 @@ eshchanov9@gmail.com
 
 Формат заявки:
 
-sendLeadEmail({
   to: "eshchanov9@gmail.com",
   subject: "Новая заявка с сайта profnastilvtashkente",
   lead: {
@@ -75,7 +74,6 @@ sendLeadEmail({
     comment: "дополнительный комментарий клиента, если есть",
     pageUrl: "ссылка на страницу, если есть"
   }
-})
 
 клиенту повтори данные которые он тебе дал не показывай ему sendLeadEmail
 
