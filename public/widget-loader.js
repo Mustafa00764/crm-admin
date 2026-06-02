@@ -8,61 +8,83 @@
   var position = currentScript.getAttribute('data-position') || 'right'
   var theme = currentScript.getAttribute('data-theme') || 'dark'
 
+  var closedSize = 64
+  var openedWidth = 380
+  var openedHeight = 620
+  var offset = 20
+
   var container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
 
   container.style.position = 'fixed'
   container.style.zIndex = '2147483647'
-  container.style.width = '380px'
-  container.style.height = '620px'
-  container.style.background = 'transparent'
+  container.style.width = closedSize + 'px'
+  container.style.height = closedSize + 'px'
   container.style.border = '0'
   container.style.overflow = 'hidden'
+  container.style.background = 'transparent'
+  container.style.transition = 'width .2s ease, height .2s ease'
 
-  if (position === 'left') {
-    container.style.left = '20px'
-    container.style.right = 'auto'
-    container.style.bottom = '20px'
-    container.style.top = 'auto'
-  }
-
-  if (position === 'right') {
-    container.style.right = '20px'
+  function applyPosition() {
     container.style.left = 'auto'
-    container.style.bottom = '20px'
+    container.style.right = 'auto'
     container.style.top = 'auto'
-  }
-
-  if (position === 'top-left') {
-    container.style.left = '20px'
-    container.style.right = 'auto'
-    container.style.top = '20px'
     container.style.bottom = 'auto'
+    container.style.transform = 'none'
+
+    if (position === 'left') {
+      container.style.left = offset + 'px'
+      container.style.bottom = offset + 'px'
+      return
+    }
+
+    if (position === 'top-left') {
+      container.style.left = offset + 'px'
+      container.style.top = offset + 'px'
+      return
+    }
+
+    if (position === 'top-right') {
+      container.style.right = offset + 'px'
+      container.style.top = offset + 'px'
+      return
+    }
+
+    if (position === 'center') {
+      container.style.left = '50%'
+      container.style.top = '50%'
+      container.style.transform = 'translate(-50%, -50%)'
+      return
+    }
+
+    container.style.right = offset + 'px'
+    container.style.bottom = offset + 'px'
   }
 
-  if (position === 'top-right') {
-    container.style.right = '20px'
-    container.style.left = 'auto'
-    container.style.top = '20px'
-    container.style.bottom = 'auto'
+  function setClosedSize() {
+    container.style.width = closedSize + 'px'
+    container.style.height = closedSize + 'px'
+    applyPosition()
   }
 
-  if (position === 'center') {
-    container.style.left = '50%'
-    container.style.top = '50%'
-    container.style.right = 'auto'
-    container.style.bottom = 'auto'
-    container.style.transform = 'translate(-50%, -50%)'
+  function setOpenedSize() {
+    if (position === 'full') {
+      container.style.left = '0'
+      container.style.right = '0'
+      container.style.top = '0'
+      container.style.bottom = '0'
+      container.style.width = '100vw'
+      container.style.height = '100vh'
+      container.style.transform = 'none'
+      return
+    }
+
+    container.style.width = openedWidth + 'px'
+    container.style.height = openedHeight + 'px'
+    applyPosition()
   }
 
-  if (position === 'full') {
-    container.style.left = '0'
-    container.style.right = '0'
-    container.style.top = '0'
-    container.style.bottom = '0'
-    container.style.width = '100vw'
-    container.style.height = '100vh'
-  }
+  applyPosition()
 
   var iframe = document.createElement('iframe')
 
@@ -77,12 +99,26 @@
 
   iframe.title = 'AI Chat'
   iframe.allow = 'microphone'
+  iframe.allowTransparency = 'true'
   iframe.style.width = '100%'
   iframe.style.height = '100%'
   iframe.style.border = '0'
-  iframe.style.borderRadius = '18px'
-  iframe.style.boxShadow = '0 20px 60px rgba(0,0,0,.35)'
   iframe.style.background = 'transparent'
+  iframe.style.display = 'block'
+
+  window.addEventListener('message', function (event) {
+    if (event.origin !== crmUrl) return
+
+    if (!event.data || event.data.source !== 'omni-crm-widget') return
+
+    if (event.data.type === 'open') {
+      setOpenedSize()
+    }
+
+    if (event.data.type === 'close') {
+      setClosedSize()
+    }
+  })
 
   container.appendChild(iframe)
   document.body.appendChild(container)

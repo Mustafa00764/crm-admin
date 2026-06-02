@@ -35,6 +35,16 @@ export function PublicChatWidget({
     }
   ])
 
+  function notifyParent(type: 'open' | 'close') {
+    window.parent.postMessage(
+      {
+        source: 'omni-crm-widget',
+        type
+      },
+      '*'
+    )
+  }
+
   const sendMessage = React.useCallback(async () => {
     const text = input.trim()
 
@@ -102,8 +112,11 @@ export function PublicChatWidget({
     return (
       <button
         type="button"
-        onClick={() => setOpened(true)}
-        className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white"
+        onClick={() => {
+          setOpened(true)
+          notifyParent('open')
+        }}
+        className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-xl"
       >
         <Bot className="h-6 w-6" />
       </button>
