@@ -81,6 +81,66 @@ function saveStorage<T>(key: string, value: T) {
   }
 }
 
+function subscribeHydration(onStoreChange: () => void) {
+  const timeoutId = window.setTimeout(onStoreChange, 0)
+
+  return () => window.clearTimeout(timeoutId)
+}
+
+function getClientHydrationSnapshot() {
+  return true
+}
+
+function getServerHydrationSnapshot() {
+  return false
+}
+
+function useIsHydrated() {
+  return React.useSyncExternalStore(
+    subscribeHydration,
+    getClientHydrationSnapshot,
+    getServerHydrationSnapshot
+  )
+}
+
+function sanitizeAttachment(
+  attachment: AIWorkspaceAttachment
+): AIWorkspaceAttachment {
+  const { objectUrl: _objectUrl, ...cleanAttachment } = attachment
+
+  return cleanAttachment
+}
+
+function sanitizeMessage(message: AIWorkspaceMessage): AIWorkspaceMessage {
+  const { audioUrl: _audioUrl, ...cleanMessage } = message
+
+  return {
+    ...cleanMessage,
+    attachments: cleanMessage.attachments.map(sanitizeAttachment)
+  }
+}
+
+function sanitizeMessagesRecord(
+  value: Record<string, AIWorkspaceMessage[]>
+): Record<string, AIWorkspaceMessage[]> {
+  return Object.fromEntries(
+    Object.entries(value).map(([chatId, chatMessages]) => [
+      chatId,
+      chatMessages.map(sanitizeMessage)
+    ])
+  )
+}
+
+function readMessagesStorage() {
+  return sanitizeMessagesRecord(
+    readStorage<Record<string, AIWorkspaceMessage[]>>(MESSAGES_STORAGE_KEY, {})
+  )
+}
+
+function saveMessagesStorage(value: Record<string, AIWorkspaceMessage[]>) {
+  saveStorage(MESSAGES_STORAGE_KEY, sanitizeMessagesRecord(value))
+}
+
 function getAgentVoiceSettings(agent: AIAgent | null) {
   return {
     ...DEFAULT_VOICE_SETTINGS,
@@ -145,7 +205,8 @@ export function AIWorkspacePage() {
   )
   const [messages, setMessages] = React.useState<
     Record<string, AIWorkspaceMessage[]>
-  >(() => readStorage(MESSAGES_STORAGE_KEY, {}))
+  >(() => readMessagesStorage())
+  const isHydrated = useIsHydrated()
   const [selectedChatId, setSelectedChatId] = React.useState<string | null>(
     () => readStorage<AIWorkspaceChat[]>(CHATS_STORAGE_KEY, [])[0]?.id ?? null
   )
@@ -170,7 +231,7 @@ export function AIWorkspacePage() {
   }, [chats])
 
   React.useEffect(() => {
-    saveStorage(MESSAGES_STORAGE_KEY, messages)
+    saveMessagesStorage(messages)
   }, [messages])
 
   const selectedAgent = React.useMemo(() => {
@@ -342,7 +403,7 @@ export function AIWorkspacePage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: agent?.model ?? 'gpt-5.4-mini',
+            model: 'gpt-4.1-mini', // agent?.model ?? 'gpt-5.4-mini,
             systemPrompt:
               agent?.systemPrompt ??
               'Ты AI-ассистент CRM. Отвечай полезно и кратко.',
@@ -591,6 +652,45 @@ export function AIWorkspacePage() {
     setAttachments(current => current.filter(item => item.id !== attachmentId))
   }, [])
 
+  if (!isHydrated) {
+    return (
+      <div className="cf-page min-h-screen">
+        <AdminPageHeader
+          title="Dashboard - AI Workspace"
+          actions={
+            <>
+              <ThemeToggle />
+            </>
+          }
+        />
+
+        <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
+          <aside className="cf-panel flex min-h-0 flex-col">
+            <div className="border-b border-[var(--cf-border)] p-3">
+              <div className="h-9 rounded-md bg-[var(--cf-button)]" />
+            </div>
+
+            <div className="p-4 text-[12px] text-[var(--cf-text-muted)]">
+              Loading chats...
+            </div>
+          </aside>
+
+          <main className="cf-panel flex min-h-0 items-center justify-center">
+            <div className="text-[12px] text-[var(--cf-text-muted)]">
+              Loading AI Workspace...
+            </div>
+          </main>
+
+          <aside className="cf-panel min-h-0 p-3">
+            <div className="text-[13px] font-semibold text-[var(--cf-text)]">
+              Agent settings
+            </div>
+          </aside>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="cf-page min-h-screen">
       <AdminPageHeader
@@ -689,16 +789,19 @@ export function AIWorkspacePage() {
                 value={selectedAgent?.id ?? ''}
                 onValueChange={value => selectAiAgent(value)}
               >
-                <SelectTrigger className="cf-control h-8 w-[250px] px-3 text-[12px] shadow-none">
+                <SelectTrigger className="cf-control h-8 w-[250px] px-3 text-[12px] text-primary shadow-none">
                   <SelectValue placeholder="Select agent" />
                 </SelectTrigger>
 
                 <SelectContent className="cf-panel">
-                  {aiAgentRecords.map(agent => (
-                    <SelectItem key={agent.id} value={agent.id}>
-                      {agent.name} · {agent.model}
-                    </SelectItem>
-                  ))}
+                  {aiAgentRecords.map(agent => {
+                    if (agent.id !== 'ai_agent_sales_001') return
+                    return (
+                      <SelectItem key={agent.id} value={agent.id}>
+                        {agent.name} · {agent.model}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectContent>
               </Select>
 
