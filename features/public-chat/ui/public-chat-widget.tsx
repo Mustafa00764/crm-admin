@@ -101,10 +101,6 @@ export function PublicChatWidget({
           }))
         })
       })
-      messagesEndRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end'
-      })
 
       if (response.ok) {
         const phone = extractPhone(text)

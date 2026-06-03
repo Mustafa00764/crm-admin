@@ -33,6 +33,7 @@ import {
   SelectValue
 } from '@/shared/ui/select'
 import { AIRealtimeVoicePanel } from './ai-realtime-voice-panel'
+import Image from 'next/image'
 
 const CHATS_STORAGE_KEY = 'crm.aiWorkspace.chats'
 const MESSAGES_STORAGE_KEY = 'crm.aiWorkspace.messages'
@@ -221,6 +222,7 @@ export function AIWorkspacePage() {
 
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null)
   const audioChunksRef = React.useRef<Blob[]>([])
+  const messagesScrollRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
     void loadAiAgentRecords()
@@ -652,44 +654,56 @@ export function AIWorkspacePage() {
     setAttachments(current => current.filter(item => item.id !== attachmentId))
   }, [])
 
+  const scrollToBottom = () => {
+    const el = messagesScrollRef.current
+
+    if (!el) return
+
+    el.scrollTop = el.scrollHeight
+  }
+
+  React.useEffect(() => {
+    requestAnimationFrame(scrollToBottom)
+  }, [messages])
+
   if (!isHydrated) {
-  return (
-    <div className="cf-page min-h-screen">
-      <AdminPageHeader
-        title="Dashboard - AI Workspace"
-        actions={
-          <>
-            <ThemeToggle />
-          </>
-        }
-      />
+    return (
+      <div className="cf-page min-h-screen">
+        <AdminPageHeader
+          title="Dashboard - AI Workspace"
+          actions={
+            <>
+              <ThemeToggle />
+            </>
+          }
+        />
 
-      <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
-        <aside className="cf-panel flex min-h-0 flex-col">
-          <div className="border-b border-[var(--cf-border)] p-3">
-            <div className="h-9 rounded-md bg-[var(--cf-button)]" />
-          </div>
+        <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
+          <aside className="cf-panel flex min-h-0 flex-col">
+            <div className="border-b border-[var(--cf-border)] p-3">
+              <div className="h-9 rounded-md bg-[var(--cf-button)]" />
+            </div>
 
-          <div className="p-4 text-[12px] text-[var(--cf-text-muted)]">
-            Loading chats...
-          </div>
-        </aside>
+            <div className="p-4 text-[12px] text-[var(--cf-text-muted)]">
+              Loading chats...
+            </div>
+          </aside>
 
-        <main className="cf-panel flex min-h-0 items-center justify-center">
-          <div className="text-[12px] text-[var(--cf-text-muted)]">
-            Loading AI Workspace...
-          </div>
-        </main>
+          <main className="cf-panel flex min-h-0 items-center justify-center">
+            <div className="text-[12px] text-[var(--cf-text-muted)]">
+              Loading AI Workspace...
+            </div>
+          </main>
 
-        <aside className="cf-panel min-h-0 p-3">
-          <div className="text-[13px] font-semibold text-[var(--cf-text)]">
-            Agent settings
-          </div>
-        </aside>
+          <aside className="cf-panel min-h-0 p-3">
+            <div className="text-[13px] font-semibold text-[var(--cf-text)]">
+              Agent settings
+            </div>
+          </aside>
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
   return (
     <div className="cf-page min-h-screen ">
@@ -822,7 +836,10 @@ export function AIWorkspacePage() {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
+          <div
+            ref={messagesScrollRef}
+            className="min-h-0 flex-1 space-y-3 overflow-auto p-4"
+          >
             {chatMessages.length === 0 ? (
               <div className="flex h-full items-center justify-center">
                 <div className="text-center">
@@ -1083,7 +1100,10 @@ function AttachmentBadge({
 }) {
   if (attachment.type === 'image' && attachment.dataUrl) {
     return (
-      <img
+      <Image
+        unoptimized
+        width={80}
+        height={80}
         src={attachment.dataUrl}
         alt={attachment.name}
         className="h-20 w-20 rounded-md border border-[var(--cf-border)] object-cover"
