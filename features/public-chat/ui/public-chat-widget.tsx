@@ -214,7 +214,7 @@ export function PublicChatWidget({
         </button>
       </div>
 
-      <div ref={messagesEndRef} className="min-h-0 transition-all flex-1 space-y-3 overflow-auto p-3 scrollbar-0">
+      <div ref={messagesEndRef} className="min-h-0 transition-all flex-1 space-y-3 overflow-auto p-3 scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-transparent">
         {messages.map(message => (
           <div
             key={message.id}
