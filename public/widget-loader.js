@@ -66,7 +66,7 @@
     }
 
     root.style.left = offset + 'px'
-    root.style.bottom = offset + 'px'
+    root.style.bottom = '10%'
   }
 
   let style = document.createElement('style')
