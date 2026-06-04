@@ -23,10 +23,11 @@
   // container.style.borderRadius = closedSize + 'px'
   container.style.border = '0'
   // container.style.overflow = 'hidden'
-  container.style.background = 'transparent'
-  container.style.inset = '0'
-  container.style.pointerEvents = 'none'
-
+  container.style.backgroundColor = 'transparent'
+  container.style.cssText = `& > #crm-admin-root { background: transparent !important; inset: 0 !important; pointer-events: none !important; }`
+  // container.style.background = 'transparent'
+  // container.style.inset = '0'
+  // container.style.pointerEvents = 'none'
   // document.addEventListener('DOMContentLoaded', function () {
   //   const crmAdminRoot = document.getElementById('crm-admin-root')
 

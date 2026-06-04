@@ -208,7 +208,7 @@
   }
 
   body {
-    @apply text-foreground bg-transparent text-(--cf-text); 
+    @apply bg-background text-foreground; 
     /* (--cf-bg) */
     margin: 0;
     font-family:
