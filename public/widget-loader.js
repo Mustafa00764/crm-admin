@@ -7,7 +7,7 @@
   let position = currentScript.getAttribute('data-position') || 'left'
   let theme = currentScript.getAttribute('data-theme') || 'light'
 
-  let buttonSize = 56
+  let buttonSize = 60
   let openedWidth = 380
   let openedHeight = 620
   let offset = 20
