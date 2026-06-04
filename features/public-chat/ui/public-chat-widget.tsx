@@ -166,36 +166,22 @@ export function PublicChatWidget({
 
   if (!opened) {
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={() => {
-              setOpened(true)
-              notifyParent('open')
-            }}
-            className="fixed bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl pointer-events-auto"
-          >
-            <Image
-              unoptimized
-              width={56}
-              height={56}
-              src="/images/assistant-2.png"
-              alt="assistant"
-              className="w-14 h-14 object-cover object-top rounded-full"
-            />
-            <div
-              className={cn(
-                'absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full bg-green-500 border-2 ',
-                theme === 'light' ? 'border-white' : 'border-[#090b10]'
-              )}
-            />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side={'right'} className={cn(theme === 'light' ? 'bg-white text-slate-950' : 'bg-[#090b10] text-white')}>
-          <p>Есть вопросы? Напишите, мы онлайн</p>
-        </TooltipContent>
-      </Tooltip>
+      <button
+        type="button"
+        onClick={() => {
+          setOpened(true)
+          notifyParent('open')
+        }}
+        className="fixed bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl pointer-events-auto"
+      >
+        <div className="relative h-14 w-14 rounded-full">
+          <Image
+            src="/images/assistant-2.png"
+            alt="assistant"
+            className="h-14 w-14 rounded-full object-cover object-top"
+          />
+        </div>
+      </button>
     )
   }
 

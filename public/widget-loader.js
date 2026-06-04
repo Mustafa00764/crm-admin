@@ -7,94 +7,88 @@
   let position = currentScript.getAttribute('data-position') || 'right'
   let theme = currentScript.getAttribute('data-theme') || 'light'
 
-  let closedSize = 56
+  let buttonSize = 56
   let openedWidth = 380
   let openedHeight = 620
   let offset = 20
+  let opened = false
 
-  let container = document.createElement('div')
-  container.id = 'omni-crm-chat-widget-root'
+  let root = document.createElement('div')
+  root.id = 'omni-crm-chat-widget-root'
 
-  Object.assign(container.style, {
+  Object.assign(root.style, {
     position: 'fixed',
     zIndex: '2147483647',
-    width: closedSize + 'px',
-    height: closedSize + 'px',
-    borderRadius: closedSize + 'px',
-    border: '0',
-    overflow: 'hidden',
+    width: openedWidth + 'px',
+    height: openedHeight + buttonSize + 24 + 'px',
     background: 'transparent',
-    pointerEvents: 'auto'
+    pointerEvents: 'none'
   })
 
   function applyPosition() {
-    container.style.left = 'auto'
-    container.style.right = 'auto'
-    container.style.top = 'auto'
-    container.style.bottom = 'auto'
-    container.style.transform = 'none'
+    root.style.left = 'auto'
+    root.style.right = 'auto'
+    root.style.top = 'auto'
+    root.style.bottom = 'auto'
+    root.style.transform = 'none'
 
     if (position === 'left') {
-      container.style.left = offset + 'px'
-      container.style.bottom = '10%'
+      root.style.left = offset + 'px'
+      root.style.bottom = '10%'
       return
     }
 
     if (position === 'top-left') {
-      container.style.left = offset + 'px'
-      container.style.top = offset + 'px'
+      root.style.left = offset + 'px'
+      root.style.top = offset + 'px'
       return
     }
 
     if (position === 'top-right') {
-      container.style.right = offset + 'px'
-      container.style.top = offset + 'px'
+      root.style.right = offset + 'px'
+      root.style.top = offset + 'px'
       return
     }
 
     if (position === 'center') {
-      container.style.left = '50%'
-      container.style.top = '50%'
-      container.style.transform = 'translate(-50%, -50%)'
+      root.style.left = '50%'
+      root.style.top = '50%'
+      root.style.transform = 'translate(-50%, -50%)'
       return
     }
 
-    container.style.right = offset + 'px'
-    container.style.bottom = '10%'
+    root.style.right = offset + 'px'
+    root.style.bottom = '10%'
   }
 
-  function setClosedSize() {
-    container.style.width = closedSize + 'px'
-    container.style.height = closedSize + 'px'
-    container.style.borderRadius = '56px'
-    container.style.overflow = 'hidden'
-    applyPosition()
-  }
+  let style = document.createElement('style')
+  style.textContent = `
+    @keyframes omniCrmPing {
+      0% {
+        transform: scale(1);
+        opacity: .65;
+      }
 
-  function setOpenedSize() {
-    if (position === 'full') {
-      Object.assign(container.style, {
-        left: '0',
-        right: '0',
-        top: '0',
-        bottom: '0',
-        width: '100vw',
-        height: '100vh',
-        borderRadius: '0',
-        overflow: 'hidden',
-        transform: 'none'
-      })
-      return
+      75%, 100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
     }
 
-    container.style.width = openedWidth + 'px'
-    container.style.height = openedHeight + 'px'
-    container.style.borderRadius = '18.55px'
-    container.style.overflow = 'hidden'
-    applyPosition()
-  }
+    #omni-crm-chat-button {
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
 
-  applyPosition()
+    #omni-crm-chat-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, .28) !important;
+    }
+
+    #omni-crm-tooltip {
+      transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+    }
+  `
+  document.head.appendChild(style)
 
   let iframe = document.createElement('iframe')
 
@@ -112,11 +106,197 @@
   iframe.setAttribute('allowtransparency', 'true')
 
   Object.assign(iframe.style, {
-    width: '100%',
-    height: '100%',
+    position: 'absolute',
+    right: '0',
+    bottom: buttonSize + 16 + 'px',
+    width: openedWidth + 'px',
+    height: openedHeight + 'px',
     border: '0',
+    borderRadius: '18px',
     background: 'transparent',
-    display: 'block'
+    display: 'none',
+    pointerEvents: 'auto',
+    boxShadow: '0 18px 50px rgba(0, 0, 0, .25)',
+    overflow: 'hidden'
+  })
+
+  let button = document.createElement('button')
+  button.type = 'button'
+  button.id = 'omni-crm-chat-button'
+  button.setAttribute('aria-label', 'Открыть чат')
+
+  Object.assign(button.style, {
+    position: 'absolute',
+    right: '0',
+    bottom: '0',
+    width: buttonSize + 'px',
+    height: buttonSize + 'px',
+    borderRadius: '999px',
+    border: '0',
+    padding: '0',
+    margin: '0',
+    cursor: 'pointer',
+    pointerEvents: 'auto',
+    background: 'transparent',
+    boxShadow: '0 14px 30px rgba(0, 0, 0, .25)'
+  })
+
+  button.innerHTML = `
+    <img
+      src="${crmUrl}/images/assistant-2.png"
+      alt="assistant"
+      style="
+        width: ${buttonSize}px;
+        height: ${buttonSize}px;
+        border-radius: 999px;
+        object-fit: cover;
+        object-position: top;
+        display: block;
+      "
+    />
+
+    <span
+      style="
+        position: absolute;
+        right: 2px;
+        bottom: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #22c55e;
+        opacity: .6;
+        animation: omniCrmPing 1.4s cubic-bezier(0, 0, .2, 1) infinite;
+        z-index: 1;
+      "
+    ></span>
+
+    <span
+      style="
+        position: absolute;
+        right: 2px;
+        bottom: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #22c55e;
+        border: 2px solid ${theme === 'light' ? '#ffffff' : '#090b10'};
+        box-sizing: border-box;
+        z-index: 2;
+      "
+    ></span>
+  `
+
+  let tooltip = document.createElement('div')
+  tooltip.id = 'omni-crm-tooltip'
+  tooltip.textContent = 'Есть вопросы? Напишите, мы онлайн'
+
+  Object.assign(tooltip.style, {
+    position: 'absolute',
+    right: buttonSize + 12 + 'px',
+    bottom: '8px',
+    padding: '10px 14px',
+    borderRadius: '12px',
+    fontSize: '14px',
+    lineHeight: '1.4',
+    whiteSpace: 'nowrap',
+    background: theme === 'light' ? '#ffffff' : '#090b10',
+    color: theme === 'light' ? '#0f172a' : '#ffffff',
+    boxShadow: '0 12px 30px rgba(0, 0, 0, .2)',
+    opacity: '0',
+    visibility: 'hidden',
+    transform: 'translateX(6px)',
+    pointerEvents: 'none'
+  })
+
+  function showTooltip() {
+    if (opened) return
+
+    tooltip.style.opacity = '1'
+    tooltip.style.visibility = 'visible'
+    tooltip.style.transform = 'translateX(0)'
+  }
+
+  function hideTooltip() {
+    tooltip.style.opacity = '0'
+    tooltip.style.visibility = 'hidden'
+    tooltip.style.transform = 'translateX(6px)'
+  }
+
+  function openChat() {
+    opened = true
+    hideTooltip()
+
+    iframe.style.display = 'block'
+    button.style.display = 'none'
+
+    if (position === 'full') {
+      Object.assign(root.style, {
+        left: '0',
+        right: '0',
+        top: '0',
+        bottom: '0',
+        width: '100vw',
+        height: '100vh',
+        transform: 'none'
+      })
+
+      Object.assign(iframe.style, {
+        left: '0',
+        right: '0',
+        top: '0',
+        bottom: '0',
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0'
+      })
+
+      return
+    }
+
+    Object.assign(root.style, {
+      width: openedWidth + 'px',
+      height: openedHeight + 'px'
+    })
+
+    Object.assign(iframe.style, {
+      right: '0',
+      bottom: '0',
+      width: openedWidth + 'px',
+      height: openedHeight + 'px',
+      borderRadius: '18px'
+    })
+
+    applyPosition()
+  }
+
+  function closeChat() {
+    opened = false
+
+    iframe.style.display = 'none'
+    button.style.display = 'block'
+
+    Object.assign(root.style, {
+      width: openedWidth + 'px',
+      height: openedHeight + buttonSize + 24 + 'px'
+    })
+
+    Object.assign(iframe.style, {
+      position: 'absolute',
+      right: '0',
+      bottom: buttonSize + 16 + 'px',
+      width: openedWidth + 'px',
+      height: openedHeight + 'px',
+      borderRadius: '18px'
+    })
+
+    applyPosition()
+  }
+
+  button.addEventListener('mouseenter', showTooltip)
+  button.addEventListener('mouseleave', hideTooltip)
+
+  button.addEventListener('click', function () {
+    openChat()
   })
 
   window.addEventListener('message', function (event) {
@@ -124,14 +304,18 @@
     if (!event.data || event.data.source !== 'omni-crm-widget') return
 
     if (event.data.type === 'open') {
-      setOpenedSize()
+      openChat()
     }
 
     if (event.data.type === 'close') {
-      setClosedSize()
+      closeChat()
     }
   })
 
-  container.appendChild(iframe)
-  document.body.appendChild(container)
+  applyPosition()
+
+  root.appendChild(iframe)
+  root.appendChild(tooltip)
+  root.appendChild(button)
+  document.body.appendChild(root)
 })()
