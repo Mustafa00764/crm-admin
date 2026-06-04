@@ -8,7 +8,7 @@
   var position = currentScript.getAttribute('data-position') || 'right'
   var theme = currentScript.getAttribute('data-theme') || 'dark'
 
-  // var closedSize = 56
+  var closedSize = 56
   var openedWidth = 380
   var openedHeight = 620
   var offset = 20
@@ -20,18 +20,18 @@
   container.style.zIndex = '2147483647'
   container.style.width = 'auto'
   container.style.height = 'auto'
-  // container.style.borderRadius = closedSize + 'px'
+  container.style.borderRadius = closedSize + 'px'
   container.style.border = '0'
-  // container.style.overflow = 'hidden'
+  container.style.overflow = 'hidden'
   container.style.background = 'white'
 
-  document.addEventListener('DOMContentLoaded', function () {
-    const crmAdminRoot = document.getElementById('crm-admin-root')
+  // document.addEventListener('DOMContentLoaded', function () {
+  //   const crmAdminRoot = document.getElementById('crm-admin-root')
 
-    crmAdminRoot.style.backgroundColor = 'transparent'
-    crmAdminRoot.style.inset = '0'
-    crmAdminRoot.style.pointerEvents = 'none'
-  })
+  //   crmAdminRoot.style.backgroundColor = 'transparent'
+  //   crmAdminRoot.style.inset = '0'
+  //   crmAdminRoot.style.pointerEvents = 'none'
+  // })
 
   //   container.style.transition = 'width .2s ease, height .2s ease'
 
@@ -71,15 +71,15 @@
     container.style.bottom = '10%'
   }
 
-  // function setClosedSize() {
-  //   // document.querySelector('body').style.backgroundColor = 'white'
+  function setClosedSize() {
+    // document.querySelector('body').style.backgroundColor = 'white'
 
-  //   container.style.width = closedSize + 'px'
-  //   container.style.height = closedSize + 'px'
-  //   container.style.borderRadius = '56px'
+    container.style.width = closedSize + 'px'
+    container.style.height = closedSize + 'px'
+    container.style.borderRadius = '56px'
 
-  //   applyPosition()
-  // }
+    applyPosition()
+  }
 
   function setOpenedSize() {
     // document.querySelector('body').style.backgroundColor = 'white'
@@ -132,9 +132,9 @@
       setOpenedSize()
     }
 
-    // if (event.data.type === 'close') {
-    //   setClosedSize()
-    // }
+    if (event.data.type === 'close') {
+      setClosedSize()
+    }
   })
 
   container.appendChild(iframe)

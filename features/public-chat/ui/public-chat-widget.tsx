@@ -186,7 +186,7 @@ export function PublicChatWidget({
             />
             <div
               className={cn(
-                'absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 ',
+                'absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full bg-green-500 border-2 ',
                 theme === 'light' ? 'border-white' : 'border-[#090b10]'
               )}
             />
