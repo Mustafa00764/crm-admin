@@ -216,7 +216,7 @@
   Object.assign(tooltip.style, {
     position: 'absolute',
     left: buttonSize + 12 + 'px',
-    bottom: '50%',
+    bottom: '13px',
     maxWidth: '300px',
     padding: '10px 14px',
     borderRadius: '14px',
@@ -230,7 +230,7 @@
     boxShadow: '0 12px 30px rgba(0, 0, 0, .16)',
     opacity: '0',
     visibility: 'hidden',
-    transform: 'translateX(-6px) translateY(50%)',
+    transform: 'translateX(-6px)',
     pointerEvents: 'none',
   })
 
