@@ -13,8 +13,6 @@
   var openedHeight = 620
   var offset = 20
 
-  const crmAdminRoot = document.getElementById('crm-admin-root')
-
   var container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
 
@@ -26,9 +24,16 @@
   container.style.border = '0'
   // container.style.overflow = 'hidden'
   container.style.background = 'white'
-  crmAdminRoot.style.backgroundColor = 'transparent'
-  crmAdminRoot.style.inset = '0'
-  crmAdminRoot.style.pointerEvents = 'none'
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const crmAdminRoot = document.getElementById('crm-admin-root')
+
+    if (crmAdminRoot) {
+      crmAdminRoot.style.backgroundColor = 'transparent'
+      crmAdminRoot.style.inset = '0'
+      crmAdminRoot.style.pointerEvents = 'none'
+    }
+  })
 
   //   container.style.transition = 'width .2s ease, height .2s ease'
 
