@@ -100,7 +100,6 @@
       #omni-crm-chat-widget-root {
         left: 12px !important;
         right: 12px !important;
-        bottom: 12px !important;
         width: calc(100vw - 24px) !important;
       }
 
@@ -125,7 +124,7 @@
     '&pageUrl=' +
     encodeURIComponent(window.location.href)
 
-  iframe.title = 'AI Chat'
+  iframe.title = 'Online Chat'
   iframe.allow = 'microphone'
   iframe.setAttribute('allowtransparency', 'true')
 
@@ -217,7 +216,7 @@
   Object.assign(tooltip.style, {
     position: 'absolute',
     left: buttonSize + 12 + 'px',
-    bottom: '8px',
+    bottom: '12px',
     maxWidth: '300px',
     padding: '10px 14px',
     borderRadius: '14px',
