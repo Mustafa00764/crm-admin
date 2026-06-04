@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { Bot, Send, X } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
+import Image from 'next/image'
 
 type PublicChatMessage = {
   id: string
@@ -194,7 +195,15 @@ export function PublicChatWidget({
         )}
       >
         <div>
-          <div className="text-sm font-semibold">AI Assistant</div>
+          <div className="text-sm font-semibold">
+            <Image
+              src="/images/assistant.png"
+              alt="assistant"
+              width={40}
+              height={40}
+              className="rounded-l-xl"
+            />
+          </div>
           <div className="text-xs opacity-60">Онлайн-консультант</div>
         </div>
 
