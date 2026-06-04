@@ -207,7 +207,7 @@ export function PublicChatWidget({
               height={40}
               src="/images/assistant-2.png"
               alt="assistant"
-              className="w-10 h-10 object-cover object-top rounded-xl"
+              className="w-10 h-10 object-cover object-top rounded-full"
             />
           </div>
           <div className="flex flex-col gap-1">
