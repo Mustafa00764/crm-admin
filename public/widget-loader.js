@@ -1,39 +1,31 @@
 ;(function () {
-  var currentScript = document.currentScript
-
+  let currentScript = document.currentScript
   if (!currentScript) return
 
-  var crmUrl = 'https://crm-admin-hibj.vercel.app'
-  var siteId = currentScript.getAttribute('data-site-id') || 'default'
-  var position = currentScript.getAttribute('data-position') || 'right'
-  var theme = currentScript.getAttribute('data-theme') || 'dark'
+  let crmUrl = 'https://crm-admin-hibj.vercel.app'
+  let siteId = currentScript.getAttribute('data-site-id') || 'default'
+  let position = currentScript.getAttribute('data-position') || 'right'
+  let theme = currentScript.getAttribute('data-theme') || 'light'
 
-  var closedSize = 56
-  var openedWidth = 380
-  var openedHeight = 620
-  var offset = 20
+  let closedSize = 56
+  let openedWidth = 380
+  let openedHeight = 620
+  let offset = 20
 
-  var container = document.createElement('div')
+  let container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
 
-  container.style.cssText = `& > #crm-admin-root { background: transparent !important; inset: 0 !important; pointer-events: none !important; }`
-  container.style.position = 'fixed'
-  container.style.zIndex = '2147483647'
-  container.style.width = closedSize + 'px'
-  container.style.height = closedSize + 'px'
-  container.style.borderRadius = closedSize + 'px'
-  container.style.border = '0'
-  // container.style.overflow = 'hidden'
-  container.style.backgroundColor = 'transparent'
-  // document.addEventListener('DOMContentLoaded', function () {
-  //   const crmAdminRoot = document.getElementById('crm-admin-root')
-
-  //   crmAdminRoot.style.backgroundColor = 'transparent'
-  //   crmAdminRoot.style.inset = '0'
-  //   crmAdminRoot.style.pointerEvents = 'none'
-  // })
-
-  //   container.style.transition = 'width .2s ease, height .2s ease'
+  Object.assign(container.style, {
+    position: 'fixed',
+    zIndex: '2147483647',
+    width: closedSize + 'px',
+    height: closedSize + 'px',
+    borderRadius: closedSize + 'px',
+    border: '0',
+    overflow: 'hidden',
+    background: 'transparent',
+    pointerEvents: 'auto'
+  })
 
   function applyPosition() {
     container.style.left = 'auto'
@@ -72,38 +64,39 @@
   }
 
   function setClosedSize() {
-    // document.querySelector('body').style.backgroundColor = 'white'
-
     container.style.width = closedSize + 'px'
     container.style.height = closedSize + 'px'
     container.style.borderRadius = '56px'
-
+    container.style.overflow = 'hidden'
     applyPosition()
   }
 
   function setOpenedSize() {
-    // document.querySelector('body').style.backgroundColor = 'white'
-
     if (position === 'full') {
-      container.style.left = '0'
-      container.style.right = '0'
-      container.style.top = '0'
-      container.style.bottom = '0'
-      container.style.width = '100vw'
-      container.style.height = '100vh'
-      container.style.transform = 'none'
+      Object.assign(container.style, {
+        left: '0',
+        right: '0',
+        top: '0',
+        bottom: '0',
+        width: '100vw',
+        height: '100vh',
+        borderRadius: '0',
+        overflow: 'hidden',
+        transform: 'none'
+      })
       return
     }
 
     container.style.width = openedWidth + 'px'
     container.style.height = openedHeight + 'px'
     container.style.borderRadius = '18.55px'
+    container.style.overflow = 'hidden'
     applyPosition()
   }
 
   applyPosition()
 
-  var iframe = document.createElement('iframe')
+  let iframe = document.createElement('iframe')
 
   iframe.src =
     crmUrl +
@@ -116,16 +109,18 @@
 
   iframe.title = 'AI Chat'
   iframe.allow = 'microphone'
-  iframe.allowTransparency = 'true'
-  iframe.style.width = '100%'
-  iframe.style.height = '100%'
-  iframe.style.border = '0'
-  iframe.style.background = 'transparent'
-  iframe.style.display = 'block'
+  iframe.setAttribute('allowtransparency', 'true')
+
+  Object.assign(iframe.style, {
+    width: '100%',
+    height: '100%',
+    border: '0',
+    background: 'transparent',
+    display: 'block'
+  })
 
   window.addEventListener('message', function (event) {
     if (event.origin !== crmUrl) return
-
     if (!event.data || event.data.source !== 'omni-crm-widget') return
 
     if (event.data.type === 'open') {
