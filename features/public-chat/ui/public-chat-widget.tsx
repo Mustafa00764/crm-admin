@@ -1,10 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { Bot, Send, X } from 'lucide-react'
+import { Send, X } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import Image from 'next/image'
-
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 type PublicChatMessage = {
   id: string
   role: 'user' | 'assistant'
@@ -166,16 +166,36 @@ export function PublicChatWidget({
 
   if (!opened) {
     return (
-      <button
-        type="button"
-        onClick={() => {
-          setOpened(true)
-          notifyParent('open')
-        }}
-        className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-xl"
-      >
-        <Bot className="h-6 w-6" />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={() => {
+              setOpened(true)
+              notifyParent('open')
+            }}
+            className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-xl"
+          >
+            <Image
+              unoptimized
+              width={56}
+              height={56}
+              src="/images/assistant.png"
+              alt="assistant"
+              className="w-14 h-14 object-cover object-top rounded-full"
+            />
+            <div
+              className={cn(
+                'absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 ',
+                theme === 'light' ? 'border-white' : 'border-[#090b10]'
+              )}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side={'right'} className={cn(theme === 'light' ? 'bg-white text-slate-950' : 'bg-[#090b10] text-white')}>
+          <p>Есть вопросы? Напишите, мы онлайн</p>
+        </TooltipContent>
+      </Tooltip>
     )
   }
 
@@ -194,17 +214,26 @@ export function PublicChatWidget({
           theme === 'light' ? 'border-black/10' : 'border-white/10'
         )}
       >
-        <div>
+        <div className="flex items-center gap-3">
           <div className="text-sm font-semibold">
             <Image
-              src="/images/assistant.png"
-              alt="assistant"
+              unoptimized
               width={40}
               height={40}
-              className="rounded-l-xl"
+              src="/images/assistant.png"
+              alt="assistant"
+              className="w-10 h-10 object-cover object-top rounded-xl"
             />
           </div>
-          <div className="text-xs opacity-60">Онлайн-консультант</div>
+          <div className="flex flex-col gap-1">
+            <div className="text-[14px] leading-4 opacity-100 font-semibold">
+              Анна
+            </div>
+
+            <div className="text-xs opacity-60 leading-3">
+              Онлайн-консультант
+            </div>
+          </div>
         </div>
 
         <button
