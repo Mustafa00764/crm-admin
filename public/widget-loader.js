@@ -24,7 +24,7 @@
   container.style.border = '0'
   container.style.overflow = 'hidden'
   container.style.background = 'white'
-//   container.style.transition = 'width .2s ease, height .2s ease'
+  //   container.style.transition = 'width .2s ease, height .2s ease'
 
   function applyPosition() {
     container.style.left = 'auto'
@@ -35,7 +35,7 @@
 
     if (position === 'left') {
       container.style.left = offset + 'px'
-      container.style.bottom = offset + 'px'
+      container.style.bottom = '10%'
       return
     }
 
@@ -59,7 +59,7 @@
     }
 
     container.style.right = offset + 'px'
-    container.style.bottom = offset + 'px'
+    container.style.bottom = '10%'
   }
 
   function setClosedSize() {

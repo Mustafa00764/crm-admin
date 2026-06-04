@@ -643,7 +643,7 @@ export function AIWorkspacePage() {
   const stopRecording = React.useCallback(() => {
     const recorder = mediaRecorderRef.current
 
-    if (!recorder) return
+    if (!recorder) return 
 
     if (recorder.state !== 'inactive') {
       recorder.stop()
