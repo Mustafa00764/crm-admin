@@ -8,10 +8,12 @@
   var position = currentScript.getAttribute('data-position') || 'right'
   var theme = currentScript.getAttribute('data-theme') || 'dark'
 
-  var closedSize = 56
+  // var closedSize = 56
   var openedWidth = 380
   var openedHeight = 620
   var offset = 20
+
+  const crmAdminRoot = document.getElementById('crm-admin-root')
 
   var container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
@@ -22,10 +24,11 @@
   container.style.height = 'auto'
   // container.style.borderRadius = closedSize + 'px'
   container.style.border = '0'
-  container.style.overflow = 'hidden'
+  // container.style.overflow = 'hidden'
   container.style.background = 'white'
-  console.log(container)
-  
+  crmAdminRoot.style.backgroundColor = 'transparent'
+  crmAdminRoot.style.inset = '0'
+  crmAdminRoot.style.pointerEvents = 'none'
 
   //   container.style.transition = 'width .2s ease, height .2s ease'
 
@@ -65,15 +68,15 @@
     container.style.bottom = '10%'
   }
 
-  function setClosedSize() {
-    // document.querySelector('body').style.backgroundColor = 'white'
+  // function setClosedSize() {
+  //   // document.querySelector('body').style.backgroundColor = 'white'
 
-    container.style.width = closedSize + 'px'
-    container.style.height = closedSize + 'px'
-    container.style.borderRadius = '56px'
+  //   container.style.width = closedSize + 'px'
+  //   container.style.height = closedSize + 'px'
+  //   container.style.borderRadius = '56px'
 
-    applyPosition()
-  }
+  //   applyPosition()
+  // }
 
   function setOpenedSize() {
     // document.querySelector('body').style.backgroundColor = 'white'

@@ -24,7 +24,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} h-full antialiased dark`}
     >
-      <body className="h-full bg-[var(--cf-bg)] text-[var(--cf-text)]">
+      <body id='crm-admin-root' className=" h-full bg-(--cf-bg) text-(--cf-text)">
         <Providers>{children}</Providers>
       </body>
 
