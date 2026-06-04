@@ -12,7 +12,6 @@
   var openedWidth = 380
   var openedHeight = 620
   var offset = 20
-  const body = document.querySelectorAll('body')[1]
 
   var container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
@@ -25,10 +24,7 @@
   container.style.border = '0'
   container.style.overflow = 'hidden'
   container.style.background = 'white'
-  body.style.backgroundColor = 'transparent'
-  body.style.inset = '0'
-  body.style.pointerEvents = 'none'
-
+  console.log(container)
   
 
   //   container.style.transition = 'width .2s ease, height .2s ease'
