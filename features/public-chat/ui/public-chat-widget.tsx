@@ -4,7 +4,6 @@ import * as React from 'react'
 import { Send, X } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import Image from 'next/image'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 type PublicChatMessage = {
   id: string
   role: 'user' | 'assistant'
@@ -164,26 +163,26 @@ export function PublicChatWidget({
     requestAnimationFrame(scrollToBottom)
   }, [messages])
 
-  if (!opened) {
-    return (
-      <button
-        type="button"
-        onClick={() => {
-          setOpened(true)
-          notifyParent('open')
-        }}
-        className="fixed bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl pointer-events-auto"
-      >
-        <div className="relative h-14 w-14 rounded-full">
-          <Image
-            src="/images/assistant-2.png"
-            alt="assistant"
-            className="h-14 w-14 rounded-full object-cover object-top"
-          />
-        </div>
-      </button>
-    )
-  }
+  // if (!opened) {
+  //   return (
+  //     <button
+  //       type="button"
+  //       onClick={() => {
+  //         setOpened(true)
+  //         notifyParent('open')
+  //       }}
+  //       className="fixed bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl pointer-events-auto"
+  //     >
+  //       <div className="relative h-14 w-14 rounded-full">
+  //         <Image
+  //           src="/images/assistant-2.png"
+  //           alt="assistant"
+  //           className="h-14 w-14 rounded-full object-cover object-top"
+  //         />
+  //       </div>
+  //     </button>
+  //   )
+  // }
 
   return (
     <div
