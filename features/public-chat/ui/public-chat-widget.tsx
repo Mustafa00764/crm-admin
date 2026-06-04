@@ -281,7 +281,7 @@ export function PublicChatWidget({
         ))}
 
         {pending ? (
-          <div className="text-xs opacity-60">AI печатает...</div>
+          <div className="text-xs opacity-60">Анна печатает...</div>
         ) : null}
       </div>
 
