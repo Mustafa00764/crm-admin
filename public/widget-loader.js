@@ -4,7 +4,7 @@
 
   let crmUrl = 'https://crm-admin-hibj.vercel.app'
   let siteId = currentScript.getAttribute('data-site-id') || 'default'
-  let position = currentScript.getAttribute('data-position') || 'right'
+  let position = currentScript.getAttribute('data-position') || 'left'
   let theme = currentScript.getAttribute('data-theme') || 'light'
 
   let buttonSize = 56
@@ -22,8 +22,16 @@
     width: openedWidth + 'px',
     height: openedHeight + buttonSize + 24 + 'px',
     background: 'transparent',
-    pointerEvents: 'none'
+    pointerEvents: 'none',
   })
+
+  function getPanelWidth() {
+    return Math.min(openedWidth, window.innerWidth - offset * 2)
+  }
+
+  function getPanelHeight() {
+    return Math.min(openedHeight, window.innerHeight - buttonSize - offset * 3)
+  }
 
   function applyPosition() {
     root.style.left = 'auto'
@@ -32,9 +40,9 @@
     root.style.bottom = 'auto'
     root.style.transform = 'none'
 
-    if (position === 'left') {
-      root.style.left = offset + 'px'
-      root.style.bottom = '10%'
+    if (position === 'right') {
+      root.style.right = offset + 'px'
+      root.style.bottom = offset + 'px'
       return
     }
 
@@ -57,8 +65,8 @@
       return
     }
 
-    root.style.right = offset + 'px'
-    root.style.bottom = '10%'
+    root.style.left = offset + 'px'
+    root.style.bottom = offset + 'px'
   }
 
   let style = document.createElement('style')
@@ -87,6 +95,22 @@
     #omni-crm-tooltip {
       transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
     }
+
+    @media (max-width: 480px) {
+      #omni-crm-chat-widget-root {
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 12px !important;
+        width: calc(100vw - 24px) !important;
+      }
+
+      #omni-crm-tooltip {
+        max-width: calc(100vw - 96px) !important;
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+        white-space: normal !important;
+      }
+    }
   `
   document.head.appendChild(style)
 
@@ -107,17 +131,17 @@
 
   Object.assign(iframe.style, {
     position: 'absolute',
-    right: '0',
+    left: '0',
     bottom: buttonSize + 16 + 'px',
-    width: openedWidth + 'px',
-    height: openedHeight + 'px',
+    width: getPanelWidth() + 'px',
+    height: getPanelHeight() + 'px',
     border: '0',
     borderRadius: '18px',
     background: 'transparent',
     display: 'none',
     pointerEvents: 'auto',
     boxShadow: '0 18px 50px rgba(0, 0, 0, .25)',
-    overflow: 'hidden'
+    overflow: 'hidden',
   })
 
   let button = document.createElement('button')
@@ -127,7 +151,7 @@
 
   Object.assign(button.style, {
     position: 'absolute',
-    right: '0',
+    left: '0',
     bottom: '0',
     width: buttonSize + 'px',
     height: buttonSize + 'px',
@@ -138,7 +162,7 @@
     cursor: 'pointer',
     pointerEvents: 'auto',
     background: 'transparent',
-    boxShadow: '0 14px 30px rgba(0, 0, 0, .25)'
+    boxShadow: '0 14px 30px rgba(0, 0, 0, .25)',
   })
 
   button.innerHTML = `
@@ -192,20 +216,23 @@
 
   Object.assign(tooltip.style, {
     position: 'absolute',
-    right: buttonSize + 12 + 'px',
+    left: buttonSize + 12 + 'px',
     bottom: '8px',
+    maxWidth: '300px',
     padding: '10px 14px',
-    borderRadius: '12px',
+    borderRadius: '14px',
     fontSize: '14px',
-    lineHeight: '1.4',
+    lineHeight: '1.35',
+    fontWeight: '400',
+    letterSpacing: '0',
     whiteSpace: 'nowrap',
     background: theme === 'light' ? '#ffffff' : '#090b10',
     color: theme === 'light' ? '#0f172a' : '#ffffff',
-    boxShadow: '0 12px 30px rgba(0, 0, 0, .2)',
+    boxShadow: '0 12px 30px rgba(0, 0, 0, .16)',
     opacity: '0',
     visibility: 'hidden',
-    transform: 'translateX(6px)',
-    pointerEvents: 'none'
+    transform: 'translateX(-6px)',
+    pointerEvents: 'none',
   })
 
   function showTooltip() {
@@ -219,7 +246,7 @@
   function hideTooltip() {
     tooltip.style.opacity = '0'
     tooltip.style.visibility = 'hidden'
-    tooltip.style.transform = 'translateX(6px)'
+    tooltip.style.transform = 'translateX(-6px)'
   }
 
   function openChat() {
@@ -237,7 +264,7 @@
         bottom: '0',
         width: '100vw',
         height: '100vh',
-        transform: 'none'
+        transform: 'none',
       })
 
       Object.assign(iframe.style, {
@@ -247,23 +274,26 @@
         bottom: '0',
         width: '100vw',
         height: '100vh',
-        borderRadius: '0'
+        borderRadius: '0',
       })
 
       return
     }
 
+    let panelWidth = getPanelWidth()
+    let panelHeight = getPanelHeight()
+
     Object.assign(root.style, {
-      width: openedWidth + 'px',
-      height: openedHeight + 'px'
+      width: panelWidth + 'px',
+      height: panelHeight + 'px',
     })
 
     Object.assign(iframe.style, {
-      right: '0',
+      left: '0',
       bottom: '0',
-      width: openedWidth + 'px',
-      height: openedHeight + 'px',
-      borderRadius: '18px'
+      width: panelWidth + 'px',
+      height: panelHeight + 'px',
+      borderRadius: window.innerWidth <= 480 ? '16px' : '18px',
     })
 
     applyPosition()
@@ -275,18 +305,21 @@
     iframe.style.display = 'none'
     button.style.display = 'block'
 
+    let panelWidth = getPanelWidth()
+    let panelHeight = getPanelHeight()
+
     Object.assign(root.style, {
-      width: openedWidth + 'px',
-      height: openedHeight + buttonSize + 24 + 'px'
+      width: panelWidth + 'px',
+      height: panelHeight + buttonSize + 24 + 'px',
     })
 
     Object.assign(iframe.style, {
       position: 'absolute',
-      right: '0',
+      left: '0',
       bottom: buttonSize + 16 + 'px',
-      width: openedWidth + 'px',
-      height: openedHeight + 'px',
-      borderRadius: '18px'
+      width: panelWidth + 'px',
+      height: panelHeight + 'px',
+      borderRadius: '18px',
     })
 
     applyPosition()
@@ -308,6 +341,14 @@
     }
 
     if (event.data.type === 'close') {
+      closeChat()
+    }
+  })
+
+  window.addEventListener('resize', function () {
+    if (opened) {
+      openChat()
+    } else {
       closeChat()
     }
   })
