@@ -174,13 +174,13 @@ export function PublicChatWidget({
               setOpened(true)
               notifyParent('open')
             }}
-            className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-xl"
+            className="fixed bottom-0 right-0 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl"
           >
             <Image
               unoptimized
               width={56}
               height={56}
-              src="/images/assistant.png"
+              src="/images/assistant-2.png"
               alt="assistant"
               className="w-14 h-14 object-cover object-top rounded-full"
             />
@@ -220,7 +220,7 @@ export function PublicChatWidget({
               unoptimized
               width={40}
               height={40}
-              src="/images/assistant.png"
+              src="/images/assistant-2.png"
               alt="assistant"
               className="w-10 h-10 object-cover object-top rounded-xl"
             />
