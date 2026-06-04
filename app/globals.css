@@ -208,7 +208,8 @@
   }
 
   body {
-    @apply bg-background text-foreground bg-(--cf-bg) text-(--cf-text);
+    @apply text-foreground bg-transparent text-(--cf-text); 
+    /* (--cf-bg) */
     margin: 0;
     font-family:
       var(--font-inter),
