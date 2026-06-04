@@ -18,16 +18,13 @@
 
   container.style.position = 'fixed'
   container.style.zIndex = '2147483647'
-  container.style.width = 'auto'
-  container.style.height = 'auto'
-  // container.style.borderRadius = closedSize + 'px'
+  container.style.width = closedSize + 'px'
+  container.style.height = closedSize + 'px'
+  container.style.borderRadius = closedSize + 'px'
   container.style.border = '0'
   // container.style.overflow = 'hidden'
   container.style.backgroundColor = 'transparent'
   container.style.cssText = `& > #crm-admin-root { background: transparent !important; inset: 0 !important; pointer-events: none !important; }`
-  // container.style.background = 'transparent'
-  // container.style.inset = '0'
-  // container.style.pointerEvents = 'none'
   // document.addEventListener('DOMContentLoaded', function () {
   //   const crmAdminRoot = document.getElementById('crm-admin-root')
 
@@ -74,15 +71,15 @@
     container.style.bottom = '10%'
   }
 
-  // function setClosedSize() {
-  //   // document.querySelector('body').style.backgroundColor = 'white'
+  function setClosedSize() {
+    // document.querySelector('body').style.backgroundColor = 'white'
 
-  //   container.style.width = closedSize + 'px'
-  //   container.style.height = closedSize + 'px'
-  //   container.style.borderRadius = '56px'
+    container.style.width = closedSize + 'px'
+    container.style.height = closedSize + 'px'
+    container.style.borderRadius = '56px'
 
-  //   applyPosition()
-  // }
+    applyPosition()
+  }
 
   function setOpenedSize() {
     // document.querySelector('body').style.backgroundColor = 'white'
@@ -135,9 +132,9 @@
       setOpenedSize()
     }
 
-    // if (event.data.type === 'close') {
-    //   setClosedSize()
-    // }
+    if (event.data.type === 'close') {
+      setClosedSize()
+    }
   })
 
   container.appendChild(iframe)
