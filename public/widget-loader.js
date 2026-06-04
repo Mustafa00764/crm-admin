@@ -8,7 +8,7 @@
   var position = currentScript.getAttribute('data-position') || 'right'
   var theme = currentScript.getAttribute('data-theme') || 'dark'
 
-  // var closedSize = 56
+  var closedSize = 56
   var openedWidth = 380
   var openedHeight = 620
   var offset = 20
