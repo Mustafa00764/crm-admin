@@ -16,6 +16,7 @@
   var container = document.createElement('div')
   container.id = 'omni-crm-chat-widget-root'
 
+  container.style.cssText = `& > #crm-admin-root { background: transparent !important; inset: 0 !important; pointer-events: none !important; }`
   container.style.position = 'fixed'
   container.style.zIndex = '2147483647'
   container.style.width = closedSize + 'px'
@@ -24,7 +25,6 @@
   container.style.border = '0'
   // container.style.overflow = 'hidden'
   container.style.backgroundColor = 'transparent'
-  container.style.cssText = `& > #crm-admin-root { background: transparent !important; inset: 0 !important; pointer-events: none !important; }`
   // document.addEventListener('DOMContentLoaded', function () {
   //   const crmAdminRoot = document.getElementById('crm-admin-root')
 
