@@ -28,11 +28,9 @@
   document.addEventListener('DOMContentLoaded', function () {
     const crmAdminRoot = document.getElementById('crm-admin-root')
 
-    if (crmAdminRoot) {
-      crmAdminRoot.style.backgroundColor = 'transparent'
-      crmAdminRoot.style.inset = '0'
-      crmAdminRoot.style.pointerEvents = 'none'
-    }
+    crmAdminRoot.style.backgroundColor = 'transparent'
+    crmAdminRoot.style.inset = '0'
+    crmAdminRoot.style.pointerEvents = 'none'
   })
 
   //   container.style.transition = 'width .2s ease, height .2s ease'
