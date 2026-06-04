@@ -216,7 +216,7 @@
   Object.assign(tooltip.style, {
     position: 'absolute',
     left: buttonSize + 12 + 'px',
-    bottom: '12px',
+    bottom: '14px',
     maxWidth: '300px',
     padding: '10px 14px',
     borderRadius: '14px',
