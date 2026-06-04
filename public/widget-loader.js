@@ -221,7 +221,7 @@
     padding: '10px 14px',
     borderRadius: '14px',
     fontSize: '14px',
-    lineHeight: '1.35',
+    lineHeight: '16px',
     fontWeight: '400',
     letterSpacing: '0',
     whiteSpace: 'nowrap',
