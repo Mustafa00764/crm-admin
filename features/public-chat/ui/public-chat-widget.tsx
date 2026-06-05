@@ -127,18 +127,22 @@ export function PublicChatWidget({
       if (!response.ok) {
         throw new Error(data.error ?? 'AI request failed')
       }
-      setTimeout(() => {
-        setMessages(current => [
-          ...current,
-          {
-            id: uid(),
-            role: 'assistant',
-            content:
-              data.text ||
-              'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
-          }
-        ])
-      }, Math.floor((data.text?.length || 0) * 150) + 500)
+      setTimeout(
+        () => {
+          setMessages(current => [
+            ...current,
+            {
+              id: uid(),
+              role: 'assistant',
+              content:
+                data.text ||
+                'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
+            }
+          ])
+          setPending(false)
+        },
+        Math.floor((data.text?.length || 0) * 100) + 500
+      )
     } catch {
       setMessages(current => [
         ...current,
@@ -149,8 +153,6 @@ export function PublicChatWidget({
             'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
         }
       ])
-    } finally {
-      setPending(false)
     }
   }, [input, pending, siteId, pageUrl, messages])
 
