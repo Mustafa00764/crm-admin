@@ -153,6 +153,7 @@ export function PublicChatWidget({
             'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
         }
       ])
+      setPending(false)
     }
   }, [input, pending, siteId, pageUrl, messages])
 
@@ -274,9 +275,7 @@ export function PublicChatWidget({
           <div
             className={cn(
               'text-xs w-[50%] flex items-end',
-              theme === 'light'
-                ? ' text-slate-900/60'
-                : ' text-white/60'
+              theme === 'light' ? ' text-slate-900/60' : ' text-white/60'
             )}
           >
             <p>Анна печатает</p>
