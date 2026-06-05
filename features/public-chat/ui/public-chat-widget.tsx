@@ -127,15 +127,18 @@ export function PublicChatWidget({
       if (!response.ok) {
         throw new Error(data.error ?? 'AI request failed')
       }
-
-      setMessages(current => [
-        ...current,
-        {
-          id: uid(),
-          role: 'assistant',
-          content: data.text ?? 'Не удалось получить ответ.'
-        }
-      ])
+      setTimeout(() => {
+        setMessages(current => [
+          ...current,
+          {
+            id: uid(),
+            role: 'assistant',
+            content:
+              data.text ||
+              'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
+          }
+        ])
+      }, Math.floor(Math.random() * 1500) + 500)
     } catch {
       setMessages(current => [
         ...current,
