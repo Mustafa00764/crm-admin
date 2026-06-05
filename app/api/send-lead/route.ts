@@ -99,12 +99,12 @@ function formatComment(comment: SendLeadBody['comment']) {
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.RESEND_API_KEY) {
-      return NextResponse.json(
-        { error: 'RESEND_API_KEY is not configured' },
-        { status: 500 }
-      )
-    }
+    // if (!'re_cck4yn6G_BVzYCkYppPjEKYNcq8QacY8Z') {
+    //   return NextResponse.json(
+    //     { error: 'RESEND_API_KEY is not configured' },
+    //     { status: 500 }
+    //   )
+    // }
 
     const body = (await req.json()) as SendLeadBody
 
