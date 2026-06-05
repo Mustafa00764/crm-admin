@@ -20,19 +20,52 @@ type PublicChatMessage = {
   attachments?: PublicChatAttachment[]
 }
 
+type LeadFormData = {
+  name: string
+  phone: string
+  city: string
+  comment: string
+}
+
 function uid() {
   return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`
 }
 
-// Максимальное количество файлов за одно сообщение
 const MAX_FILES = 5
-
-// Максимальный размер одного файла.
-// Base64 увеличивает размер запроса, поэтому лучше не ставить много.
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
+const REQUIRED_FORM_AFTER_USER_MESSAGES = 4
+
+const DEFAULT_LEAD_FORM: LeadFormData = {
+  name: '',
+  phone: '',
+  city: '',
+  comment: ''
+}
+
+function getChatStorageKey(siteId: string) {
+  return `public-chat-${siteId}-messages`
+}
+
+function getLeadFormStorageKey(siteId: string) {
+  return `public-chat-${siteId}-lead-form`
+}
+
+function getLeadFormSubmittedKey(siteId: string) {
+  return `public-chat-${siteId}-lead-form-submitted`
+}
+
+function getDefaultMessages(): PublicChatMessage[] {
+  return [
+    {
+      id: uid(),
+      role: 'assistant',
+      content:
+        'Здравствуйте. Напишите, какой материал нужен, город доставки и примерный объём. Я помогу сориентироваться.'
+    }
+  ]
+}
 
 const QUICK_EMOJIS = [
-  // Общение
   '😊',
   '🙂',
   '😄',
@@ -41,21 +74,15 @@ const QUICK_EMOJIS = [
   '👍',
   '👌',
   '🙏',
-
-  // Подтверждение
   '✅',
   '☑️',
   '⭐',
   '🔥',
-
-  // Заявка и связь
   '💬',
   '📞',
   '📲',
   '📩',
   '📝',
-
-  // Доставка и объект
   '📦',
   '🚚',
   '📍',
@@ -63,16 +90,12 @@ const QUICK_EMOJIS = [
   '🏡',
   '🏢',
   '🏗️',
-
-  // Стройка и материалы
   '🔧',
   '🛠️',
   '🔩',
   '🧱',
   '📐',
   '📏',
-
-  // Цена и параметры
   '💰',
   '💳',
   '⏱️',
@@ -80,8 +103,6 @@ const QUICK_EMOJIS = [
   '🇺🇿'
 ]
 
-// Переводим файл в base64/dataUrl.
-// Это нужно для превью картинки и отправки файла в /api/public-chat/message.
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -93,7 +114,6 @@ function fileToDataUrl(file: File): Promise<string> {
   })
 }
 
-// Проверяем, является ли вложение картинкой.
 function isImageFile(file: PublicChatAttachment) {
   return file.type.startsWith('image/')
 }
@@ -110,30 +130,149 @@ export function PublicChatWidget({
   const [input, setInput] = React.useState('')
   const [pending, setPending] = React.useState(false)
 
-  // Показывать или скрывать панель смайликов
+  const [leadFormOpen, setLeadFormOpen] = React.useState(false)
+
+  const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(() => {
+    if (typeof window === 'undefined') return false
+
+    try {
+      return localStorage.getItem(getLeadFormSubmittedKey(siteId)) === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  const [leadForm, setLeadForm] = React.useState<LeadFormData>(() => {
+    if (typeof window === 'undefined') return DEFAULT_LEAD_FORM
+
+    try {
+      const saved = localStorage.getItem(getLeadFormStorageKey(siteId))
+
+      if (!saved) return DEFAULT_LEAD_FORM
+
+      return {
+        ...DEFAULT_LEAD_FORM,
+        ...JSON.parse(saved)
+      }
+    } catch {
+      return DEFAULT_LEAD_FORM
+    }
+  })
+
   const [emojiOpen, setEmojiOpen] = React.useState(false)
 
-  // Файлы, выбранные пользователем перед отправкой
   const [attachments, setAttachments] = React.useState<PublicChatAttachment[]>(
     []
   )
 
-  // ref для прокрутки списка сообщений
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
-
-  // ref для скрытого input type="file"
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
-  const [messages, setMessages] = React.useState<PublicChatMessage[]>([
-    {
-      id: uid(),
-      role: 'assistant',
-      content:
-        'Здравствуйте. Напишите, какой материал нужен, город доставки и примерный объём. Я помогу сориентироваться.'
-    }
-  ])
+  const [messages, setMessages] = React.useState<PublicChatMessage[]>(() => {
+    const defaultMessages = getDefaultMessages()
 
-  // Сообщаем родительскому сайту, что iframe нужно закрыть.
+    if (typeof window === 'undefined') return defaultMessages
+
+    try {
+      const saved = localStorage.getItem(getChatStorageKey(siteId))
+
+      if (!saved) return defaultMessages
+
+      const parsed = JSON.parse(saved) as PublicChatMessage[]
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return defaultMessages
+      }
+
+      return parsed
+    } catch {
+      return defaultMessages
+    }
+  })
+
+  const userMessagesCount = messages.filter(
+    message => message.role === 'user'
+  ).length
+
+  const shouldBlockChat =
+    userMessagesCount >= REQUIRED_FORM_AFTER_USER_MESSAGES && !leadFormSubmitted
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(getChatStorageKey(siteId), JSON.stringify(messages))
+    } catch (error) {
+      console.error('Local chat save error:', error)
+    }
+  }, [messages, siteId])
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(
+        getLeadFormStorageKey(siteId),
+        JSON.stringify(leadForm)
+      )
+    } catch (error) {
+      console.error('Lead form save error:', error)
+    }
+  }, [leadForm, siteId])
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(
+        getLeadFormSubmittedKey(siteId),
+        String(leadFormSubmitted)
+      )
+    } catch (error) {
+      console.error('Lead form submitted save error:', error)
+    }
+  }, [leadFormSubmitted, siteId])
+
+  async function submitLeadForm() {
+    const phone = leadForm.phone.trim()
+
+    if (!phone) {
+      alert('Пожалуйста, укажите номер телефона.')
+      return
+    }
+
+    try {
+      await fetch('/api/send-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone,
+          name: leadForm.name,
+          deliveryCity: leadForm.city,
+          comment: {
+            text:
+              leadForm.comment ||
+              'Форма заполнена после нескольких сообщений в чате',
+            pageUrl,
+            siteId,
+            attachments: []
+          }
+        })
+      })
+    } catch (error) {
+      console.error('Lead form send error:', error)
+    }
+
+    setLeadFormSubmitted(true)
+    setLeadFormOpen(false)
+
+    setMessages(current => [
+      ...current,
+      {
+        id: uid(),
+        role: 'assistant',
+        content:
+          'Спасибо, заявку передала менеджеру. Можете продолжать писать здесь — я помогу сориентироваться дальше.'
+      }
+    ])
+  }
+
   function notifyParent(type: 'open' | 'close') {
     window.parent.postMessage(
       {
@@ -144,7 +283,6 @@ export function PublicChatWidget({
     )
   }
 
-  // Достаём номер телефона из текста клиента.
   function extractPhone(text: string): string | null {
     const phoneRegex =
       /(?:\+?\s*998[\s\-()]*)?(?:\d{2}[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2})/
@@ -155,12 +293,10 @@ export function PublicChatWidget({
 
     const digits = match[0].replace(/\D/g, '')
 
-    // Формат: +998901234567
     if (digits.startsWith('998') && digits.length === 12) {
       return `+${digits}`
     }
 
-    // Формат: 901234567 или 90 123 45 67
     if (digits.length === 9) {
       return `+998${digits}`
     }
@@ -168,21 +304,16 @@ export function PublicChatWidget({
     return null
   }
 
-  // Открываем системный выбор файлов.
   function openFileDialog() {
     fileInputRef.current?.click()
   }
 
-  // Добавляем выбранные файлы в состояние.
   async function handleFilesChange(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files || [])
 
     if (!files.length) return
 
-    // Берём максимум MAX_FILES файлов
     const limitedFiles = files.slice(0, MAX_FILES)
-
-    // Отсекаем слишком большие файлы
     const validFiles = limitedFiles.filter(file => file.size <= MAX_FILE_SIZE)
 
     if (validFiles.length !== limitedFiles.length) {
@@ -218,17 +349,14 @@ export function PublicChatWidget({
       console.error('File reading error:', error)
       alert('Не удалось прочитать файл. Попробуйте выбрать другой файл.')
     } finally {
-      // Сбрасываем input, чтобы можно было выбрать тот же файл повторно
       event.target.value = ''
     }
   }
 
-  // Удаляем выбранный файл перед отправкой.
   function removeAttachment(id: string) {
     setAttachments(current => current.filter(file => file.id !== id))
   }
 
-  // Добавляем смайлик в поле ввода.
   function addEmoji(emoji: string) {
     setInput(current => `${current}${emoji}`)
     setEmojiOpen(false)
@@ -237,7 +365,32 @@ export function PublicChatWidget({
   const sendMessage = React.useCallback(async () => {
     const text = input.trim()
 
-    // Разрешаем отправку, если есть текст или хотя бы один файл.
+    if (shouldBlockChat) {
+      setLeadFormOpen(true)
+
+      setMessages(current => {
+        const alreadyHasBlockMessage = current.some(
+          message =>
+            message.role === 'assistant' &&
+            message.content.includes('Чтобы продолжить консультацию')
+        )
+
+        if (alreadyHasBlockMessage) return current
+
+        return [
+          ...current,
+          {
+            id: uid(),
+            role: 'assistant',
+            content:
+              'Чтобы продолжить консультацию, пожалуйста, заполните короткую форму. Менеджер сможет точнее рассчитать заказ и связаться с вами.'
+          }
+        ]
+      })
+
+      return
+    }
+
     if ((!text && attachments.length === 0) || pending) return
 
     const currentAttachments = attachments
@@ -249,7 +402,6 @@ export function PublicChatWidget({
       attachments: currentAttachments
     }
 
-    // Сразу очищаем поле и показываем сообщение клиента в чате
     setInput('')
     setAttachments([])
     setEmojiOpen(false)
@@ -265,8 +417,6 @@ export function PublicChatWidget({
         body: JSON.stringify({
           siteId,
           pageUrl,
-
-          // Отправляем историю сообщений вместе с вложениями
           messages: [...messages, userMessage].map(message => ({
             role: message.role,
             content: message.content,
@@ -293,7 +443,6 @@ export function PublicChatWidget({
         }
       }
 
-      // Показываем реальную ошибку API в чате
       if (!response.ok) {
         console.error('Public chat API error:', data.error)
 
@@ -314,7 +463,6 @@ export function PublicChatWidget({
         data.text ||
         'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
 
-      // Имитация печати ответа Анны
       setTimeout(
         () => {
           setMessages(current => [
@@ -331,8 +479,6 @@ export function PublicChatWidget({
         Math.floor(answer.length * 80) + 500
       )
 
-      // Отправка лида не должна ломать чат.
-      // Поэтому /api/send-lead находится в отдельном try/catch.
       const phone = extractPhone(text)
 
       if (phone) {
@@ -375,9 +521,8 @@ export function PublicChatWidget({
 
       setPending(false)
     }
-  }, [input, attachments, pending, siteId, pageUrl, messages])
+  }, [input, attachments, pending, siteId, pageUrl, messages, shouldBlockChat])
 
-  // Прокручиваем чат вниз.
   const scrollToBottom = () => {
     const el = messagesEndRef.current
 
@@ -399,7 +544,6 @@ export function PublicChatWidget({
           : 'bg-[#090b10] text-white border-white/10'
       )}
     >
-      {/* Верхняя панель чата */}
       <div
         className={cn(
           'flex h-14 items-center justify-between border-b px-4',
@@ -436,7 +580,6 @@ export function PublicChatWidget({
         </button>
       </div>
 
-      {/* Список сообщений */}
       <div
         ref={messagesEndRef}
         className={cn(
@@ -464,12 +607,14 @@ export function PublicChatWidget({
                     : 'bg-white/10 text-white'
               )}
             >
-              {/* Вложения внутри сообщения */}
               {message.attachments?.length ? (
                 <div className="mt-2 grid gap-2">
                   {message.attachments.map(file =>
                     isImageFile(file) ? (
-                      <img
+                      <Image
+                        unoptimized
+                        width={60}
+                        height={60}
                         key={file.id}
                         src={file.dataUrl}
                         alt={file.name}
@@ -487,13 +632,11 @@ export function PublicChatWidget({
                 </div>
               ) : null}
 
-              {/* Текст сообщения */}
               {message.content ? <div>{message.content}</div> : null}
             </div>
           </div>
         ))}
 
-        {/* Индикатор печати */}
         {pending ? (
           <div
             className={cn(
@@ -546,14 +689,116 @@ export function PublicChatWidget({
         ) : null}
       </div>
 
-      {/* Нижняя зона ввода */}
+      {leadFormOpen || shouldBlockChat ? (
+        <div
+          className={cn(
+            'border-t p-3',
+            theme === 'light'
+              ? 'border-black/10 bg-slate-50'
+              : 'border-white/10 bg-white/5'
+          )}
+        >
+          <div className="mb-2 text-sm font-semibold">
+            Заполните форму, чтобы продолжить консультацию
+          </div>
+
+          <div
+            className={cn(
+              'mb-3 text-xs leading-4',
+              theme === 'light' ? 'text-slate-500' : 'text-white/60'
+            )}
+          >
+            Номер телефона обязателен. Остальные поля можно заполнить по
+            желанию.
+          </div>
+
+          <div className="grid gap-2">
+            <input
+              value={leadForm.name}
+              onChange={event =>
+                setLeadForm(current => ({
+                  ...current,
+                  name: event.target.value
+                }))
+              }
+              placeholder="Ваше имя"
+              className={cn(
+                'h-10 rounded-xl border px-3 text-sm outline-none',
+                theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-950'
+                  : 'border-white/10 bg-[#090b10] text-white'
+              )}
+            />
+
+            <input
+              value={leadForm.phone}
+              onChange={event =>
+                setLeadForm(current => ({
+                  ...current,
+                  phone: event.target.value
+                }))
+              }
+              placeholder="Телефон *"
+              className={cn(
+                'h-10 rounded-xl border px-3 text-sm outline-none',
+                theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-950'
+                  : 'border-white/10 bg-[#090b10] text-white'
+              )}
+            />
+
+            <input
+              value={leadForm.city}
+              onChange={event =>
+                setLeadForm(current => ({
+                  ...current,
+                  city: event.target.value
+                }))
+              }
+              placeholder="Город или район доставки"
+              className={cn(
+                'h-10 rounded-xl border px-3 text-sm outline-none',
+                theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-950'
+                  : 'border-white/10 bg-[#090b10] text-white'
+              )}
+            />
+
+            <textarea
+              value={leadForm.comment}
+              rows={2}
+              onChange={event =>
+                setLeadForm(current => ({
+                  ...current,
+                  comment: event.target.value
+                }))
+              }
+              placeholder="Комментарий к заявке"
+              className={cn(
+                'resize-none rounded-xl border px-3 py-2 text-sm outline-none',
+                theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-950'
+                  : 'border-white/10 bg-[#090b10] text-white'
+              )}
+            />
+
+            <button
+              type="button"
+              onClick={() => void submitLeadForm()}
+              className="h-10 rounded-xl bg-[#08b7ef] text-sm font-semibold text-white"
+            >
+              Отправить и продолжить
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       <div
         className={cn(
           'border-t p-3',
           theme === 'light' ? 'border-black/10' : 'border-white/10'
         )}
       >
-        {/* Превью файлов перед отправкой */}
         {attachments.length ? (
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {attachments.map(file => (
@@ -595,7 +840,6 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        {/* Панель смайликов */}
         {emojiOpen ? (
           <div
             className={cn(
@@ -619,7 +863,6 @@ export function PublicChatWidget({
         ) : null}
 
         <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2">
-          {/* Скрытый input для выбора файлов */}
           <input
             ref={fileInputRef}
             type="file"
@@ -629,11 +872,10 @@ export function PublicChatWidget({
             className="hidden"
           />
 
-          {/* Кнопка прикрепления файлов */}
           <button
             type="button"
             onClick={openFileDialog}
-            disabled={pending}
+            disabled={pending || shouldBlockChat}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
               theme === 'light'
@@ -645,11 +887,10 @@ export function PublicChatWidget({
             <Paperclip className="h-4 w-4" />
           </button>
 
-          {/* Кнопка смайликов */}
           <button
             type="button"
             onClick={() => setEmojiOpen(current => !current)}
-            disabled={pending}
+            disabled={pending || shouldBlockChat}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
               theme === 'light'
@@ -661,10 +902,10 @@ export function PublicChatWidget({
             <Smile className="h-4 w-4" />
           </button>
 
-          {/* Поле ввода */}
           <textarea
             value={input}
             rows={1}
+            disabled={shouldBlockChat}
             onChange={event => setInput(event.target.value)}
             onKeyDown={event => {
               if (event.key === 'Enter' && !event.shiftKey) {
@@ -672,19 +913,26 @@ export function PublicChatWidget({
                 void sendMessage()
               }
             }}
-            placeholder="Введите сообщение..."
+            placeholder={
+              shouldBlockChat
+                ? 'Заполните форму, чтобы продолжить...'
+                : 'Введите сообщение...'
+            }
             className={cn(
-              'min-h-10 resize-none rounded-xl border px-3 py-2 text-sm outline-none',
+              'min-h-10 resize-none rounded-xl border px-3 py-2 text-sm outline-none disabled:opacity-60',
               theme === 'light'
                 ? 'border-slate-200 bg-white text-slate-950'
                 : 'border-white/10 bg-white/5 text-white'
             )}
           />
 
-          {/* Кнопка отправки */}
           <button
             type="button"
-            disabled={pending || (!input.trim() && attachments.length === 0)}
+            disabled={
+              pending ||
+              shouldBlockChat ||
+              (!input.trim() && attachments.length === 0)
+            }
             onClick={() => void sendMessage()}
             className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#08b7ef] text-white disabled:opacity-50"
           >
