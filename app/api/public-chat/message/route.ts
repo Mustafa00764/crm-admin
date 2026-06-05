@@ -208,9 +208,18 @@ lead: {
 Сначала помочь клиенту и вызвать доверие, затем аккуратно получить номер телефона и передать заявку менеджеру.
 `
 
+type PublicChatAttachment = {
+  id?: string
+  name: string
+  type: string
+  size: number
+  dataUrl?: string
+}
+
 type PublicChatMessage = {
   role: 'user' | 'assistant'
   content: string
+  attachments?: PublicChatAttachment[]
 }
 
 type PublicChatRequest = {
@@ -238,29 +247,41 @@ type OpenAIResponseBody = {
 }
 
 const SITE_PROMPTS: Record<string, string> = {
-  pkmm: 'Ты AI-консультант сайта строительных материалов. Помогай с сэндвич-панелями, профнастилом, фасадными и кровельными материалами. Уточняй город, объём, размеры, покрытие, цвет RAL и телефон для связи.',
+  pkmm:
+    'Ты онлайн-консультант сайта строительных материалов. Помогай с сэндвич-панелями, профнастилом, фасадными и кровельными материалами. Уточняй город, объём, размеры, покрытие, цвет RAL и телефон для связи.',
+
   profnastilmoskva:
-    'Ты AI-консультант сайта по профнастилу и металлоизделиям в Москве и Московской области. Помогай подобрать материал, но не выдумывай цены и наличие. Проси телефон для связи с менеджером.',
+    'Ты онлайн-консультант сайта по профнастилу и металлоизделиям в Москве и Московской области. Помогай подобрать материал, но не выдумывай цены и наличие. Проси телефон для связи с менеджером.',
+
   profnastilvtashkente: PROMPT_PROFNASTIL_V_TASHKENTE,
+
   default:
-    'Ты AI-консультант компании. Отвечай кратко, помогай подобрать товар и проси номер телефона для связи с менеджером.'
+    'Ты онлайн-консультант компании. Отвечай кратко, помогай подобрать товар и проси номер телефона для связи с менеджером.'
 }
 
 function getSystemPrompt(siteId: string, pageUrl: string) {
   return [
     SITE_PROMPTS[siteId] ?? SITE_PROMPTS.default,
+    '',
     `Site ID: ${siteId}`,
     `Page URL: ${pageUrl}`,
-    'Правила:',
+    '',
+    'Дополнительные правила:',
     '- отвечай на русском языке;',
+    '- отвечай живо, понятно и по-человечески;',
     '- не выдумывай точное наличие;',
     '- не называй точную цену, если её нет в данных;',
+    '- если клиент прикрепил картинку, фото или файл, обязательно учитывай это в ответе;',
+    '- если клиент прикрепил фото объекта, можешь описать, что видно на фото, и уточнить нужные параметры;',
+    '- если по файлу нельзя понять точные размеры, попроси клиента уточнить размеры, количество или назначение;',
+    '- если клиент отправил только файл без текста, уточни, что именно нужно рассчитать или подобрать;',
     '- уточняй город, объём, размеры и назначение материала;',
-    '- после 1-2 уточняющих вопросов попроси номер телефона;',
+    '- после 1-2 уточняющих вопросов мягко попроси номер телефона;',
     '- если нужен расчёт, предложи передать заявку менеджеру.'
   ].join('\n')
 }
 
+// Достаёт текст из ответа OpenAI
 function extractOpenAIText(data: OpenAIResponseBody) {
   if (typeof data.output_text === 'string' && data.output_text.trim()) {
     return data.output_text.trim()
@@ -277,6 +298,137 @@ function extractOpenAIText(data: OpenAIResponseBody) {
   return outputText
 }
 
+// Проверяет, является ли вложение изображением
+function isImageAttachment(file: PublicChatAttachment) {
+  return file.type?.startsWith('image/') && Boolean(file.dataUrl)
+}
+
+// Ограничение размера картинки.
+// Base64 сильно увеличивает размер запроса, поэтому лучше не отправлять большие фото.
+function isAllowedImageSize(file: PublicChatAttachment) {
+  const maxSize = 3 * 1024 * 1024 // 3 MB
+
+  return file.size <= maxSize
+}
+
+// Превращает файл не-картинку в текстовое описание.
+// PDF/DOC/XLS здесь не читаются, но ассистент будет знать, что клиент прикрепил файл.
+function formatFileInfo(file: PublicChatAttachment) {
+  const sizeKb = Math.round(file.size / 1024)
+
+  return `- ${file.name} (${file.type || 'тип не указан'}, ${sizeKb} KB)`
+}
+
+// Преобразует сообщение из твоего чата в формат OpenAI Responses API
+function mapMessageToOpenAI(message: PublicChatMessage) {
+  const role = message.role === 'assistant' ? 'assistant' : 'user'
+  const attachments = message.attachments ?? []
+
+  // Сообщения ассистента отправляем обычным текстом
+  if (role === 'assistant') {
+    return {
+      role,
+      content: message.content || ''
+    }
+  }
+
+  // Если пользователь отправил только текст без вложений
+  if (!attachments.length) {
+    return {
+      role,
+      content: message.content || ''
+    }
+  }
+
+  const textParts: string[] = []
+
+  if (message.content?.trim()) {
+    textParts.push(message.content.trim())
+  }
+
+  const imageFiles = attachments.filter(file => isImageAttachment(file))
+  const allowedImages = imageFiles.filter(file => isAllowedImageSize(file))
+  const skippedImages = imageFiles.filter(file => !isAllowedImageSize(file))
+  const otherFiles = attachments.filter(file => !isImageAttachment(file))
+
+  if (otherFiles.length) {
+    textParts.push(
+      [
+        'Клиент прикрепил файлы:',
+        ...otherFiles.map(formatFileInfo)
+      ].join('\n')
+    )
+  }
+
+  if (skippedImages.length) {
+    textParts.push(
+      [
+        'Некоторые изображения не были переданы на анализ, потому что они слишком большие:',
+        ...skippedImages.map(formatFileInfo)
+      ].join('\n')
+    )
+  }
+
+  if (allowedImages.length) {
+    textParts.push(
+      `Клиент прикрепил изображений: ${allowedImages.length}. Учитывай их при ответе.`
+    )
+  }
+
+  const content: Array<
+    | {
+        type: 'input_text'
+        text: string
+      }
+    | {
+        type: 'input_image'
+        image_url: string
+      }
+  > = []
+
+  content.push({
+    type: 'input_text',
+    text:
+      textParts.join('\n\n') ||
+      'Клиент отправил вложение без текстового комментария.'
+  })
+
+  // Картинки отправляем в OpenAI как input_image
+  allowedImages.forEach(file => {
+    if (!file.dataUrl) return
+
+    content.push({
+      type: 'input_image',
+      image_url: file.dataUrl
+    })
+  })
+
+  return {
+    role,
+    content
+  }
+}
+
+function validateBody(body: Partial<PublicChatRequest>) {
+  if (!body || typeof body !== 'object') {
+    return 'Invalid request body'
+  }
+
+  if (!body.siteId || typeof body.siteId !== 'string') {
+    return 'Invalid siteId'
+  }
+
+  if (!body.pageUrl || typeof body.pageUrl !== 'string') {
+    return 'Invalid pageUrl'
+  }
+
+  if (!Array.isArray(body.messages)) {
+    return 'Invalid messages'
+  }
+
+  return null
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.OPENAI_API_KEY
 
@@ -287,33 +439,67 @@ export async function POST(request: Request) {
     )
   }
 
-  const body = (await request.json()) as PublicChatRequest
+  let body: PublicChatRequest
 
-  const response = await fetch('https://api.openai.com/v1/responses', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: process.env.OPENAI_DEFAULT_CHAT_MODEL || 'gpt-4.1',
-      input: [
-        {
-          role: 'system',
-          content: getSystemPrompt(body.siteId, body.pageUrl)
-        },
-        ...body.messages.slice(-12).map(message => ({
-          role: message.role === 'assistant' ? 'assistant' : 'user',
-          content: message.content
-        }))
-      ],
-      max_output_tokens: 800
+  try {
+    body = (await request.json()) as PublicChatRequest
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid JSON body' },
+      { status: 400 }
+    )
+  }
+
+  const bodyError = validateBody(body)
+
+  if (bodyError) {
+    return NextResponse.json(
+      { error: bodyError },
+      { status: 400 }
+    )
+  }
+
+  const lastMessages = body.messages.slice(-12)
+
+  let response: Response
+
+  try {
+    response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_DEFAULT_CHAT_MODEL || 'gpt-4.1-mini',
+
+        // Системный prompt передаём через instructions.
+        // Это правильнее для Responses API, чем role: "system" внутри input.
+        instructions: getSystemPrompt(body.siteId, body.pageUrl),
+
+        // Здесь только история сообщений клиента и ассистента
+        input: lastMessages.map(mapMessageToOpenAI),
+
+        max_output_tokens: 800
+      })
     })
-  })
+  } catch (error) {
+    console.error('OpenAI fetch failed:', error)
+
+    return NextResponse.json(
+      { error: 'Failed to connect to OpenAI' },
+      { status: 502 }
+    )
+  }
 
   const data = (await response.json()) as OpenAIResponseBody
 
   if (!response.ok) {
+    console.error('OpenAI error:', {
+      status: response.status,
+      data
+    })
+
     return NextResponse.json(
       {
         error:
@@ -327,6 +513,8 @@ export async function POST(request: Request) {
   const text = extractOpenAIText(data)
 
   if (!text) {
+    console.error('OpenAI returned empty text:', data)
+
     return NextResponse.json(
       {
         error: 'OpenAI returned empty text response'
