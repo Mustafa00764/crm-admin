@@ -713,7 +713,7 @@ export function PublicChatWidget({
           </div>
 
           <div className="grid gap-2">
-            <input
+            {/* <input
               value={leadForm.name}
               onChange={event =>
                 setLeadForm(current => ({
@@ -728,7 +728,7 @@ export function PublicChatWidget({
                   ? 'border-slate-200 bg-white text-slate-950'
                   : 'border-white/10 bg-[#090b10] text-white'
               )}
-            />
+            /> */}
 
             <input
               value={leadForm.phone}
@@ -747,7 +747,7 @@ export function PublicChatWidget({
               )}
             />
 
-            <input
+            {/* <input
               value={leadForm.city}
               onChange={event =>
                 setLeadForm(current => ({
@@ -762,7 +762,7 @@ export function PublicChatWidget({
                   ? 'border-slate-200 bg-white text-slate-950'
                   : 'border-white/10 bg-[#090b10] text-white'
               )}
-            />
+            /> */}
 
             <textarea
               value={leadForm.comment}
