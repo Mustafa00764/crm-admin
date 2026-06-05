@@ -33,7 +33,7 @@ function uid() {
 
 const MAX_FILES = 5
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
-const REQUIRED_FORM_AFTER_USER_MESSAGES = 4
+const REQUIRED_FORM_AFTER_USER_MESSAGES = 2
 
 const DEFAULT_LEAD_FORM: LeadFormData = {
   name: '',
