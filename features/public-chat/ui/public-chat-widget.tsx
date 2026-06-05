@@ -130,6 +130,8 @@ export function PublicChatWidget({
   const [input, setInput] = React.useState('')
   const [pending, setPending] = React.useState(false)
 
+  const [phoneError, setPhoneError] = React.useState('')
+
   const [leadFormOpen, setLeadFormOpen] = React.useState(false)
 
   const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(() => {
@@ -231,10 +233,15 @@ export function PublicChatWidget({
     const phone = leadForm.phone.trim()
 
     if (!phone) {
-      alert('Пожалуйста, укажите номер телефона.')
+      setPhoneError('Укажите номер телефона')
       return
     }
 
+    if (!isValidUzPhone(phone)) {
+      setPhoneError('Введите номер в формате +998 XX XXX XX XX')
+      return
+    }
+    
     try {
       await fetch('/api/send-lead', {
         method: 'POST',
@@ -535,6 +542,35 @@ export function PublicChatWidget({
     requestAnimationFrame(scrollToBottom)
   }, [messages, pending])
 
+  function formatUzPhone(value: string) {
+    let digits = value.replace(/\D/g, '')
+
+    if (digits.startsWith('998')) {
+      digits = digits.slice(3)
+    }
+
+    digits = digits.slice(0, 9)
+
+    const operator = digits.slice(0, 2)
+    const part1 = digits.slice(2, 5)
+    const part2 = digits.slice(5, 7)
+    const part3 = digits.slice(7, 9)
+
+    let result = '+998'
+
+    if (operator) result += ` ${operator}`
+    if (part1) result += ` ${part1}`
+    if (part2) result += ` ${part2}`
+    if (part3) result += ` ${part3}`
+
+    return result
+  }
+
+  function isValidUzPhone(value: string) {
+    const digits = value.replace(/\D/g, '')
+    return digits.startsWith('998') && digits.length === 12
+  }
+
   return (
     <div
       className={cn(
@@ -713,56 +749,44 @@ export function PublicChatWidget({
           </div>
 
           <div className="grid gap-2">
-            {/* <input
-              value={leadForm.name}
-              onChange={event =>
-                setLeadForm(current => ({
-                  ...current,
-                  name: event.target.value
-                }))
-              }
-              placeholder="Ваше имя"
-              className={cn(
-                'h-10 rounded-xl border px-3 text-sm outline-none',
-                theme === 'light'
-                  ? 'border-slate-200 bg-white text-slate-950'
-                  : 'border-white/10 bg-[#090b10] text-white'
-              )}
-            /> */}
+            <div className="grid gap-1">
+              <input
+                value={leadForm.phone}
+                inputMode="tel"
+                autoComplete="tel"
+                maxLength={17}
+                onChange={event => {
+                  const formattedPhone = formatUzPhone(event.target.value)
 
-            <input
-              value={leadForm.phone}
-              onChange={event =>
-                setLeadForm(current => ({
-                  ...current,
-                  phone: event.target.value
-                }))
-              }
-              placeholder="Телефон *"
-              className={cn(
-                'h-10 rounded-xl border px-3 text-sm outline-none',
-                theme === 'light'
-                  ? 'border-slate-200 bg-white text-slate-950'
-                  : 'border-white/10 bg-[#090b10] text-white'
-              )}
-            />
+                  setLeadForm(current => ({
+                    ...current,
+                    phone: formattedPhone
+                  }))
 
-            {/* <input
-              value={leadForm.city}
-              onChange={event =>
-                setLeadForm(current => ({
-                  ...current,
-                  city: event.target.value
-                }))
-              }
-              placeholder="Город или район доставки"
-              className={cn(
-                'h-10 rounded-xl border px-3 text-sm outline-none',
-                theme === 'light'
-                  ? 'border-slate-200 bg-white text-slate-950'
-                  : 'border-white/10 bg-[#090b10] text-white'
-              )}
-            /> */}
+                  if (phoneError) {
+                    setPhoneError('')
+                  }
+                }}
+                onBlur={() => {
+                  if (leadForm.phone && !isValidUzPhone(leadForm.phone)) {
+                    setPhoneError('Введите номер в формате +998 XX XXX XX XX')
+                  }
+                }}
+                placeholder="+998 90 123 45 67"
+                className={cn(
+                  'h-10 rounded-xl border px-3 text-sm outline-none transition',
+                  phoneError
+                    ? 'border-red-500 bg-red-50 text-red-900'
+                    : theme === 'light'
+                      ? 'border-slate-200 bg-white text-slate-950'
+                      : 'border-white/10 bg-[#090b10] text-white'
+                )}
+              />
+
+              {phoneError ? (
+                <p className="px-1 text-xs text-red-500">{phoneError}</p>
+              ) : null}
+            </div>
 
             <textarea
               value={leadForm.comment}
