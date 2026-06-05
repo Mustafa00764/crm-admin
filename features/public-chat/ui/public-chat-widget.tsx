@@ -575,10 +575,13 @@ export function PublicChatWidget({
                 </button>
 
                 {isImageFile(file) ? (
-                  <img
+                  <Image
+                    unoptimized
+                    width={56}
+                    height={56}
                     src={file.dataUrl}
                     alt={file.name}
-                    className="h-14 w-20 rounded-lg object-cover"
+                    className="h-14 w-14 rounded-lg object-cover"
                   />
                 ) : (
                   <div className="flex h-14 w-20 items-center justify-center rounded-lg bg-black/10">
