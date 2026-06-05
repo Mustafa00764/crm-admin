@@ -138,7 +138,7 @@ export function PublicChatWidget({
               'Сейчас не удалось получить ответ. Оставьте телефон, менеджер свяжется с вами.'
           }
         ])
-      }, Math.floor(Math.random() * 1500) + 500)
+      }, Math.floor((data.text?.length || 0) * 150) + 500)
     } catch {
       setMessages(current => [
         ...current,
