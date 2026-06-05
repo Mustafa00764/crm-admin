@@ -243,7 +243,7 @@ export function PublicChatWidget({
         },
         body: JSON.stringify({
           phone,
-          name: leadForm.name,
+          clientName: leadForm.name,
           deliveryCity: leadForm.city,
           comment: {
             text:

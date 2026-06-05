@@ -10,6 +10,7 @@ export const runtime = 'nodejs'
 const resend = new Resend('re_cck4yn6G_BVzYCkYppPjEKYNcq8QacY8Z')
 
 type SendLeadBody = {
+  clientName?: string
   phone?: string
   product?: string
   deliveryCity?: string
@@ -124,6 +125,7 @@ export async function POST(req: Request) {
         <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
           <h2>Новая заявка с сайта</h2>
 
+          <p><b>ФИО:</b> ${escapeHtml(body.clientName)}</p>
           <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
           <p><b>Товар:</b> ${escapeHtml(body.product || 'Не указан')}</p>
           <p><b>Город:</b> ${escapeHtml(body.deliveryCity || 'Не указан')}</p>
