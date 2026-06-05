@@ -127,7 +127,7 @@ export async function POST(req: Request) {
 
           <p><b>ФИО:</b> ${escapeHtml(body.clientName)}</p>
           <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
-          <p><b>Товар:</b> ${escapeHtml(body.product || 'Не указан')}</p>
+          ${body.product ? `<p><b>Товар:</b> ${escapeHtml(body.product)}</p>` : ''}
           <p><b>Город:</b> ${escapeHtml(body.deliveryCity || 'Не указан')}</p>
 
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
