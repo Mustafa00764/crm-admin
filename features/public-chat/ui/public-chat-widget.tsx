@@ -32,16 +32,52 @@ const MAX_FILES = 5
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
 
 const QUICK_EMOJIS = [
+  // Общение
   '😊',
+  '🙂',
+  '😄',
+  '😉',
+  '🤝',
   '👍',
   '👌',
+  '🙏',
+
+  // Подтверждение
   '✅',
+  '☑️',
+  '⭐',
+  '🔥',
+
+  // Заявка и связь
+  '💬',
+  '📞',
+  '📲',
+  '📩',
+  '📝',
+
+  // Доставка и объект
   '📦',
   '🚚',
+  '📍',
   '🏠',
+  '🏡',
+  '🏢',
+  '🏗️',
+
+  // Стройка и материалы
   '🔧',
-  '💬',
-  '📞'
+  '🛠️',
+  '🔩',
+  '🧱',
+  '📐',
+  '📏',
+
+  // Цена и параметры
+  '💰',
+  '💳',
+  '⏱️',
+  '🎨',
+  '🇺🇿'
 ]
 
 // Переводим файл в base64/dataUrl.
@@ -428,9 +464,6 @@ export function PublicChatWidget({
                     : 'bg-white/10 text-white'
               )}
             >
-              {/* Текст сообщения */}
-              {message.content ? <div>{message.content}</div> : null}
-
               {/* Вложения внутри сообщения */}
               {message.attachments?.length ? (
                 <div className="mt-2 grid gap-2">
@@ -453,6 +486,9 @@ export function PublicChatWidget({
                   )}
                 </div>
               ) : null}
+
+              {/* Текст сообщения */}
+              {message.content ? <div>{message.content}</div> : null}
             </div>
           </div>
         ))}
