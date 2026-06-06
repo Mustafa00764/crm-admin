@@ -122,30 +122,30 @@ export async function POST(req: Request) {
       to: 'info@profnastilvtashkente.uz',
       subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
-          <h2>Новая заявка с сайта profnastilvtashkente.uz</h2>
+    <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
+      <h2>Новая заявка с сайта profnastilvtashkente.uz</h2>
 
-          <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
+      <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
 
-          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
+      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
 
-          <p><b>Комментарий клиента:</b></p>
-          <p>${escapeHtml(formattedComment.text)}</p>
+      <p><b>Комментарий клиента:</b></p>
+      <p>${escapeHtml(formattedComment.text)}</p>
 
-          <p><b>Site ID:</b> ${escapeHtml(formattedComment.siteId || 'Не указан')}</p>
+      <p><b>Site ID:</b> ${escapeHtml(formattedComment.siteId || 'Не указан')}</p>
 
-          <p><b>Страница:</b> ${
-            formattedComment.pageUrl
-              ? `<a href="${escapeHtml(formattedComment.pageUrl)}">${escapeHtml(
-                  formattedComment.pageUrl
-                )}</a>`
-              : 'Не указана'
-          }</p>
+      <p><b>Страница:</b> ${
+        formattedComment.pageUrl
+          ? `<a href="${escapeHtml(formattedComment.pageUrl)}">${escapeHtml(
+              formattedComment.pageUrl
+            )}</a>`
+          : 'Не указана'
+      }</p>
 
-          <p><b>Прикрепленные файлы:</b></p>
-          ${formattedComment.attachmentsHtml}
-        </div>
-      `
+      <p><b>Прикрепленные файлы:</b></p>
+      ${formattedComment.attachmentsHtml}
+    </div>
+  `
     })
 
     if (error) {
