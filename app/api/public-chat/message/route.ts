@@ -347,6 +347,17 @@ type OpenAIResponseBody = {
   }
 }
 
+type OpenAIInputContent =
+  | {
+      type: 'input_text'
+      text: string
+    }
+  | {
+      type: 'input_image'
+      image_url: string
+      detail: 'low' | 'high' | 'auto'
+    }
+
 const SITE_PROMPTS: Record<string, string> = {
   pkmm: 'Ты онлайн-консультант сайта строительных материалов. Помогай с сэндвич-панелями, профнастилом, фасадными и кровельными материалами. Уточняй город, объём, размеры, покрытие, цвет RAL и телефон для связи.',
 
@@ -367,7 +378,11 @@ function getSystemPrompt(siteId: string, pageUrl: string) {
     `Page URL: ${pageUrl}`,
     '',
     'Дополнительные правила:',
-    '- отвечай на русском языке;',
+    '- отвечай на языке, который выбрал клиент;',
+    '- если клиент просит сменить язык, сразу переходи на новый язык;',
+    '- если клиент пишет на русском, отвечай на русском;',
+    '- если клиент пишет на узбекском, отвечай на узбекском;',
+    '- не смешивай русский и узбекский, кроме первого сообщения с выбором языка;',
     '- отвечай живо, понятно и по-человечески;',
     '- не выдумывай точное наличие;',
     '- не называй точную цену, если её нет в данных;',
@@ -377,11 +392,12 @@ function getSystemPrompt(siteId: string, pageUrl: string) {
     '- если клиент отправил только файл без текста, уточни, что именно нужно рассчитать или подобрать;',
     '- уточняй город, объём, размеры и назначение материала;',
     '- после 1-2 уточняющих вопросов мягко попроси номер телефона;',
-    '- если нужен расчёт, предложи передать заявку менеджеру.'
+    '- если нужен расчёт, предложи передать заявку менеджеру;',
+    '- не обрывай предложения ради краткости;',
+    '- отвечай коротко, но только законченными фразами.'
   ].join('\n')
 }
 
-// Достаёт текст из ответа OpenAI
 function extractOpenAIText(data: OpenAIResponseBody) {
   if (typeof data.output_text === 'string' && data.output_text.trim()) {
     return data.output_text.trim()
@@ -398,33 +414,26 @@ function extractOpenAIText(data: OpenAIResponseBody) {
   return outputText
 }
 
-// Проверяет, является ли вложение изображением
 function isImageAttachment(file: PublicChatAttachment) {
   return file.type?.startsWith('image/') && Boolean(file.dataUrl)
 }
 
-// Ограничение размера картинки.
-// Base64 сильно увеличивает размер запроса, поэтому лучше не отправлять большие фото.
 function isAllowedImageSize(file: PublicChatAttachment) {
   const maxSize = 3 * 1024 * 1024 // 3 MB
 
   return file.size <= maxSize
 }
 
-// Превращает файл не-картинку в текстовое описание.
-// PDF/DOC/XLS здесь не читаются, но ассистент будет знать, что клиент прикрепил файл.
 function formatFileInfo(file: PublicChatAttachment) {
   const sizeKb = Math.round(file.size / 1024)
 
   return `- ${file.name} (${file.type || 'тип не указан'}, ${sizeKb} KB)`
 }
 
-// Преобразует сообщение из твоего чата в формат OpenAI Responses API
 function mapMessageToOpenAI(message: PublicChatMessage) {
   const role = message.role === 'assistant' ? 'assistant' : 'user'
   const attachments = message.attachments ?? []
 
-  // Сообщения ассистента отправляем обычным текстом
   if (role === 'assistant') {
     return {
       role,
@@ -432,7 +441,6 @@ function mapMessageToOpenAI(message: PublicChatMessage) {
     }
   }
 
-  // Если пользователь отправил только текст без вложений
   if (!attachments.length) {
     return {
       role,
@@ -472,16 +480,7 @@ function mapMessageToOpenAI(message: PublicChatMessage) {
     )
   }
 
-  const content: Array<
-    | {
-        type: 'input_text'
-        text: string
-      }
-    | {
-        type: 'input_image'
-        image_url: string
-      }
-  > = []
+  const content: OpenAIInputContent[] = []
 
   content.push({
     type: 'input_text',
@@ -490,13 +489,13 @@ function mapMessageToOpenAI(message: PublicChatMessage) {
       'Клиент отправил вложение без текстового комментария.'
   })
 
-  // Картинки отправляем в OpenAI как input_image
   allowedImages.forEach(file => {
     if (!file.dataUrl) return
 
     content.push({
       type: 'input_image',
-      image_url: file.dataUrl
+      image_url: file.dataUrl,
+      detail: 'low'
     })
   })
 
@@ -527,94 +526,116 @@ function validateBody(body: Partial<PublicChatRequest>) {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.OPENAI_API_KEY
-
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: 'OPENAI_API_KEY is not configured' },
-      { status: 500 }
-    )
-  }
-
-  let body: PublicChatRequest
-
   try {
-    body = (await request.json()) as PublicChatRequest
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
-  }
+    const apiKey = process.env.OPENAI_API_KEY
 
-  const bodyError = validateBody(body)
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'OPENAI_API_KEY is not configured' },
+        { status: 500 }
+      )
+    }
 
-  if (bodyError) {
-    return NextResponse.json({ error: bodyError }, { status: 400 })
-  }
+    let body: PublicChatRequest
 
-  const lastMessages = body.messages.slice(-12)
+    try {
+      body = (await request.json()) as PublicChatRequest
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
 
-  let response: Response
+    const bodyError = validateBody(body)
 
-  try {
-    response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_DEFAULT_CHAT_MODEL || 'gpt-4.1-mini',
+    if (bodyError) {
+      return NextResponse.json({ error: bodyError }, { status: 400 })
+    }
 
-        // Системный prompt передаём через instructions.
-        // Это правильнее для Responses API, чем role: "system" внутри input.
-        instructions: getSystemPrompt(body.siteId, body.pageUrl),
+    const lastMessages = body.messages.slice(-8)
 
-        // Здесь только история сообщений клиента и ассистента
-        input: lastMessages.map(mapMessageToOpenAI),
+    let response: Response
 
-        max_output_tokens: 800
+    try {
+      response = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_DEFAULT_CHAT_MODEL || 'gpt-4.1-mini',
+
+          instructions: getSystemPrompt(body.siteId, body.pageUrl),
+
+          input: lastMessages.map(mapMessageToOpenAI),
+
+          max_output_tokens: 800
+        })
       })
+    } catch (error) {
+      console.error('OpenAI fetch failed:', error)
+
+      return NextResponse.json(
+        { error: 'Failed to connect to OpenAI' },
+        { status: 502 }
+      )
+    }
+
+    let data: OpenAIResponseBody
+
+    try {
+      data = (await response.json()) as OpenAIResponseBody
+    } catch {
+      return NextResponse.json(
+        {
+          error: 'OpenAI вернул не JSON. Проверь ключ, модель или лимиты API.'
+        },
+        { status: 502 }
+      )
+    }
+
+    if (!response.ok) {
+      console.error('OpenAI error:', {
+        status: response.status,
+        data
+      })
+
+      return NextResponse.json(
+        {
+          error:
+            data.error?.message ||
+            `OpenAI request failed with status ${response.status}`
+        },
+        { status: response.status }
+      )
+    }
+
+    const text = extractOpenAIText(data)
+
+    if (!text) {
+      console.error('OpenAI returned empty text:', data)
+
+      return NextResponse.json(
+        {
+          error: 'OpenAI returned empty text response'
+        },
+        { status: 502 }
+      )
+    }
+
+    return NextResponse.json({
+      text
     })
   } catch (error) {
-    console.error('OpenAI fetch failed:', error)
-
-    return NextResponse.json(
-      { error: 'Failed to connect to OpenAI' },
-      { status: 502 }
-    )
-  }
-
-  const data = (await response.json()) as OpenAIResponseBody
-
-  if (!response.ok) {
-    console.error('OpenAI error:', {
-      status: response.status,
-      data
-    })
+    console.error('Public chat route error:', error)
 
     return NextResponse.json(
       {
         error:
-          data.error?.message ||
-          `OpenAI request failed with status ${response.status}`
+          error instanceof Error
+            ? error.message
+            : 'Ошибка сервера public-chat/message'
       },
-      { status: response.status }
+      { status: 500 }
     )
   }
-
-  const text = extractOpenAIText(data)
-
-  if (!text) {
-    console.error('OpenAI returned empty text:', data)
-
-    return NextResponse.json(
-      {
-        error: 'OpenAI returned empty text response'
-      },
-      { status: 502 }
-    )
-  }
-
-  return NextResponse.json({
-    text
-  })
 }
