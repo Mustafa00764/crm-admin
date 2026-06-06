@@ -117,7 +117,7 @@ export async function POST(req: Request) {
 
     const formattedComment = formatComment(body.comment)
 
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: 'info@profnastilvtashkente.uz',
       subject: 'Новая заявка с сайта profnastilvtashkente',
@@ -147,6 +147,9 @@ export async function POST(req: Request) {
     </div>
   `
     })
+
+    console.log('Resend data:', data)
+    console.log('Resend error:', error)
 
     if (error) {
       console.error('Resend error:', error)
