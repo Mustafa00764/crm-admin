@@ -138,7 +138,7 @@ export function PublicChatWidget({
     if (typeof window === 'undefined') return false
 
     try {
-      return localStorage.getItem(getLeadFormSubmittedKey(siteId)) === 'true'
+      return sessionStorage.getItem(getLeadFormSubmittedKey(siteId)) === 'true'
     } catch {
       return false
     }
@@ -148,7 +148,7 @@ export function PublicChatWidget({
     if (typeof window === 'undefined') return DEFAULT_LEAD_FORM
 
     try {
-      const saved = localStorage.getItem(getLeadFormStorageKey(siteId))
+      const saved = sessionStorage.getItem(getLeadFormStorageKey(siteId))
 
       if (!saved) return DEFAULT_LEAD_FORM
 
@@ -176,7 +176,7 @@ export function PublicChatWidget({
     if (typeof window === 'undefined') return defaultMessages
 
     try {
-      const saved = localStorage.getItem(getChatStorageKey(siteId))
+      const saved = sessionStorage.getItem(getChatStorageKey(siteId))
 
       if (!saved) return defaultMessages
 
@@ -201,7 +201,7 @@ export function PublicChatWidget({
 
   React.useEffect(() => {
     try {
-      localStorage.setItem(getChatStorageKey(siteId), JSON.stringify(messages))
+      sessionStorage.setItem(getChatStorageKey(siteId), JSON.stringify(messages))
     } catch (error) {
       console.error('Local chat save error:', error)
     }
@@ -209,7 +209,7 @@ export function PublicChatWidget({
 
   React.useEffect(() => {
     try {
-      localStorage.setItem(
+      sessionStorage.setItem(
         getLeadFormStorageKey(siteId),
         JSON.stringify(leadForm)
       )
@@ -220,7 +220,7 @@ export function PublicChatWidget({
 
   React.useEffect(() => {
     try {
-      localStorage.setItem(
+      sessionStorage.setItem(
         getLeadFormSubmittedKey(siteId),
         String(leadFormSubmitted)
       )
@@ -241,7 +241,7 @@ export function PublicChatWidget({
       setPhoneError('Введите номер в формате +998 XX XXX XX XX')
       return
     }
-    
+
     try {
       await fetch('/api/send-lead', {
         method: 'POST',
