@@ -580,7 +580,7 @@
       if (!tooltipHovering) {
         hideTooltip()
       }
-    }, 3500)
+    }, 4000)
   }
 
   /**
