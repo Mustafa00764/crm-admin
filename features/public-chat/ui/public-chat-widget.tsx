@@ -60,7 +60,7 @@ function getDefaultMessages(): PublicChatMessage[] {
       id: uid(),
       role: 'assistant',
       content:
-        'Здравствуйте. Напишите, какой материал нужен, город доставки и примерный объём. Я помогу сориентироваться.'
+        'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?'
     }
   ]
 }
@@ -201,7 +201,10 @@ export function PublicChatWidget({
 
   React.useEffect(() => {
     try {
-      sessionStorage.setItem(getChatStorageKey(siteId), JSON.stringify(messages))
+      sessionStorage.setItem(
+        getChatStorageKey(siteId),
+        JSON.stringify(messages)
+      )
     } catch (error) {
       console.error('Local chat save error:', error)
     }
