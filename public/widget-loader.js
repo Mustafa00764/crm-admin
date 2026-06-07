@@ -119,6 +119,7 @@
 
       #omni-crm-tooltip {
         max-width: calc(100vw - 96px) !important;
+        width: auto;
         font-size: 13px !important;
         line-height: 1.35 !important;
         white-space: normal !important;
@@ -232,7 +233,8 @@
     position: 'absolute',
     left: buttonSize + 12 + 'px',
     bottom: '13px',
-    maxWidth: '300px',
+    maxWidth: '100vw',
+    width: 'auto',
     padding: '10px 14px',
     borderRadius: '14px',
     fontSize: '14px',
