@@ -1,9 +1,25 @@
 'use client'
 
 import * as React from 'react'
-import { Send, X, Paperclip, Smile, ImageIcon } from 'lucide-react'
+import {
+  Send,
+  X,
+  Paperclip,
+  Smile,
+  ImageIcon,
+  Mic,
+  MicOff,
+  Languages
+} from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import Image from 'next/image'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/shared/ui/select'
 
 type PublicChatAttachment = {
   id: string
@@ -27,6 +43,19 @@ type LeadFormData = {
   comment: string
 }
 
+type RealtimeTranslateTokenResponse = {
+  value?: string
+  error?: string
+}
+
+type RealtimeTranslationEvent = {
+  type?: string
+  delta?: string
+  error?: {
+    message?: string
+  }
+}
+
 function uid() {
   return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`
 }
@@ -34,6 +63,12 @@ function uid() {
 const MAX_FILES = 5
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
 const REQUIRED_FORM_AFTER_USER_MESSAGES = 4
+
+const TRANSLATION_TARGET_LANGUAGES = [
+  { value: 'ru', label: 'Русский' },
+  { value: 'en', label: 'English' },
+  { value: 'uz', label: 'Uzbek' }
+] as const
 
 const DEFAULT_LEAD_FORM: LeadFormData = {
   name: '',
@@ -162,6 +197,13 @@ export function PublicChatWidget({
   })
 
   const [emojiOpen, setEmojiOpen] = React.useState(false)
+  const [translationTargetLanguage, setTranslationTargetLanguage] =
+    React.useState('ru')
+  const [translationActive, setTranslationActive] = React.useState(false)
+  const [translationConnecting, setTranslationConnecting] =
+    React.useState(false)
+  const [translationTranscript, setTranslationTranscript] = React.useState('')
+  const [translationError, setTranslationError] = React.useState('')
 
   const [attachments, setAttachments] = React.useState<PublicChatAttachment[]>(
     []
@@ -169,6 +211,11 @@ export function PublicChatWidget({
 
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const translationPeerRef = React.useRef<RTCPeerConnection | null>(null)
+  const translationChannelRef = React.useRef<RTCDataChannel | null>(null)
+  const translationStreamRef = React.useRef<MediaStream | null>(null)
+  const translationAudioRef = React.useRef<HTMLAudioElement | null>(null)
+  const translationTranscriptRef = React.useRef('')
 
   const [messages, setMessages] = React.useState<PublicChatMessage[]>(() => {
     const defaultMessages = getDefaultMessages()
@@ -372,6 +419,174 @@ export function PublicChatWidget({
     setEmojiOpen(false)
   }
 
+  function appendTranslationDelta(delta: string) {
+    setTranslationTranscript(current => {
+      const next = `${current}${delta}`
+      translationTranscriptRef.current = next
+      return next
+    })
+  }
+
+  function cleanupRealtimeTranslation(commitTranscript = true) {
+    translationChannelRef.current?.close()
+    translationPeerRef.current?.close()
+
+    translationStreamRef.current?.getTracks().forEach(track => track.stop())
+
+    if (translationAudioRef.current) {
+      translationAudioRef.current.pause()
+      translationAudioRef.current.srcObject = null
+    }
+
+    translationChannelRef.current = null
+    translationPeerRef.current = null
+    translationStreamRef.current = null
+    translationAudioRef.current = null
+
+    setTranslationActive(false)
+    setTranslationConnecting(false)
+
+    const translatedText = translationTranscriptRef.current.trim()
+
+    if (commitTranscript && translatedText) {
+      setInput(
+        current => `${current}${current.trim() ? '\n' : ''}${translatedText}`
+      )
+    }
+  }
+
+  async function startRealtimeTranslation() {
+    if (pending || shouldBlockChat || translationConnecting) return
+
+    setTranslationError('')
+    setTranslationTranscript('')
+    translationTranscriptRef.current = ''
+    setTranslationConnecting(true)
+
+    try {
+      const tokenResponse = await fetch('/api/realtime-translate/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          siteId,
+          pageUrl,
+          targetLanguage: translationTargetLanguage
+        })
+      })
+
+      const tokenData =
+        (await tokenResponse.json()) as RealtimeTranslateTokenResponse
+
+      if (!tokenResponse.ok || !tokenData.value) {
+        throw new Error(
+          tokenData.error || 'Не удалось получить realtime client secret'
+        )
+      }
+
+      const sourceStream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      })
+
+      const peerConnection = new RTCPeerConnection()
+      const sourceTrack = sourceStream.getAudioTracks()[0]
+
+      if (!sourceTrack) {
+        throw new Error('Микрофон не вернул аудиодорожку')
+      }
+
+      peerConnection.addTrack(sourceTrack, sourceStream)
+
+      const translatedAudio = new Audio()
+      translatedAudio.autoplay = true
+
+      peerConnection.ontrack = ({ streams }) => {
+        translatedAudio.srcObject = streams[0]
+        void translatedAudio.play().catch(() => {
+          setTranslationError(
+            'Браузер заблокировал автозапуск звука. Нажмите на страницу и попробуйте ещё раз.'
+          )
+        })
+      }
+
+      const events = peerConnection.createDataChannel('oai-events')
+
+      events.onmessage = ({ data }) => {
+        try {
+          const event = JSON.parse(String(data)) as RealtimeTranslationEvent
+
+          if (
+            event.type === 'session.output_transcript.delta' &&
+            typeof event.delta === 'string'
+          ) {
+            appendTranslationDelta(event.delta)
+          }
+
+          if (event.type === 'error') {
+            setTranslationError(
+              event.error?.message || 'Realtime translation error'
+            )
+          }
+        } catch (error) {
+          console.error('Realtime translation event parse error:', error)
+        }
+      }
+
+      translationPeerRef.current = peerConnection
+      translationChannelRef.current = events
+      translationStreamRef.current = sourceStream
+      translationAudioRef.current = translatedAudio
+
+      const offer = await peerConnection.createOffer()
+      await peerConnection.setLocalDescription(offer)
+
+      const sdpResponse = await fetch(
+        'https://api.openai.com/v1/realtime/translations/calls',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${tokenData.value}`,
+            'Content-Type': 'application/sdp'
+          },
+          body: offer.sdp || ''
+        }
+      )
+
+      if (!sdpResponse.ok) {
+        throw new Error(await sdpResponse.text())
+      }
+
+      await peerConnection.setRemoteDescription({
+        type: 'answer',
+        sdp: await sdpResponse.text()
+      })
+
+      setTranslationActive(true)
+    } catch (error) {
+      console.error('Realtime translation start error:', error)
+
+      cleanupRealtimeTranslation(false)
+
+      setTranslationError(
+        error instanceof Error
+          ? error.message
+          : 'Не удалось запустить голосовой перевод'
+      )
+    } finally {
+      setTranslationConnecting(false)
+    }
+  }
+
+  function toggleRealtimeTranslation() {
+    if (translationActive || translationConnecting) {
+      cleanupRealtimeTranslation(true)
+      return
+    }
+
+    void startRealtimeTranslation()
+  }
+
   const sendMessage = React.useCallback(async () => {
     const text = input.trim()
 
@@ -544,6 +759,12 @@ export function PublicChatWidget({
   React.useEffect(() => {
     requestAnimationFrame(scrollToBottom)
   }, [messages, pending])
+
+  React.useEffect(() => {
+    return () => {
+      cleanupRealtimeTranslation(false)
+    }
+  }, [])
 
   function formatUzPhone(value: string) {
     let digits = value.replace(/\D/g, '')
@@ -889,7 +1110,94 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="grid grid-cols-[auto_auto_1fr_auto] gap-2">
+        <div
+          className={cn(
+            'mb-2 flex items-center gap-2 text-xs',
+            theme === 'light' ? 'text-slate-500' : 'text-white/50'
+          )}
+        >
+          <Languages className="h-3.5 w-3.5" />
+          <span>Голосовой перевод в:</span>
+
+          <Select
+            value={translationTargetLanguage}
+            disabled={translationActive || translationConnecting}
+            onValueChange={setTranslationTargetLanguage}
+          >
+            <SelectTrigger
+              className={cn(
+                'h-10 w-[150px] border px-3 text-sm outline-none focus:ring-0 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60',
+                theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-950 hover:bg-slate-50 [&_svg]:text-slate-500'
+                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10 [&_svg]:text-white/70'
+              )}
+            >
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="min-w-0 truncate">
+                  <SelectValue placeholder="Язык" />
+                </span>
+              </span>
+            </SelectTrigger>
+
+            <SelectContent
+              className={cn(
+                'border ',
+                theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-950'
+                  : 'border-white/10 bg-[#090b10] text-white'
+              )}
+            >
+              {TRANSLATION_TARGET_LANGUAGES.map(language => (
+                <SelectItem
+                  key={language.value}
+                  value={language.value}
+                  textValue={language.label}
+                  className={cn(
+                    'text-sm',
+                    theme === 'light'
+                      ? 'text-slate-950 focus:bg-slate-100 focus:text-slate-950 data-[highlighted]:bg-slate-100 data-[highlighted]:text-slate-950'
+                      : 'text-white focus:bg-white/10 focus:text-white data-[highlighted]:bg-white/10 data-[highlighted]:text-white'
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <span>{language.label}</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {translationTranscript || translationError || translationActive ? (
+          <div
+            className={cn(
+              'mb-2 rounded-xl border px-3 py-2 text-xs leading-4',
+              theme === 'light'
+                ? 'border-slate-200 bg-slate-50 text-slate-600'
+                : 'border-white/10 bg-white/5 text-white/70'
+            )}
+          >
+            {translationActive || translationConnecting ? (
+              <div className="font-medium">
+                {translationConnecting
+                  ? 'Подключаю голосовой перевод...'
+                  : 'Голосовой перевод активен. Нажмите микрофон ещё раз, чтобы остановить.'}
+              </div>
+            ) : null}
+
+            {translationTranscript ? (
+              <div className="mt-1 whitespace-pre-wrap">
+                {translationTranscript}
+              </div>
+            ) : null}
+
+            {translationError ? (
+              <div className="mt-1 text-red-500">{translationError}</div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="flex gap-2">
           <input
             ref={fileInputRef}
             type="file"
@@ -929,6 +1237,31 @@ export function PublicChatWidget({
             <Smile className="h-4 w-4" />
           </button>
 
+          <button
+            type="button"
+            onClick={toggleRealtimeTranslation}
+            disabled={pending || shouldBlockChat}
+            className={cn(
+              'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
+              translationActive || translationConnecting
+                ? 'border-red-500 bg-red-500 text-white'
+                : theme === 'light'
+                  ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
+            )}
+            title={
+              translationActive || translationConnecting
+                ? 'Остановить голосовой перевод'
+                : 'Голосовой перевод через gpt-realtime-translate'
+            }
+          >
+            {translationActive || translationConnecting ? (
+              <MicOff className="h-4 w-4" />
+            ) : (
+              <Mic className="h-4 w-4" />
+            )}
+          </button>
+
           <textarea
             value={input}
             rows={1}
@@ -946,7 +1279,7 @@ export function PublicChatWidget({
                 : 'Введите сообщение...'
             }
             className={cn(
-              'min-h-10 resize-none rounded-xl border px-3 py-2 text-sm outline-none disabled:opacity-60',
+              'min-h-10 flex-1 resize-none rounded-xl border px-3 py-2 text-sm outline-none disabled:opacity-60',
               theme === 'light'
                 ? 'border-slate-200 bg-white text-slate-950'
                 : 'border-white/10 bg-white/5 text-white'
