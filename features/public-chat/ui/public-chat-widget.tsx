@@ -1556,7 +1556,8 @@ export function PublicChatWidget({
           <button
             type="button"
             onClick={() => void startDictation()}
-            disabled={pending || shouldBlockChat || realtimePanelOpen}
+            // disabled={pending || shouldBlockChat || realtimePanelOpen}
+            disabled
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
               theme === 'light'
@@ -1571,7 +1572,8 @@ export function PublicChatWidget({
           <button
             type="button"
             onClick={() => void startVoiceAssistant()}
-            disabled={pending || shouldBlockChat || realtimePanelOpen}
+            // disabled={pending || shouldBlockChat || realtimePanelOpen}
+            disabled
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
               theme === 'light'
@@ -1632,8 +1634,6 @@ export function PublicChatWidget({
         >
           <ImageIcon className="h-3 w-3" />
           <span>Можно прикрепить фото, PDF, документы или таблицы</span>
-          <Square className="ml-2 h-2.5 w-2.5" />
-          <span>Кнопка с волнами — разговор с Анной, микрофон — диктовка</span>
         </div>
       </div>
     </div>
