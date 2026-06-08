@@ -1553,11 +1553,10 @@ export function PublicChatWidget({
             <Smile className="h-4 w-4" />
           </button>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => void startDictation()}
-            // disabled={pending || shouldBlockChat || realtimePanelOpen}
-            disabled
+            disabled={pending || shouldBlockChat || realtimePanelOpen}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
               theme === 'light'
@@ -1572,8 +1571,7 @@ export function PublicChatWidget({
           <button
             type="button"
             onClick={() => void startVoiceAssistant()}
-            // disabled={pending || shouldBlockChat || realtimePanelOpen}
-            disabled
+            disabled={pending || shouldBlockChat || realtimePanelOpen}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
               theme === 'light'
@@ -1583,7 +1581,7 @@ export function PublicChatWidget({
             title="Говорить с AI ассистентом"
           >
             <AudioLines className="h-4 w-4" />
-          </button>
+          </button> */}
 
           <textarea
             value={input}
