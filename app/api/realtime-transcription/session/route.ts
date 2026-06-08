@@ -22,7 +22,10 @@ export async function POST(request: Request) {
     const url = new URL(request.url)
     const siteId = url.searchParams.get('siteId') || 'default'
     const pageUrl = url.searchParams.get('pageUrl') || 'unknown'
-    const language = url.searchParams.get('language') || undefined
+    const requestedLanguage = url.searchParams.get('language') || ''
+    const language = ['ru', 'uz', 'en'].includes(requestedLanguage)
+      ? requestedLanguage
+      : undefined
     const sdp = await request.text()
 
     if (!sdp.trim()) {
@@ -77,7 +80,8 @@ export async function POST(request: Request) {
     return new NextResponse(answerSdp, {
       status: 200,
       headers: {
-        'Content-Type': 'application/sdp'
+        'Content-Type': 'application/sdp',
+        'Cache-Control': 'no-store'
       }
     })
   } catch (error) {

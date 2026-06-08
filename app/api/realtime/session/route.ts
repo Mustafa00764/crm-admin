@@ -53,6 +53,9 @@ export async function POST(request: Request) {
         type: 'realtime',
         model: process.env.OPENAI_REALTIME_MODEL || 'gpt-realtime-2',
         instructions: getRealtimeInstructions(siteId, pageUrl),
+        reasoning: {
+          effort: process.env.OPENAI_REALTIME_REASONING_EFFORT || 'low'
+        },
         audio: {
           input: {
             transcription: {
@@ -88,10 +91,7 @@ export async function POST(request: Request) {
     if (!response.ok) {
       console.error('Realtime voice session error:', answerSdp)
       return NextResponse.json(
-        {
-          error:
-            answerSdp || `OpenAI realtime failed with status ${response.status}`
-        },
+        { error: answerSdp || `OpenAI realtime failed with status ${response.status}` },
         { status: response.status }
       )
     }
@@ -99,7 +99,8 @@ export async function POST(request: Request) {
     return new NextResponse(answerSdp, {
       status: 200,
       headers: {
-        'Content-Type': 'application/sdp'
+        'Content-Type': 'application/sdp',
+        'Cache-Control': 'no-store'
       }
     })
   } catch (error) {
@@ -108,9 +109,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error
-            ? error.message
-            : 'Realtime voice session error'
+          error instanceof Error ? error.message : 'Realtime voice session error'
       },
       { status: 500 }
     )

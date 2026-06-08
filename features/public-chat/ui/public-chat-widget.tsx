@@ -45,9 +45,16 @@ type RealtimeEvent = {
   item_id?: string
   response?: {
     id?: string
+    output?: Array<{
+      content?: Array<{
+        transcript?: string
+        text?: string
+      }>
+    }>
   }
   error?: {
     message?: string
+    code?: string
   }
 }
 
@@ -227,6 +234,9 @@ export function PublicChatWidget({
   const assistantTranscriptRef = React.useRef('')
   const dictationTranscriptRef = React.useRef('')
   const committedUserItemsRef = React.useRef(new Set<string>())
+  const voiceModeRef = React.useRef<VoiceMode>('idle')
+  const dictationStoppingRef = React.useRef(false)
+  const dictationStopTimeoutRef = React.useRef<number | null>(null)
 
   const [messages, setMessages] = React.useState<PublicChatMessage[]>(() => {
     const defaultMessages = getDefaultMessages()
@@ -256,6 +266,10 @@ export function PublicChatWidget({
 
   const shouldBlockChat =
     userMessagesCount >= REQUIRED_FORM_AFTER_USER_MESSAGES && !leadFormSubmitted
+
+  React.useEffect(() => {
+    voiceModeRef.current = voiceMode
+  }, [voiceMode])
 
   React.useEffect(() => {
     try {
@@ -377,7 +391,7 @@ export function PublicChatWidget({
   }
 
   async function handleFilesChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files || [])
+    const files = Array.from(event.currentTarget.files ?? []) as File[]
 
     if (!files.length) return
 
@@ -391,7 +405,7 @@ export function PublicChatWidget({
     }
 
     if (!validFiles.length) {
-      event.target.value = ''
+      event.currentTarget.value = ''
       return
     }
 
@@ -417,7 +431,7 @@ export function PublicChatWidget({
       console.error('File reading error:', error)
       alert('Не удалось прочитать файл. Попробуйте выбрать другой файл.')
     } finally {
-      event.target.value = ''
+      event.currentTarget.value = ''
     }
   }
 
@@ -430,8 +444,42 @@ export function PublicChatWidget({
     setEmojiOpen(false)
   }
 
+  async function sendLeadFromRealtimeTranscript(text: string) {
+    const phone = extractPhone(text)
+
+    if (!phone) return
+
+    try {
+      await fetch('/api/send-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone,
+          comment: {
+            text,
+            pageUrl,
+            siteId,
+            source: 'realtime-voice',
+            attachments: []
+          }
+        })
+      })
+    } catch (error) {
+      console.error('Realtime lead send error:', error)
+    }
+  }
+
   function cleanupRealtime(commitDictation = true) {
-    if (voiceMode === 'dictation' && commitDictation) {
+    const mode = voiceModeRef.current
+
+    if (dictationStopTimeoutRef.current) {
+      window.clearTimeout(dictationStopTimeoutRef.current)
+      dictationStopTimeoutRef.current = null
+    }
+
+    if (mode === 'dictation' && commitDictation) {
       const text = normalizeTranscript(dictationTranscriptRef.current)
 
       if (text) {
@@ -439,8 +487,19 @@ export function PublicChatWidget({
       }
     }
 
-    voiceChannelRef.current?.close()
-    voicePeerRef.current?.close()
+    try {
+      voiceChannelRef.current?.close()
+    } catch {
+      // already closed
+    }
+
+    try {
+      voicePeerRef.current?.getSenders().forEach(sender => sender.track?.stop())
+      voicePeerRef.current?.close()
+    } catch {
+      // already closed
+    }
+
     voiceStreamRef.current?.getTracks().forEach(track => track.stop())
 
     if (voiceAudioRef.current) {
@@ -454,7 +513,9 @@ export function PublicChatWidget({
     voiceAudioRef.current = null
     assistantTranscriptRef.current = ''
     dictationTranscriptRef.current = ''
+    dictationStoppingRef.current = false
     committedUserItemsRef.current.clear()
+    voiceModeRef.current = 'idle'
 
     setVoiceMode('idle')
     setVoiceConnecting(false)
@@ -462,6 +523,16 @@ export function PublicChatWidget({
     setLiveUserTranscript('')
     setLiveAssistantTranscript('')
     setDictationText('')
+  }
+
+  function extractTranscriptFromResponse(event: RealtimeEvent) {
+    return normalizeTranscript(
+      event.response?.output
+        ?.flatMap(item => item.content ?? [])
+        .map(content => content.transcript || content.text || '')
+        .filter(Boolean)
+        .join(' ') || ''
+    )
   }
 
   function handleVoiceAssistantEvent(event: RealtimeEvent) {
@@ -477,6 +548,11 @@ export function PublicChatWidget({
 
     if (event.type === 'input_audio_buffer.speech_stopped') {
       setVoiceStatus('Анна отвечает...')
+      return
+    }
+
+    if (event.type === 'conversation.item.input_audio_transcription.failed') {
+      setVoiceStatus('Не удалось распознать фразу, попробуйте ещё раз')
       return
     }
 
@@ -502,24 +578,51 @@ export function PublicChatWidget({
           content: text
         }
       ])
+
+      void sendLeadFromRealtimeTranscript(text)
       return
     }
 
-    if (
-      event.type === 'response.output_audio_transcript.delta' &&
-      typeof event.delta === 'string'
-    ) {
+    const isAssistantDelta =
+      event.type === 'response.output_audio_transcript.delta' ||
+      event.type === 'response.output_text.delta'
+
+    if (isAssistantDelta && typeof event.delta === 'string') {
       assistantTranscriptRef.current += event.delta
       setLiveAssistantTranscript(assistantTranscriptRef.current)
       return
     }
 
-    if (event.type === 'response.output_audio_transcript.done') {
+    const isAssistantDone =
+      event.type === 'response.output_audio_transcript.done' ||
+      event.type === 'response.output_text.done'
+
+    if (isAssistantDone) {
       const text = normalizeTranscript(
-        event.transcript || assistantTranscriptRef.current
+        event.transcript || event.text || assistantTranscriptRef.current
       )
 
       if (text) {
+        setMessages(current => [
+          ...current,
+          {
+            id: uid(),
+            role: 'assistant',
+            content: text
+          }
+        ])
+      }
+
+      assistantTranscriptRef.current = ''
+      setLiveAssistantTranscript('')
+      setVoiceStatus('Готова слушать')
+      return
+    }
+
+    if (event.type === 'response.done') {
+      const text = extractTranscriptFromResponse(event)
+
+      if (text && !assistantTranscriptRef.current) {
         setMessages(current => [
           ...current,
           {
@@ -542,6 +645,11 @@ export function PublicChatWidget({
       return
     }
 
+    if (event.type === 'conversation.item.input_audio_transcription.failed') {
+      setVoiceError('Не удалось распознать речь. Попробуйте сказать ещё раз.')
+      return
+    }
+
     if (
       event.type === 'conversation.item.input_audio_transcription.delta' &&
       typeof event.delta === 'string'
@@ -553,11 +661,15 @@ export function PublicChatWidget({
 
     if (
       event.type === 'conversation.item.input_audio_transcription.completed' &&
-      event.transcript
+      typeof event.transcript === 'string'
     ) {
       const text = normalizeTranscript(event.transcript)
       dictationTranscriptRef.current = text
       setDictationText(text)
+
+      if (dictationStoppingRef.current) {
+        cleanupRealtime(true)
+      }
     }
   }
 
@@ -568,6 +680,13 @@ export function PublicChatWidget({
     mode: Exclude<VoiceMode, 'idle'>
     endpoint: string
   }) {
+    if (
+      typeof window === 'undefined' ||
+      !navigator.mediaDevices?.getUserMedia
+    ) {
+      throw new Error('Браузер не поддерживает доступ к микрофону')
+    }
+
     const sourceStream = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: true,
@@ -577,6 +696,14 @@ export function PublicChatWidget({
     })
 
     const peerConnection = new RTCPeerConnection()
+
+    peerConnection.onconnectionstatechange = () => {
+      if (peerConnection.connectionState === 'failed') {
+        setVoiceError('Соединение с голосовым режимом прервано')
+        cleanupRealtime(false)
+      }
+    }
+
     const sourceTrack = sourceStream.getAudioTracks()[0]
 
     if (!sourceTrack) {
@@ -625,6 +752,12 @@ export function PublicChatWidget({
       setVoiceError('Ошибка realtime-канала')
     }
 
+    events.onclose = () => {
+      if (voiceModeRef.current !== 'idle') {
+        setVoiceStatus('Соединение завершено')
+      }
+    }
+
     voicePeerRef.current = peerConnection
     voiceChannelRef.current = events
     voiceStreamRef.current = sourceStream
@@ -664,6 +797,7 @@ export function PublicChatWidget({
       return
     }
 
+    voiceModeRef.current = 'assistant'
     setVoiceConnecting(true)
     setVoiceError('')
     setVoiceStatus('Подключаю Анну...')
@@ -696,6 +830,7 @@ export function PublicChatWidget({
       return
     }
 
+    voiceModeRef.current = 'dictation'
     setVoiceConnecting(true)
     setVoiceError('')
     setVoiceStatus('Подключаю диктовку...')
@@ -727,17 +862,24 @@ export function PublicChatWidget({
   }
 
   function stopDictationAndCommit() {
+    dictationStoppingRef.current = true
+    setVoiceStatus('Завершаю диктовку...')
+
     try {
-      voiceChannelRef.current?.send(
-        JSON.stringify({
-          type: 'input_audio_buffer.commit'
-        })
-      )
+      if (voiceChannelRef.current?.readyState === 'open') {
+        voiceChannelRef.current.send(
+          JSON.stringify({
+            type: 'input_audio_buffer.commit'
+          })
+        )
+      }
     } catch (error) {
       console.error('Dictation commit error:', error)
     }
 
-    window.setTimeout(() => cleanupRealtime(true), 500)
+    dictationStopTimeoutRef.current = window.setTimeout(() => {
+      cleanupRealtime(true)
+    }, 1800)
   }
 
   function stopVoiceMode() {
@@ -1371,7 +1513,7 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="grid grid-cols-[auto_auto_auto_auto_1fr_auto] gap-2">
+        <div className="grid grid-cols-[auto_auto_auto_auto_minmax(0,1fr)_auto] gap-2">
           <input
             ref={fileInputRef}
             type="file"
