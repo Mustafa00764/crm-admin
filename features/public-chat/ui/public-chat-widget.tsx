@@ -348,9 +348,7 @@ export function PublicChatWidget({
           clientName: leadForm.name,
           deliveryCity: leadForm.city,
           comment: {
-            text:
-              leadForm.comment ||
-              'Нет',
+            text: leadForm.comment || 'Нет',
             pageUrl,
             siteId,
             attachments: []
@@ -1511,7 +1509,7 @@ export function PublicChatWidget({
 
       <div
         className={cn(
-          'border-t p-3',
+          'border-t p-2',
           theme === 'light' ? 'border-black/10' : 'border-white/10'
         )}
       >
@@ -1624,7 +1622,7 @@ export function PublicChatWidget({
         ) : null}
 
         {realtimePanelOpen ? (
-          <div className={cn('flex items-center gap-3', composerClass)}>
+          <div className={cn('flex items-center gap-2', composerClass)}>
             <button
               type="button"
               disabled
@@ -1673,7 +1671,12 @@ export function PublicChatWidget({
             </div>
           </div>
         ) : (
-          <div className={cn('flex items-center gap-2', composerClass)}>
+          <div
+            className={cn(
+              'gird grid-cols-[auto_auto_auto_auto_auto] items-center gap-2',
+              composerClass
+            )}
+          >
             <button
               type="button"
               onClick={openFileDialog}
@@ -1701,7 +1704,10 @@ export function PublicChatWidget({
                     ? 'Заполните форму, чтобы продолжить...'
                     : 'Введите сообщение...'
                 }
-                className="min-h-9 max-h-28 w-full resize-none border-0 bg-transparent px-1 py-2 text-[14px] leading-4 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
+                className={cn(
+                  'min-h-9 w-full resize-none border-0 bg-transparent px-1 py-2 text-[14px] leading-4 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60',
+                  input.length >= 20 ? 'grid grid-cols-5' : ''
+                )}
               />
             </div>
 
