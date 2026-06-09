@@ -1708,7 +1708,7 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="w-full h-9 flex items-center justify-between gap-2 mb-2">
+        <div className="w-full h-9 flex items-center justify-between gap-2 mb-1">
           {!realtimePanelOpen ? (
             <div
               className={cn(
