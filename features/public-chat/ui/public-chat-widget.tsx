@@ -1359,7 +1359,9 @@ export function PublicChatWidget({
         )}
       >
         <div className="flex items-center gap-3">
-          <Mic className="h-5 w-5 text-slate-900" />
+          <div className=" w-10 h-10 bg-[#08b7ef]/50 text-slate-900">
+            <Mic className="h-6 w-6" />
+          </div>
 
           <div className="flex flex-col gap-1">
             <div className="text-[14px] leading-4 opacity-100 font-semibold">
