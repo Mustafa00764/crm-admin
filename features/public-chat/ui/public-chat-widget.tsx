@@ -42,6 +42,7 @@ type RealtimeEvent = {
   transcript?: string
   text?: string
   item_id?: string
+  response_id?: string
   response?: {
     id?: string
     output?: Array<{
@@ -222,6 +223,8 @@ export function PublicChatWidget({
   const dictationStoppingRef = React.useRef(false)
   const dictationStopTimeoutRef = React.useRef<number | null>(null)
   const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+  const activeResponseRef = React.useRef(false)
+  const createResponseTimeoutRef = React.useRef<number | null>(null)
 
   const [messages, setMessages] =
     React.useState<PublicChatMessage[]>(getDefaultMessages)
@@ -493,6 +496,13 @@ export function PublicChatWidget({
   function cleanupRealtime(commitDictation = true) {
     const mode = voiceModeRef.current
 
+    if (createResponseTimeoutRef.current) {
+      window.clearTimeout(createResponseTimeoutRef.current)
+      createResponseTimeoutRef.current = null
+    }
+
+    activeResponseRef.current = false
+
     if (dictationStopTimeoutRef.current) {
       window.clearTimeout(dictationStopTimeoutRef.current)
       dictationStopTimeoutRef.current = null
@@ -641,10 +651,66 @@ export function PublicChatWidget({
     ])
   }
 
+  function safelyCreateRealtimeResponse() {
+    if (voiceModeRef.current !== 'assistant') return
+
+    const channel = voiceChannelRef.current
+
+    if (!channel || channel.readyState !== 'open') return
+    if (activeResponseRef.current) return
+
+    if (createResponseTimeoutRef.current) {
+      window.clearTimeout(createResponseTimeoutRef.current)
+      createResponseTimeoutRef.current = null
+    }
+
+    createResponseTimeoutRef.current = window.setTimeout(() => {
+      const currentChannel = voiceChannelRef.current
+
+      if (!currentChannel || currentChannel.readyState !== 'open') return
+      if (activeResponseRef.current) return
+
+      currentChannel.send(
+        JSON.stringify({
+          type: 'response.create'
+        })
+      )
+
+      activeResponseRef.current = true
+      createResponseTimeoutRef.current = null
+    }, 180)
+  }
+
   function handleVoiceAssistantEvent(event: RealtimeEvent) {
     if (event.type === 'error') {
-      setVoiceError(event.error?.message || 'Realtime voice error')
+      const message = event.error?.message || 'Realtime voice error'
+
+      activeResponseRef.current = false
+
+      if (
+        message.includes('active response in progress') ||
+        message.includes('already has an active response')
+      ) {
+        setVoiceStatus('Анна ещё отвечает...')
+        return
+      }
+
+      setVoiceError(message)
       return
+    }
+
+    if (event.type === 'response.created') {
+      activeResponseRef.current = true
+      return
+    }
+
+    if (
+      event.type === 'response.done' ||
+      event.type === 'response.cancelled' ||
+      event.type === 'response.failed' ||
+      event.type === 'response.incomplete'
+    ) {
+      activeResponseRef.current = false
     }
 
     if (event.type === 'input_audio_buffer.speech_started') {
@@ -676,6 +742,7 @@ export function PublicChatWidget({
       if (!text) return
 
       appendRealtimeUserMessage(text)
+      safelyCreateRealtimeResponse()
       return
     }
 
@@ -698,7 +765,10 @@ export function PublicChatWidget({
         event.transcript || event.text || assistantTranscriptRef.current
       )
 
-      appendRealtimeAssistantMessage(text, event.response?.id)
+      appendRealtimeAssistantMessage(
+        text,
+        event.response?.id || event.response_id
+      )
 
       assistantTranscriptRef.current = ''
       setLiveAssistantTranscript('')
@@ -710,7 +780,10 @@ export function PublicChatWidget({
       const text = extractTranscriptFromResponse(event)
 
       if (text) {
-        appendRealtimeAssistantMessage(text, event.response?.id)
+        appendRealtimeAssistantMessage(
+          text,
+          event.response?.id || event.response_id
+        )
       }
 
       assistantTranscriptRef.current = ''
@@ -909,6 +982,12 @@ export function PublicChatWidget({
     lastRealtimeUserTextAtRef.current = 0
     lastRealtimeAssistantTextRef.current = ''
     lastRealtimeAssistantTextAtRef.current = 0
+    activeResponseRef.current = false
+
+    if (createResponseTimeoutRef.current) {
+      window.clearTimeout(createResponseTimeoutRef.current)
+      createResponseTimeoutRef.current = null
+    }
 
     /*
      * Запуск происходит по клику пользователя, поэтому здесь можно безопасно
@@ -1047,6 +1126,11 @@ export function PublicChatWidget({
     }
 
     setInput('')
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
+
     setAttachments([])
     setEmojiOpen(false)
     setMessages(current => [...current, userMessage])
