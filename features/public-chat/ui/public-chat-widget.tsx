@@ -1525,7 +1525,7 @@ export function PublicChatWidget({
         />
 
         {attachments.length ? (
-          <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+          <div className="mb-2 flex gap-2 overflow-x-auto py-1.5">
             {attachments.map(file => (
               <div
                 key={file.id}
