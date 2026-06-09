@@ -1673,7 +1673,7 @@ export function PublicChatWidget({
         ) : (
           <div
             className={cn(
-              'gird grid-cols-3 items-center gap-2',
+              'grid grid-cols-3 items-center gap-2',
               composerClass
             )}
           >
