@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import Image from 'next/image'
+import { Button } from '@/shared/ui/button'
 
 type PublicChatAttachment = {
   id: string
@@ -1364,9 +1365,7 @@ export function PublicChatWidget({
           </div>
 
           <div className="flex flex-col gap-1">
-            <div className="text-[14px] leading-4 opacity-100 font-semibold">
-              
-            </div>
+            <div className="text-[14px] leading-4 opacity-100 font-semibold"></div>
 
             <div className="text-xs opacity-60 leading-3">
               Онлайн-консультант
@@ -1532,8 +1531,13 @@ export function PublicChatWidget({
               : 'border-white/10 bg-white/5'
           )}
         >
-          <div className="mb-2 text-sm font-semibold">
-            Заполните форму, чтобы продолжить консультацию
+          <div className='flex items-start justify-between gap-2'>
+            <h3 className="mb-2 text-sm font-semibold">
+              Заполните форму, чтобы продолжить консультацию
+            </h3>
+            <Button variant={'ghost'} size={'lg'} className='rounded-full text-slate-900'>
+              <X className='w-6 h-6'/>
+            </Button>
           </div>
 
           <div
@@ -1823,10 +1827,10 @@ export function PublicChatWidget({
                 }}
                 placeholder={
                   shouldBlockChat
-                    ? 'Заполните форму, чтобы продолжить...'
+                    ? 'Заполните форму...'
                     : 'Введите сообщение...'
                 }
-                className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60 disabled:pointer-events-none"
+                className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
               />
             </div>
 
@@ -1901,7 +1905,8 @@ export function PublicChatWidget({
             theme === 'light' ? 'text-slate-400' : 'text-white/35'
           )}
         >
-          Онлайн-консультант может ошибаться. Рекомендуем проверять важную информацию.
+          Онлайн-консультант может ошибаться. Рекомендуем проверять важную
+          информацию.
         </div>
       </div>
     </div>
