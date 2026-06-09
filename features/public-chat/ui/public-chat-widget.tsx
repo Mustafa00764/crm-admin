@@ -184,7 +184,7 @@ export function PublicChatWidget({
 
   const [leadFormOpen, setLeadFormOpen] = React.useState(false)
 
-  const [formState, setFormState] = React.useState<'open' | 'close'>('close')
+  const [formState, setFormState] = React.useState<'open' | 'close'>('open')
 
   const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(false)
 
