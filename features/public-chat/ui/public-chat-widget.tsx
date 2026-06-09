@@ -1678,27 +1678,26 @@ export function PublicChatWidget({
               'transition-all duration-200',
               composerClass,
               isComposerExpanded
-                ? 'grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 gap-y-1'
+                ? 'grid grid-cols-1 gap-1'
                 : 'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2'
             )}
           >
-            <button
-              type="button"
-              onClick={openFileDialog}
-              disabled={pending || shouldBlockChat}
-              className={cn(
-                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50',
-                isComposerExpanded ? 'self-start' : ''
-              )}
-              title="Прикрепить файл"
-            >
-              <Plus className="h-6 w-6" strokeWidth={2} />
-            </button>
+            {!isComposerExpanded ? (
+              <button
+                type="button"
+                onClick={openFileDialog}
+                disabled={pending || shouldBlockChat}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50"
+                title="Прикрепить файл"
+              >
+                <Plus className="h-6 w-6" strokeWidth={2} />
+              </button>
+            ) : null}
 
             <div className="min-w-0">
               <textarea
                 value={input}
-                // rows={1}
+                rows={1}
                 disabled={shouldBlockChat}
                 onChange={event => {
                   setInput(event.target.value)
@@ -1727,52 +1726,64 @@ export function PublicChatWidget({
             <div
               className={cn(
                 'flex shrink-0 items-center gap-1',
-                isComposerExpanded
-                  ? 'col-span-2 justify-end pt-1'
-                  : 'self-center'
+                isComposerExpanded ? 'justify-between' : 'self-center'
               )}
             >
-              <button
-                type="button"
-                onClick={() => setEmojiOpen(current => !current)}
-                disabled={pending || shouldBlockChat}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/75 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
-                title="Смайлики"
-              >
-                <Smile className="h-5 w-5" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => void startDictation()}
-                disabled={pending || shouldBlockChat}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/80 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
-                title="Диктовка: распознать речь в текст"
-              >
-                <Mic className="h-6 w-6" />
-              </button>
-
-              {input.trim() || attachments.length ? (
+              {isComposerExpanded ? (
                 <button
                   type="button"
+                  onClick={openFileDialog}
                   disabled={pending || shouldBlockChat}
-                  onClick={() => void sendMessage()}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
-                  title="Отправить"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50"
+                  title="Прикрепить файл"
                 >
-                  <ArrowUp className="h-6 w-6" strokeWidth={2.4} />
+                  <Plus className="h-6 w-6" strokeWidth={2} />
                 </button>
-              ) : (
+              ) : null}
+
+              <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  onClick={() => void startVoiceAssistant()}
+                  onClick={() => setEmojiOpen(current => !current)}
                   disabled={pending || shouldBlockChat}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
-                  title="Говорить с AI ассистентом"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/75 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
+                  title="Смайлики"
                 >
-                  <AudioLines className="h-6 w-6" strokeWidth={2.2} />
+                  <Smile className="h-5 w-5" />
                 </button>
-              )}
+
+                <button
+                  type="button"
+                  onClick={() => void startDictation()}
+                  disabled={pending || shouldBlockChat}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/80 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
+                  title="Диктовка: распознать речь в текст"
+                >
+                  <Mic className="h-6 w-6" />
+                </button>
+
+                {input.trim() || attachments.length ? (
+                  <button
+                    type="button"
+                    disabled={pending || shouldBlockChat}
+                    onClick={() => void sendMessage()}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
+                    title="Отправить"
+                  >
+                    <ArrowUp className="h-6 w-6" strokeWidth={2.4} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void startVoiceAssistant()}
+                    disabled={pending || shouldBlockChat}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
+                    title="Говорить с AI ассистентом"
+                  >
+                    <AudioLines className="h-6 w-6" strokeWidth={2.2} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
