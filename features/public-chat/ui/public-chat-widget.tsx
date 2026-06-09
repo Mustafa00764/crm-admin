@@ -1697,7 +1697,7 @@ export function PublicChatWidget({
             <div className="min-w-0 flex items-center">
               <textarea
                 value={input}
-                // rows={1}
+                rows={!isComposerExpanded ? 1 : 2}
                 disabled={shouldBlockChat}
                 onChange={event => {
                   setInput(event.target.value)
