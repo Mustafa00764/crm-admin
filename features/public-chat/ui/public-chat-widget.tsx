@@ -1826,7 +1826,7 @@ export function PublicChatWidget({
                     ? 'Заполните форму, чтобы продолжить...'
                     : 'Введите сообщение...'
                 }
-                className="min-h-9 w-full resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60 disabled:pointer-events-none"
+                className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60 disabled:pointer-events-none"
               />
             </div>
 
