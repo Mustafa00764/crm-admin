@@ -1923,7 +1923,7 @@ export function PublicChatWidget({
           </div>
         )}
 
-        <div
+        {/* <div
           className={cn(
             'mt-3 text-center text-[9px] leading-3',
             theme === 'light' ? 'text-slate-400' : 'text-white/35'
@@ -1931,7 +1931,7 @@ export function PublicChatWidget({
         >
           Онлайн-консультант может ошибаться. Рекомендуем проверять важную
           информацию.
-        </div>
+        </div> */}
       </div>
     </div>
   )
