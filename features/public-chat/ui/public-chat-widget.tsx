@@ -1698,7 +1698,7 @@ export function PublicChatWidget({
             <div className="min-w-0">
               <textarea
                 value={input}
-                rows={1}
+                // rows={1}
                 disabled={shouldBlockChat}
                 onChange={event => {
                   setInput(event.target.value)
