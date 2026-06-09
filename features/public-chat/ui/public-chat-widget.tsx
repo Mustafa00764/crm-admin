@@ -1673,7 +1673,7 @@ export function PublicChatWidget({
             </div>
           </div>
         ) : (
-          <div className={cn('flex items-end gap-2', composerClass)}>
+          <div className={cn('flex items-center gap-2', composerClass)}>
             <button
               type="button"
               onClick={openFileDialog}
@@ -1701,7 +1701,7 @@ export function PublicChatWidget({
                     ? 'Заполните форму, чтобы продолжить...'
                     : 'Введите сообщение...'
                 }
-                className="min-h-11 max-h-28 w-full resize-none border-0 bg-transparent px-1 py-2 text-[16px] leading-6 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
+                className="min-h-9 max-h-28 w-full resize-none border-0 bg-transparent px-1 py-2 text-[14px] leading-4 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
               />
             </div>
 
