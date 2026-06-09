@@ -84,7 +84,7 @@ export async function POST(request: Request) {
               interrupt_response: false,
 
               // Ответ всё равно создаётся после нормальной фразы пользователя.
-              create_response: true
+              create_response: false
             }
           },
 
