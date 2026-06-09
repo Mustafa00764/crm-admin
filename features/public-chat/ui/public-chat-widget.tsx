@@ -9,7 +9,8 @@ import {
   AudioLines,
   Keyboard,
   Plus,
-  ArrowUp
+  ArrowUp,
+  ClipboardList
 } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import Image from 'next/image'
@@ -69,7 +70,7 @@ function uid() {
 
 const MAX_FILES = 5
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
-const REQUIRED_FORM_AFTER_USER_MESSAGES = 4
+const REQUIRED_FORM_AFTER_USER_MESSAGES = 6
 const DEFAULT_ASSISTANT_MESSAGE_ID = 'default_assistant_greeting'
 
 const DICTATION_LANGUAGES: Array<{ value: DictationLanguage; label: string }> =
@@ -182,6 +183,8 @@ export function PublicChatWidget({
   const [phoneError, setPhoneError] = React.useState('')
 
   const [leadFormOpen, setLeadFormOpen] = React.useState(false)
+
+  // const [formState, setFormState] = React.useState<'open' | 'close'>('close')
 
   const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(false)
 
@@ -366,6 +369,7 @@ export function PublicChatWidget({
 
     setLeadFormSubmitted(true)
     setLeadFormOpen(false)
+    // setFormState('close')
 
     setMessages(current => [
       ...current,
@@ -1104,6 +1108,7 @@ export function PublicChatWidget({
 
     if (shouldBlockChat) {
       setLeadFormOpen(true)
+      // setFormState('open')
 
       setMessages(current => {
         const alreadyHasBlockMessage = current.some(
@@ -1531,12 +1536,17 @@ export function PublicChatWidget({
               : 'border-white/10 bg-white/5'
           )}
         >
-          <div className='flex items-start justify-between gap-2'>
+          <div className="flex items-start justify-between gap-2">
             <h3 className="mb-2 text-sm font-semibold">
               Заполните форму, чтобы продолжить консультацию
             </h3>
-            <Button variant={'ghost'} size={'lg'} className='rounded-full text-slate-900'>
-              <X className='w-6 h-6'/>
+            <Button
+              variant={'ghost'}
+              size={'lg'}
+              onClick={() => setLeadFormOpen(false)}
+              className="rounded-full text-slate-900/80 hover:text-slate-900 hover:bg-black/10"
+            >
+              <X className="w-6 h-6" />
             </Button>
           </div>
 
@@ -1697,35 +1707,48 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        {!realtimePanelOpen ? (
-          <div
-            className={cn(
-              'mb-2 flex items-center gap-2 px-1 text-[11px]',
-              theme === 'light' ? 'text-slate-500' : 'text-white/45'
-            )}
-          >
-            <Keyboard className="h-3 w-3" />
-            <span>Язык диктовки:</span>
+        <div className="w-full flex items-center justify-between gap-2">
+          {!realtimePanelOpen ? (
+            <div
+              className={cn(
+                'mb-2 flex items-center gap-2 px-1 text-[11px]',
+                theme === 'light' ? 'text-slate-500' : 'text-white/45'
+              )}
+            >
+              <Keyboard className="h-3 w-3" />
+              <span>Язык диктовки:</span>
 
-            <div className="flex overflow-hidden rounded-full border border-current/15">
-              {DICTATION_LANGUAGES.map(language => (
-                <button
-                  key={language.value}
-                  type="button"
-                  onClick={() => setDictationLanguage(language.value)}
-                  className={cn(
-                    'h-7 px-3 text-[11px] transition',
-                    dictationLanguage === language.value
-                      ? 'bg-[#08b7ef] text-white'
-                      : 'hover:bg-current/10'
-                  )}
-                >
-                  {language.label}
-                </button>
-              ))}
+              <div className="flex overflow-hidden rounded-full border border-current/15">
+                {DICTATION_LANGUAGES.map(language => (
+                  <button
+                    key={language.value}
+                    type="button"
+                    onClick={() => setDictationLanguage(language.value)}
+                    className={cn(
+                      'h-7 px-3 text-[11px] transition',
+                      dictationLanguage === language.value
+                        ? 'bg-[#08b7ef] text-white'
+                        : 'hover:bg-current/10'
+                    )}
+                  >
+                    {language.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null}
+
+          {!leadFormOpen ? (
+            <Button
+              variant={'ghost'}
+              size={'lg'}
+              onClick={() => setLeadFormOpen(true)}
+              className="rounded-full text-slate-900/80 hover:text-slate-900 hover:bg-black/10"
+            >
+              <ClipboardList className="w-6 h-6" />
+            </Button>
+          ) : null}
+        </div>
 
         {voiceError ? (
           <div className="mb-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-500">
