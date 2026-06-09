@@ -1647,7 +1647,7 @@ export function PublicChatWidget({
             </div>
 
             <div className="flex shrink-0 items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black/5 text-slate-900">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-slate-900">
                 {voiceMode === 'assistant' ? (
                   <AudioLines className="h-5 w-5" />
                 ) : (
