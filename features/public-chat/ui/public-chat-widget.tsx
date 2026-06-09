@@ -1712,14 +1712,14 @@ export function PublicChatWidget({
           {!realtimePanelOpen ? (
             <div
               className={cn(
-                'flex items-center gap-2 px-1 text-[11px]',
+                'flex h-full items-center gap-2 px-1 text-[11px]',
                 theme === 'light' ? 'text-slate-500' : 'text-white/45'
               )}
             >
               <Keyboard className="h-3 w-3" />
               <span>Язык диктовки:</span>
 
-              <div className="flex overflow-hidden rounded-full border border-current/15">
+              <div className="flex h-full overflow-hidden rounded-full border border-current/15">
                 {DICTATION_LANGUAGES.map(language => (
                   <button
                     key={language.value}
