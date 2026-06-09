@@ -1632,7 +1632,7 @@ export function PublicChatWidget({
 
       <div
         className={cn(
-          'border-t p-2',
+          'border-t p-2 pb-4',
           theme === 'light' ? 'border-black/10' : 'border-white/10'
         )}
       >
