@@ -1365,7 +1365,7 @@ export function PublicChatWidget({
 
           <div className="flex flex-col gap-1">
             <div className="text-[14px] leading-4 opacity-100 font-semibold">
-              Анна
+              
             </div>
 
             <div className="text-xs opacity-60 leading-3">
