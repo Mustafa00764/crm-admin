@@ -1359,14 +1359,7 @@ export function PublicChatWidget({
         )}
       >
         <div className="flex items-center gap-3">
-          <Image
-            unoptimized
-            width={40}
-            height={40}
-            src="/images/assistant-2.png"
-            alt="assistant"
-            className="w-10 h-10 object-cover object-top rounded-full"
-          />
+          <Mic className="h-5 w-5 text-slate-900" />
 
           <div className="flex flex-col gap-1">
             <div className="text-[14px] leading-4 opacity-100 font-semibold">
