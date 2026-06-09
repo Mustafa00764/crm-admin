@@ -2,15 +2,14 @@
 
 import * as React from 'react'
 import {
-  Send,
   X,
   Paperclip,
   Smile,
-  ImageIcon,
   Mic,
   AudioLines,
   Keyboard,
-  Square
+  Plus,
+  ArrowUp
 } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import Image from 'next/image'
@@ -1101,6 +1100,21 @@ export function PublicChatWidget({
 
   const realtimePanelOpen = voiceMode !== 'idle' || voiceConnecting
 
+  const composerClass = cn(
+    'rounded-[32px] border px-3 py-2 shadow-sm transition-colors',
+    theme === 'light'
+      ? 'border-black/10 bg-[#202124] text-white'
+      : 'border-white/10 bg-[#202124] text-white'
+  )
+
+  const composerHint =
+    voiceMode === 'assistant'
+      ? liveAssistantTranscript ||
+        liveUserTranscript ||
+        voiceStatus ||
+        'Говорите с Анной…'
+      : dictationText || voiceStatus || 'Говорите, я распознаю речь…'
+
   return (
     <div
       className={cn(
@@ -1384,6 +1398,15 @@ export function PublicChatWidget({
           theme === 'light' ? 'border-black/10' : 'border-white/10'
         )}
       >
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+          onChange={handleFilesChange}
+          className="hidden"
+        />
+
         {attachments.length ? (
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {attachments.map(file => (
@@ -1450,21 +1473,21 @@ export function PublicChatWidget({
         {!realtimePanelOpen ? (
           <div
             className={cn(
-              'mb-2 flex items-center gap-2 text-[11px]',
+              'mb-2 flex items-center gap-2 px-1 text-[11px]',
               theme === 'light' ? 'text-slate-500' : 'text-white/45'
             )}
           >
             <Keyboard className="h-3 w-3" />
             <span>Язык диктовки:</span>
 
-            <div className="flex overflow-hidden rounded-lg border border-current/15">
+            <div className="flex overflow-hidden rounded-full border border-current/15">
               {DICTATION_LANGUAGES.map(language => (
                 <button
                   key={language.value}
                   type="button"
                   onClick={() => setDictationLanguage(language.value)}
                   className={cn(
-                    'h-7 px-2 text-[11px] transition',
+                    'h-7 px-3 text-[11px] transition',
                     dictationLanguage === language.value
                       ? 'bg-[#08b7ef] text-white'
                       : 'hover:bg-current/10'
@@ -1478,19 +1501,40 @@ export function PublicChatWidget({
         ) : null}
 
         {voiceError ? (
-          <div className="mb-2 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-500">
+          <div className="mb-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-500">
             {voiceError}
           </div>
         ) : null}
 
         {realtimePanelOpen ? (
-          <div className="mb-2 flex justify-center">
-            <div className="flex h-[72px] w-full max-w-[620px] items-center justify-center gap-5 rounded-[32px] bg-[#1f1f1f] px-6 text-white shadow-2xl">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-white">
+          <div className={cn('flex items-center gap-3', composerClass)}>
+            <button
+              type="button"
+              disabled
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/80 opacity-60"
+              title="Прикрепить файл"
+            >
+              <Plus className="h-7 w-7" strokeWidth={2} />
+            </button>
+
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[16px] font-medium text-white">
+                {voiceConnecting ? 'Подключение...' : composerHint}
+              </div>
+
+              <div className="mt-0.5 truncate text-xs text-white/45">
+                {voiceMode === 'assistant'
+                  ? 'Голосовой разговор с AI ассистентом'
+                  : 'Диктовка в текст'}
+              </div>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-white">
                 {voiceMode === 'assistant' ? (
-                  <AudioLines className="h-6 w-6" />
+                  <AudioLines className="h-5 w-5" />
                 ) : (
-                  <Mic className="h-6 w-6" />
+                  <Mic className="h-5 w-5" />
                 )}
               </div>
 
@@ -1498,12 +1542,12 @@ export function PublicChatWidget({
                 type="button"
                 onClick={stopVoiceMode}
                 disabled={voiceConnecting}
-                className="flex h-12 items-center gap-2 rounded-[24px] bg-[#0A84FF] px-6 text-[17px] font-semibold text-white disabled:opacity-60"
+                className="flex h-12 items-center gap-2 rounded-full bg-[#08b7ef] px-5 text-[16px] font-semibold text-white shadow-[0_10px_28px_rgba(8,183,239,0.32)] transition hover:bg-[#16c3fb] disabled:opacity-60"
               >
                 <span className="flex items-end gap-[3px]">
-                  <span className="h-3 w-1 rounded-full bg-white animate-pulse" />
-                  <span className="h-4 w-1 rounded-full bg-white animate-pulse delay-75" />
-                  <span className="h-2 w-1 rounded-full bg-white animate-pulse delay-150" />
+                  <span className="h-2.5 w-1 rounded-full bg-white animate-pulse" />
+                  <span className="h-4 w-1 rounded-full bg-white animate-pulse" />
+                  <span className="h-2 w-1 rounded-full bg-white animate-pulse" />
                   <span className="h-1.5 w-1 rounded-full bg-white/80" />
                 </span>
 
@@ -1511,127 +1555,92 @@ export function PublicChatWidget({
               </button>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className={cn('flex items-end gap-2', composerClass)}>
+            <button
+              type="button"
+              onClick={openFileDialog}
+              disabled={pending || shouldBlockChat}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/85 transition hover:bg-white/5 disabled:opacity-50"
+              title="Прикрепить файл"
+            >
+              <Plus className="h-7 w-7" strokeWidth={2} />
+            </button>
 
-        <div className="grid grid-cols-[auto_auto_auto_auto_minmax(0,1fr)_auto] gap-2">
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
-            onChange={handleFilesChange}
-            className="hidden"
-          />
+            <div className="min-w-0 flex-1">
+              <textarea
+                value={input}
+                rows={1}
+                disabled={shouldBlockChat}
+                onChange={event => setInput(event.target.value)}
+                onKeyDown={event => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault()
+                    void sendMessage()
+                  }
+                }}
+                placeholder={
+                  shouldBlockChat
+                    ? 'Заполните форму, чтобы продолжить...'
+                    : 'Введите сообщение...'
+                }
+                className="min-h-[44px] max-h-28 w-full resize-none border-0 bg-transparent px-1 py-2 text-[16px] leading-6 text-white outline-none placeholder:text-white/45 disabled:opacity-60"
+              />
+            </div>
 
-          <button
-            type="button"
-            onClick={openFileDialog}
-            disabled={pending || shouldBlockChat || realtimePanelOpen}
-            className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
-              theme === 'light'
-                ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
-            )}
-            title="Прикрепить файл"
-          >
-            <Paperclip className="h-4 w-4" />
-          </button>
+            <div className="flex shrink-0 items-center gap-1 self-center">
+              <button
+                type="button"
+                onClick={() => setEmojiOpen(current => !current)}
+                disabled={pending || shouldBlockChat}
+                className="flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition hover:bg-white/5 hover:text-white disabled:opacity-50"
+                title="Смайлики"
+              >
+                <Smile className="h-4 w-4" />
+              </button>
 
-          <button
-            type="button"
-            onClick={() => setEmojiOpen(current => !current)}
-            disabled={pending || shouldBlockChat || realtimePanelOpen}
-            className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
-              theme === 'light'
-                ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
-            )}
-            title="Смайлики"
-          >
-            <Smile className="h-4 w-4" />
-          </button>
+              <button
+                type="button"
+                onClick={() => void startDictation()}
+                disabled={pending || shouldBlockChat}
+                className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:bg-white/5 hover:text-white disabled:opacity-50"
+                title="Диктовка: распознать речь в текст"
+              >
+                <Mic className="h-5 w-5" />
+              </button>
 
-          {/* <button
-            type="button"
-            onClick={() => void startDictation()}
-            disabled={pending || shouldBlockChat || realtimePanelOpen}
-            className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
-              theme === 'light'
-                ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
-            )}
-            title="Диктовка: распознать речь в текст"
-          >
-            <Mic className="h-4 w-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => void startVoiceAssistant()}
-            disabled={pending || shouldBlockChat || realtimePanelOpen}
-            className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50',
-              theme === 'light'
-                ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
-            )}
-            title="Говорить с AI ассистентом"
-          >
-            <AudioLines className="h-4 w-4" />
-          </button> */}
-
-          <textarea
-            value={input}
-            rows={1}
-            disabled={shouldBlockChat || realtimePanelOpen}
-            onChange={event => setInput(event.target.value)}
-            onKeyDown={event => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault()
-                void sendMessage()
-              }
-            }}
-            placeholder={
-              shouldBlockChat
-                ? 'Заполните форму, чтобы продолжить...'
-                : realtimePanelOpen
-                  ? 'Голосовой режим активен...'
-                  : 'Введите сообщение...'
-            }
-            className={cn(
-              'min-h-10 resize-none rounded-xl border px-3 py-2 text-sm outline-none disabled:opacity-60',
-              theme === 'light'
-                ? 'border-slate-200 bg-white text-slate-950'
-                : 'border-white/10 bg-white/5 text-white'
-            )}
-          />
-
-          <button
-            type="button"
-            disabled={
-              pending ||
-              shouldBlockChat ||
-              realtimePanelOpen ||
-              (!input.trim() && attachments.length === 0)
-            }
-            onClick={() => void sendMessage()}
-            className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#08b7ef] text-white disabled:opacity-50"
-          >
-            <Send className="h-4 w-4" />
-          </button>
-        </div>
+              {input.trim() || attachments.length ? (
+                <button
+                  type="button"
+                  disabled={pending || shouldBlockChat}
+                  onClick={() => void sendMessage()}
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
+                  title="Отправить"
+                >
+                  <ArrowUp className="h-6 w-6" strokeWidth={2.4} />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void startVoiceAssistant()}
+                  disabled={pending || shouldBlockChat}
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
+                  title="Говорить с AI ассистентом"
+                >
+                  <AudioLines className="h-6 w-6" strokeWidth={2.2} />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         <div
           className={cn(
-            'mt-1 flex items-center gap-1 text-[11px]',
+            'mt-3 text-center text-[11px]',
             theme === 'light' ? 'text-slate-400' : 'text-white/35'
           )}
         >
-          <ImageIcon className="h-3 w-3" />
-          <span>Можно прикрепить фото, PDF, документы или таблицы</span>
+          Анна может ошибаться. Рекомендуем проверять важную информацию.
         </div>
       </div>
     </div>
