@@ -221,6 +221,7 @@ export function PublicChatWidget({
   const voiceModeRef = React.useRef<VoiceMode>('idle')
   const dictationStoppingRef = React.useRef(false)
   const dictationStopTimeoutRef = React.useRef<number | null>(null)
+  const textareaRef = React.useRef(null)
 
   const [messages, setMessages] =
     React.useState<PublicChatMessage[]>(getDefaultMessages)
@@ -1696,8 +1697,9 @@ export function PublicChatWidget({
 
             <div className="min-w-0 flex items-center">
               <textarea
+                ref={textareaRef}
                 value={input}
-                rows={!isComposerExpanded ? 1 : 3}
+                rows={1}
                 disabled={shouldBlockChat}
                 onChange={event => {
                   setInput(event.target.value)
