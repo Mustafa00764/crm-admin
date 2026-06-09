@@ -1673,9 +1673,9 @@ export function PublicChatWidget({
                 type="button"
                 onClick={stopVoiceMode}
                 disabled={voiceConnecting}
-                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-5 text-[14px] font-semibold text-s shadow-[0_10px_28px_rgba(8,183,239,0.32)] transition hover:bg-[#16c3fb] disabled:opacity-60"
+                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-5 text-[14px] font-semibold text-s transition hover:bg-[#16c3fb] disabled:opacity-60"
               >
-                <span className="flex items-end gap-[3px]">
+                <span className="flex items-end gap-0.75">
                   <span className="h-2.5 w-1 rounded-full bg-white animate-pulse" />
                   <span className="h-4 w-1 rounded-full bg-white animate-pulse" />
                   <span className="h-2 w-1 rounded-full bg-white animate-pulse" />
@@ -1782,7 +1782,7 @@ export function PublicChatWidget({
                     type="button"
                     disabled={pending || shouldBlockChat}
                     onClick={() => void sendMessage()}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50 disabled:pointer-events-none"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50 disabled:pointer-events-none"
                     title="Отправить"
                   >
                     <ArrowUp className="h-6 w-6" strokeWidth={2.4} />
@@ -1792,7 +1792,7 @@ export function PublicChatWidget({
                     type="button"
                     onClick={() => void startVoiceAssistant()}
                     disabled={pending || shouldBlockChat}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50 disabled:pointer-events-none"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50 disabled:pointer-events-none"
                     title="Говорить с AI ассистентом"
                   >
                     <AudioLines className="h-6 w-6" strokeWidth={2.2} />
