@@ -1687,7 +1687,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={openFileDialog}
                 disabled={pending || shouldBlockChat}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50 disabled:pointer-events-none"
                 title="Прикрепить файл"
               >
                 <Plus className="h-6 w-6" strokeWidth={2} />
@@ -1719,7 +1719,7 @@ export function PublicChatWidget({
                     ? 'Заполните форму, чтобы продолжить...'
                     : 'Введите сообщение...'
                 }
-                className="min-h-9 w-full resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
+                className="min-h-9 w-full resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60 disabled:pointer-events-none"
               />
             </div>
 
@@ -1734,7 +1734,7 @@ export function PublicChatWidget({
                   type="button"
                   onClick={openFileDialog}
                   disabled={pending || shouldBlockChat}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50 disabled:pointer-events-none"
                   title="Прикрепить файл"
                 >
                   <Plus className="h-6 w-6" strokeWidth={2} />
@@ -1746,7 +1746,7 @@ export function PublicChatWidget({
                   type="button"
                   onClick={() => setEmojiOpen(current => !current)}
                   disabled={pending || shouldBlockChat}
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/75 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/75 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50 disabled:pointer-events-none"
                   title="Смайлики"
                 >
                   <Smile className="h-5 w-5" />
@@ -1756,7 +1756,7 @@ export function PublicChatWidget({
                   type="button"
                   onClick={() => void startDictation()}
                   disabled={pending || shouldBlockChat}
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/80 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-slate-900/80 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50 disabled:pointer-events-none"
                   title="Диктовка: распознать речь в текст"
                 >
                   <Mic className="h-6 w-6" />
@@ -1767,7 +1767,7 @@ export function PublicChatWidget({
                     type="button"
                     disabled={pending || shouldBlockChat}
                     onClick={() => void sendMessage()}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50 disabled:pointer-events-none"
                     title="Отправить"
                   >
                     <ArrowUp className="h-6 w-6" strokeWidth={2.4} />
@@ -1777,7 +1777,7 @@ export function PublicChatWidget({
                     type="button"
                     onClick={() => void startVoiceAssistant()}
                     disabled={pending || shouldBlockChat}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#08b7ef] text-white shadow-[0_8px_22px_rgba(8,183,239,0.32)] transition hover:scale-[1.02] hover:bg-[#16c3fb] disabled:opacity-50 disabled:pointer-events-none"
                     title="Говорить с AI ассистентом"
                   >
                     <AudioLines className="h-6 w-6" strokeWidth={2.2} />
