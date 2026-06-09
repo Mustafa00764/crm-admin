@@ -184,7 +184,7 @@ export function PublicChatWidget({
 
   const [leadFormOpen, setLeadFormOpen] = React.useState(false)
 
-  // const [formState, setFormState] = React.useState<'open' | 'close'>('close')
+  const [formState, setFormState] = React.useState<'open' | 'close'>('close')
 
   const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(false)
 
@@ -369,7 +369,7 @@ export function PublicChatWidget({
 
     setLeadFormSubmitted(true)
     setLeadFormOpen(false)
-    // setFormState('close')
+    setFormState('close')
 
     setMessages(current => [
       ...current,
@@ -1108,7 +1108,7 @@ export function PublicChatWidget({
 
     if (shouldBlockChat) {
       setLeadFormOpen(true)
-      // setFormState('open')
+      setFormState('open')
 
       setMessages(current => {
         const alreadyHasBlockMessage = current.some(
@@ -1533,7 +1533,8 @@ export function PublicChatWidget({
             'border-t p-3',
             theme === 'light'
               ? 'border-black/10 bg-slate-50'
-              : 'border-white/10 bg-white/5'
+              : 'border-white/10 bg-white/5',
+            formState === 'open' ? '' : 'hidden'
           )}
         >
           <div className="flex items-start justify-between gap-2">
@@ -1543,8 +1544,8 @@ export function PublicChatWidget({
             <Button
               variant={'ghost'}
               size={'lg'}
-              onClick={() => setLeadFormOpen(false)}
-              className="rounded-full text-slate-900/80 hover:text-slate-900 hover:bg-black/10"
+              onClick={() => setFormState('close')}
+              className="rounded-full text-slate-900/80 hover:text-slate-900 hover:bg-black/10!"
             >
               <X className="w-6 h-6" />
             </Button>
@@ -1707,11 +1708,11 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="w-full flex items-center justify-between gap-2">
+        <div className="w-full flex items-center justify-between gap-2 mb-2">
           {!realtimePanelOpen ? (
             <div
               className={cn(
-                'mb-2 flex items-center gap-2 px-1 text-[11px]',
+                'flex items-center gap-2 px-1 text-[11px]',
                 theme === 'light' ? 'text-slate-500' : 'text-white/45'
               )}
             >
@@ -1738,12 +1739,12 @@ export function PublicChatWidget({
             </div>
           ) : null}
 
-          {!leadFormOpen ? (
+          {formState === 'close' ? (
             <Button
               variant={'ghost'}
               size={'lg'}
-              onClick={() => setLeadFormOpen(true)}
-              className="rounded-full text-slate-900/80 hover:text-slate-900 hover:bg-black/10"
+              onClick={() => setFormState('open')}
+              className="rounded-full text-slate-900/80 hover:text-slate-900 bg-black/5 hover:bg-black/10!"
             >
               <ClipboardList className="w-6 h-6" />
             </Button>
@@ -1935,3 +1936,81 @@ export function PublicChatWidget({
     </div>
   )
 }
+const arr = [
+    {
+        "id": "default_assistant_greeting",
+        "role": "assistant",
+        "content": "Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?"
+    },
+    {
+        "id": "msg_1781004795922_3a764a628193d8",
+        "role": "user",
+        "content": "lol",
+        "attachments": []
+    },
+    {
+        "id": "msg_1781004802885_b2260e7667235",
+        "role": "assistant",
+        "content": "На русском или на узбекском удобнее? :)"
+    },
+    {
+        "id": "msg_1781005225360_b1cb0ead781fd",
+        "role": "user",
+        "content": "привет",
+        "attachments": []
+    },
+    {
+        "id": "msg_1781005233276_17e9b95d1c71a8",
+        "role": "assistant",
+        "content": "Привет! Чем могу помочь по профнастилу или металлочерепице? 😊"
+    },
+    {
+        "id": "msg_1781005235861_e298553932e8f",
+        "role": "user",
+        "content": "ого",
+        "attachments": []
+    },
+    {
+        "id": "msg_1781005244078_3dbf6d221ee638",
+        "role": "assistant",
+        "content": "Супер! Есть вопросы по материалам или что-то конкретное подобрать надо? 😊"
+    },
+        {
+        "id": "default_assistant_greeting",
+        "role": "assistant",
+        "content": "Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?"
+    },
+    {
+        "id": "msg_1781004795922_3a764a628193d8",
+        "role": "user",
+        "content": "lol",
+        "attachments": []
+    },
+    {
+        "id": "msg_1781004802885_b2260e7667235",
+        "role": "assistant",
+        "content": "На русском или на узбекском удобнее? :)"
+    },
+    {
+        "id": "msg_1781005225360_b1cb0ead781fd",
+        "role": "user",
+        "content": "привет",
+        "attachments": []
+    },
+    {
+        "id": "msg_1781005233276_17e9b95d1c71a8",
+        "role": "assistant",
+        "content": "Привет! Чем могу помочь по профнастилу или металлочерепице? 😊"
+    },
+    {
+        "id": "msg_1781005235861_e298553932e8f",
+        "role": "user",
+        "content": "ого",
+        "attachments": []
+    },
+    {
+        "id": "msg_1781005244078_3dbf6d221ee638",
+        "role": "assistant",
+        "content": "Супер! Есть вопросы по материалам или что-то конкретное подобрать надо? 😊"
+    }
+]
