@@ -1678,7 +1678,7 @@ export function PublicChatWidget({
               type="button"
               onClick={openFileDialog}
               disabled={pending || shouldBlockChat}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/85 transition hover:bg-white/5 disabled:opacity-50"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-white/5 disabled:opacity-50"
               title="Прикрепить файл"
             >
               <Plus className="h-7 w-7" strokeWidth={2} />
@@ -1701,7 +1701,7 @@ export function PublicChatWidget({
                     ? 'Заполните форму, чтобы продолжить...'
                     : 'Введите сообщение...'
                 }
-                className="min-h-[44px] max-h-28 w-full resize-none border-0 bg-transparent px-1 py-2 text-[16px] leading-6 text-white outline-none placeholder:text-white/45 disabled:opacity-60"
+                className="min-h-[44px] max-h-28 w-full resize-none border-0 bg-transparent px-1 py-2 text-[16px] leading-6 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
               />
             </div>
 
@@ -1710,7 +1710,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={() => setEmojiOpen(current => !current)}
                 disabled={pending || shouldBlockChat}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition hover:bg-white/5 hover:text-white disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-slate-900/75 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
                 title="Смайлики"
               >
                 <Smile className="h-4 w-4" />
@@ -1720,7 +1720,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={() => void startDictation()}
                 disabled={pending || shouldBlockChat}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:bg-white/5 hover:text-white disabled:opacity-50"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-slate-900/80 transition hover:bg-black/5 hover:text-slate-900 disabled:opacity-50"
                 title="Диктовка: распознать речь в текст"
               >
                 <Mic className="h-5 w-5" />
