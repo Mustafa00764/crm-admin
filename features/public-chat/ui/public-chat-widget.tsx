@@ -1897,11 +1897,11 @@ export function PublicChatWidget({
 
         <div
           className={cn(
-            'mt-3 text-center text-[11px]',
+            'mt-3 text-center text-[9px] leading-3',
             theme === 'light' ? 'text-slate-400' : 'text-white/35'
           )}
         >
-          Анна может ошибаться. Рекомендуем проверять важную информацию.
+          Онлайн-консультант может ошибаться. Рекомендуем проверять важную информацию.
         </div>
       </div>
     </div>
