@@ -91,7 +91,10 @@ export async function POST(request: Request) {
     if (!response.ok) {
       console.error('Realtime voice session error:', answerSdp)
       return NextResponse.json(
-        { error: answerSdp || `OpenAI realtime failed with status ${response.status}` },
+        {
+          error:
+            answerSdp || `OpenAI realtime failed with status ${response.status}`
+        },
         { status: response.status }
       )
     }
@@ -109,7 +112,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          error instanceof Error ? error.message : 'Realtime voice session error'
+          error instanceof Error
+            ? error.message
+            : 'Realtime voice session error'
       },
       { status: 500 }
     )

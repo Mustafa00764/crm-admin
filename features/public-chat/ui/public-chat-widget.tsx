@@ -728,11 +728,32 @@ export function PublicChatWidget({
     peerConnection.addTrack(sourceTrack, sourceStream)
 
     if (mode === 'assistant') {
-      const remoteAudio = new Audio()
-      remoteAudio.autoplay = true
+      const remoteAudio = document.createElement('audio')
 
-      peerConnection.ontrack = ({ streams }) => {
-        remoteAudio.srcObject = streams[0]
+      remoteAudio.autoplay = true
+      // remoteAudio.playsInline = true
+      remoteAudio.muted = false
+      remoteAudio.volume = 1
+
+      /*
+       * Важно: без recvonly-трансивера браузер часто не добавляет
+       * отдельный audio m-line для входящего звука ассистента в SDP.
+       * В итоге текстовые события приходят, но голос Анны не слышно.
+       */
+      peerConnection.addTransceiver('audio', {
+        direction: 'recvonly'
+      })
+
+      peerConnection.ontrack = event => {
+        const [remoteStream] = event.streams
+
+        if (remoteStream) {
+          remoteAudio.srcObject = remoteStream
+        } else {
+          const fallbackStream = new MediaStream([event.track])
+          remoteAudio.srcObject = fallbackStream
+        }
+
         void remoteAudio.play().catch(() => {
           setVoiceError(
             'Браузер заблокировал звук. Нажмите на страницу и попробуйте ещё раз.'
@@ -819,6 +840,16 @@ export function PublicChatWidget({
     setVoiceMode('assistant')
     assistantTranscriptRef.current = ''
     committedUserItemsRef.current.clear()
+
+    /*
+     * Запуск происходит по клику пользователя, поэтому здесь можно безопасно
+     * подготовить audio playback до прихода удалённой дорожки.
+     */
+    try {
+      voiceAudioRef.current?.load()
+    } catch {
+      // audio is not created yet
+    }
 
     try {
       await createRealtimePeerConnection({
