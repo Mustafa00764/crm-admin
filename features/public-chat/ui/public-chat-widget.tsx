@@ -1230,6 +1230,8 @@ export function PublicChatWidget({
         'Говорите с Анной…'
       : dictationText || voiceStatus || 'Говорите, я распознаю речь…'
 
+  const isComposerExpanded = input.length > 22 || input.includes('\n')
+
   return (
     <div
       className={cn(
@@ -1673,26 +1675,40 @@ export function PublicChatWidget({
         ) : (
           <div
             className={cn(
-              'grid grid-cols-[auto_auto_auto] items-center gap-2',
-              composerClass
+              'transition-all duration-200',
+              composerClass,
+              isComposerExpanded
+                ? 'grid grid-cols-[auto_minmax(0,1fr)] gap-x-2 gap-y-1'
+                : 'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2'
             )}
           >
             <button
               type="button"
               onClick={openFileDialog}
               disabled={pending || shouldBlockChat}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50"
+              className={cn(
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50',
+                isComposerExpanded ? 'self-start' : ''
+              )}
               title="Прикрепить файл"
             >
               <Plus className="h-6 w-6" strokeWidth={2} />
             </button>
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0">
               <textarea
                 value={input}
                 rows={1}
                 disabled={shouldBlockChat}
-                onChange={event => setInput(event.target.value)}
+                onChange={event => {
+                  setInput(event.target.value)
+
+                  event.currentTarget.style.height = 'auto'
+                  event.currentTarget.style.height = `${Math.min(
+                    event.currentTarget.scrollHeight,
+                    112
+                  )}px`
+                }}
                 onKeyDown={event => {
                   if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault()
@@ -1704,14 +1720,18 @@ export function PublicChatWidget({
                     ? 'Заполните форму, чтобы продолжить...'
                     : 'Введите сообщение...'
                 }
-                className={cn(
-                  'min-h-9 w-full resize-none border-0 bg-transparent px-1 py-2 text-[14px] leading-4 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60',
-                  input.length >= 20 ? 'grid grid-cols-5' : ''
-                )}
+                className="min-h-9 w-full resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
               />
             </div>
 
-            <div className="flex shrink-0 items-center gap-1 self-center">
+            <div
+              className={cn(
+                'flex shrink-0 items-center gap-1',
+                isComposerExpanded
+                  ? 'col-span-2 justify-end pt-1'
+                  : 'self-center'
+              )}
+            >
               <button
                 type="button"
                 onClick={() => setEmojiOpen(current => !current)}
