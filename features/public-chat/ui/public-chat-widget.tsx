@@ -840,13 +840,26 @@ export function PublicChatWidget({
       throw new Error('Браузер не поддерживает доступ к микрофону')
     }
 
-    const sourceStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    })
+    let sourceStream: MediaStream
+
+    try {
+      sourceStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      })
+    } catch (error) {
+      const message =
+        error instanceof DOMException &&
+        (error.name === 'NotAllowedError' ||
+          error.name === 'PermissionDeniedError')
+          ? 'Разрешите доступ к микрофону в браузере'
+          : 'Не удалось получить доступ к микрофону'
+
+      throw new Error(message)
+    }
 
     const peerConnection = new RTCPeerConnection()
 
