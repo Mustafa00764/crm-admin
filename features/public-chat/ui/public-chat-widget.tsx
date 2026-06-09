@@ -1694,7 +1694,7 @@ export function PublicChatWidget({
               </button>
             ) : null}
 
-            <div className="min-w-0">
+            <div className="min-w-0 flex items-center">
               <textarea
                 value={input}
                 rows={1}
