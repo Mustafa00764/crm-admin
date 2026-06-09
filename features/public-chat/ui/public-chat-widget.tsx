@@ -221,7 +221,7 @@ export function PublicChatWidget({
   const voiceModeRef = React.useRef<VoiceMode>('idle')
   const dictationStoppingRef = React.useRef(false)
   const dictationStopTimeoutRef = React.useRef<number | null>(null)
-  const textareaRef = React.useRef(null)
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
 
   const [messages, setMessages] =
     React.useState<PublicChatMessage[]>(getDefaultMessages)
@@ -1184,6 +1184,15 @@ export function PublicChatWidget({
       cleanupRealtime(false)
     }
   }, [])
+
+  // useLayoutEffect отрабатывает СИНХРОННО до того, как пользователь увидит кадр
+  React.useLayoutEffect(() => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto' // Сбрасываем старую высоту
+      textarea.style.height = `${textarea.scrollHeight}px` // Задаем точную высоту под весь текст
+    }
+  }, [input]) // Срабатывает мгновенно при обновлении стейта от голосового ввода
 
   function formatUzPhone(value: string) {
     let digits = value.replace(/\D/g, '')
