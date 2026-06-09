@@ -68,6 +68,7 @@ function uid() {
 const MAX_FILES = 5
 const MAX_FILE_SIZE = 1 * 1024 * 1024 // 1 MB
 const REQUIRED_FORM_AFTER_USER_MESSAGES = 4
+const DEFAULT_ASSISTANT_MESSAGE_ID = 'default_assistant_greeting'
 
 const DICTATION_LANGUAGES: Array<{ value: DictationLanguage; label: string }> =
   [
@@ -99,7 +100,7 @@ function getLeadFormSubmittedKey(siteId: string) {
 function getDefaultMessages(): PublicChatMessage[] {
   return [
     {
-      id: uid(),
+      id: DEFAULT_ASSISTANT_MESSAGE_ID,
       role: 'assistant',
       content:
         'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?'
@@ -180,32 +181,10 @@ export function PublicChatWidget({
 
   const [leadFormOpen, setLeadFormOpen] = React.useState(false)
 
-  const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(() => {
-    if (typeof window === 'undefined') return false
+  const [leadFormSubmitted, setLeadFormSubmitted] = React.useState(false)
 
-    try {
-      return sessionStorage.getItem(getLeadFormSubmittedKey(siteId)) === 'true'
-    } catch {
-      return false
-    }
-  })
-
-  const [leadForm, setLeadForm] = React.useState<LeadFormData>(() => {
-    if (typeof window === 'undefined') return DEFAULT_LEAD_FORM
-
-    try {
-      const saved = sessionStorage.getItem(getLeadFormStorageKey(siteId))
-
-      if (!saved) return DEFAULT_LEAD_FORM
-
-      return {
-        ...DEFAULT_LEAD_FORM,
-        ...JSON.parse(saved)
-      }
-    } catch {
-      return DEFAULT_LEAD_FORM
-    }
-  })
+  const [leadForm, setLeadForm] =
+    React.useState<LeadFormData>(DEFAULT_LEAD_FORM)
 
   const [emojiOpen, setEmojiOpen] = React.useState(false)
   const [voiceMode, setVoiceMode] = React.useState<VoiceMode>('idle')
@@ -218,6 +197,7 @@ export function PublicChatWidget({
   const [dictationText, setDictationText] = React.useState('')
   const [dictationLanguage, setDictationLanguage] =
     React.useState<DictationLanguage>('auto')
+  const [hasHydrated, setHasHydrated] = React.useState(false)
 
   const [attachments, setAttachments] = React.useState<PublicChatAttachment[]>(
     []
@@ -237,27 +217,8 @@ export function PublicChatWidget({
   const dictationStoppingRef = React.useRef(false)
   const dictationStopTimeoutRef = React.useRef<number | null>(null)
 
-  const [messages, setMessages] = React.useState<PublicChatMessage[]>(() => {
-    const defaultMessages = getDefaultMessages()
-
-    if (typeof window === 'undefined') return defaultMessages
-
-    try {
-      const saved = sessionStorage.getItem(getChatStorageKey(siteId))
-
-      if (!saved) return defaultMessages
-
-      const parsed = JSON.parse(saved) as PublicChatMessage[]
-
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        return defaultMessages
-      }
-
-      return parsed
-    } catch {
-      return defaultMessages
-    }
-  })
+  const [messages, setMessages] =
+    React.useState<PublicChatMessage[]>(getDefaultMessages)
 
   const userMessagesCount = messages.filter(
     message => message.role === 'user'
@@ -271,6 +232,57 @@ export function PublicChatWidget({
   }, [voiceMode])
 
   React.useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const loadSavedState = () => {
+      try {
+        const savedMessages = sessionStorage.getItem(getChatStorageKey(siteId))
+
+        if (savedMessages) {
+          const parsedMessages = JSON.parse(
+            savedMessages
+          ) as PublicChatMessage[]
+
+          if (Array.isArray(parsedMessages) && parsedMessages.length > 0) {
+            setMessages(parsedMessages)
+          }
+        }
+      } catch (error) {
+        console.error('Local chat load error:', error)
+      }
+
+      try {
+        const savedLeadForm = sessionStorage.getItem(
+          getLeadFormStorageKey(siteId)
+        )
+
+        if (savedLeadForm) {
+          setLeadForm({
+            ...DEFAULT_LEAD_FORM,
+            ...JSON.parse(savedLeadForm)
+          })
+        }
+      } catch (error) {
+        console.error('Lead form load error:', error)
+      }
+
+      try {
+        setLeadFormSubmitted(
+          sessionStorage.getItem(getLeadFormSubmittedKey(siteId)) === 'true'
+        )
+      } catch (error) {
+        console.error('Lead form submitted load error:', error)
+      }
+
+      setHasHydrated(true)
+    }
+
+    window.queueMicrotask(loadSavedState)
+  }, [siteId])
+
+  React.useEffect(() => {
+    if (!hasHydrated) return
+
     try {
       sessionStorage.setItem(
         getChatStorageKey(siteId),
@@ -279,9 +291,11 @@ export function PublicChatWidget({
     } catch (error) {
       console.error('Local chat save error:', error)
     }
-  }, [messages, siteId])
+  }, [messages, siteId, hasHydrated])
 
   React.useEffect(() => {
+    if (!hasHydrated) return
+
     try {
       sessionStorage.setItem(
         getLeadFormStorageKey(siteId),
@@ -290,9 +304,11 @@ export function PublicChatWidget({
     } catch (error) {
       console.error('Lead form save error:', error)
     }
-  }, [leadForm, siteId])
+  }, [leadForm, siteId, hasHydrated])
 
   React.useEffect(() => {
+    if (!hasHydrated) return
+
     try {
       sessionStorage.setItem(
         getLeadFormSubmittedKey(siteId),
@@ -301,7 +317,7 @@ export function PublicChatWidget({
     } catch (error) {
       console.error('Lead form submitted save error:', error)
     }
-  }, [leadFormSubmitted, siteId])
+  }, [leadFormSubmitted, siteId, hasHydrated])
 
   async function submitLeadForm() {
     const phone = leadForm.phone.trim()
