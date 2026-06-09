@@ -1220,7 +1220,7 @@ export function PublicChatWidget({
   const composerClass = cn(
     'rounded-[32px] border px-3 py-2 shadow-sm transition-colors',
     theme === 'light'
-      ? 'border-black/10 bg-[#202124] text-white'
+      ? 'border-black/10 bg-[#fff] text-white'
       : 'border-white/10 bg-[#202124] text-white'
   )
 
