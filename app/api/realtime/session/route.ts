@@ -53,9 +53,11 @@ export async function POST(request: Request) {
         type: 'realtime',
         model: process.env.OPENAI_REALTIME_MODEL || 'gpt-realtime-2',
         instructions: getRealtimeInstructions(siteId, pageUrl),
+
         reasoning: {
           effort: process.env.OPENAI_REALTIME_REASONING_EFFORT || 'low'
         },
+
         audio: {
           input: {
             transcription: {
@@ -63,13 +65,29 @@ export async function POST(request: Request) {
                 process.env.OPENAI_REALTIME_TRANSCRIBE_MODEL ||
                 'gpt-4o-mini-transcribe'
             },
+
             turn_detection: {
               type: 'server_vad',
-              threshold: 0.5,
-              prefix_padding_ms: 300,
-              silence_duration_ms: 650
+
+              // Чем выше threshold, тем меньше реакция на тихий шум.
+              // Было 0.5 — слишком чувствительно.
+              threshold: 0.78,
+
+              // Даём больше контекста перед началом речи.
+              prefix_padding_ms: 500,
+
+              // Дольше ждём тишину перед завершением фразы.
+              // Так ассистент не будет реагировать на короткие шумы.
+              silence_duration_ms: 1100,
+
+              // Главное: не обрывать ответ Анны от любого звука.
+              interrupt_response: false,
+
+              // Ответ всё равно создаётся после нормальной фразы пользователя.
+              create_response: true
             }
           },
+
           output: {
             voice: process.env.OPENAI_REALTIME_VOICE || 'marin'
           }
