@@ -350,7 +350,7 @@ export function PublicChatWidget({
           comment: {
             text:
               leadForm.comment ||
-              'Форма заполнена после нескольких сообщений в чате',
+              'Нет',
             pageUrl,
             siteId,
             attachments: []
@@ -1678,10 +1678,10 @@ export function PublicChatWidget({
               type="button"
               onClick={openFileDialog}
               disabled={pending || shouldBlockChat}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-white/5 disabled:opacity-50"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-900/85 transition hover:bg-black/5 disabled:opacity-50"
               title="Прикрепить файл"
             >
-              <Plus className="h-7 w-7" strokeWidth={2} />
+              <Plus className="h-5 w-5" strokeWidth={2} />
             </button>
 
             <div className="min-w-0 flex-1">
