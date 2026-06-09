@@ -1192,7 +1192,11 @@ export function PublicChatWidget({
       textarea.style.height = 'auto' // Сбрасываем старую высоту
       textarea.style.height = `${textarea.scrollHeight}px` // Задаем точную высоту под весь текст
     }
-  }, [input]) // Срабатывает мгновенно при обновлении стейта от голосового ввода
+  }, [input, liveUserTranscript, liveAssistantTranscript]) // Срабатывает мгновенно при обновлении стейта от голосового ввода
+
+  React.useLayoutEffect(() => {
+    scrollToBottom()
+  }, [liveUserTranscript, liveAssistantTranscript])
 
   function formatUzPhone(value: string) {
     let digits = value.replace(/\D/g, '')
