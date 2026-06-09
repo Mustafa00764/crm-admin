@@ -1708,7 +1708,7 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="w-full h-9 flex items-center justify-between gap-2 mb-1">
+        <div className="w-full h-8 flex items-center justify-between gap-2 mb-1">
           {!realtimePanelOpen ? (
             <div
               className={cn(
@@ -1726,7 +1726,7 @@ export function PublicChatWidget({
                     type="button"
                     onClick={() => setDictationLanguage(language.value)}
                     className={cn(
-                      'h-9 px-3 text-[11px] transition font-medium',
+                      'h-full px-3 text-[11px] transition font-medium',
                       dictationLanguage === language.value
                         ? 'bg-[#08b7ef] text-white'
                         : 'hover:bg-current/10'
@@ -1744,7 +1744,7 @@ export function PublicChatWidget({
               variant={'ghost'}
               size={'lg'}
               onClick={() => setFormState('open')}
-              className="w-9 h-9 rounded-full text-slate-900/80 hover:text-slate-900 bg-black/5 hover:bg-black/10!"
+              className="w-8 h-8 rounded-full text-slate-900/80 hover:text-slate-900 bg-black/5 hover:bg-black/10!"
             >
               <ClipboardList className="w-6 h-6" />
             </Button>
