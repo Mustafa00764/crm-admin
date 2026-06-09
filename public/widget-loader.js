@@ -104,6 +104,7 @@
     height: openedHeight + buttonSize + 24 + 'px',
     background: 'transparent',
     pointerEvents: 'none'
+
   })
 
   /**
@@ -315,7 +316,7 @@
     width: getPanelWidth() + 'px',
     height: getPanelHeight() + 'px',
 
-    border: '0',
+    border: '1px solid #e5e5e5',
     borderRadius: '18px',
     background: 'transparent',
 
