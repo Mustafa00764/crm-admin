@@ -1708,7 +1708,7 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="w-full h-8 flex items-center justify-between gap-2 mb-1">
+        <div className="w-full h-8 flex items-center justify-between gap-2 mb-1.5">
           {!realtimePanelOpen ? (
             <div
               className={cn(
@@ -1744,7 +1744,7 @@ export function PublicChatWidget({
               variant={'ghost'}
               size={'lg'}
               onClick={() => setFormState('open')}
-              className="w-8 h-8 rounded-full text-slate-900/80 hover:text-slate-900 bg-black/5 hover:bg-black/10!"
+              className="w-8 h-8 rounded-full border-none text-white bg-[#08b7ef]/80 hover:bg-[#08b7ef]!"
             >
               <ClipboardList className="w-6 h-6" />
             </Button>
