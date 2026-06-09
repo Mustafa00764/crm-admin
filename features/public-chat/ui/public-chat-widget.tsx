@@ -213,6 +213,11 @@ export function PublicChatWidget({
   const assistantTranscriptRef = React.useRef('')
   const dictationTranscriptRef = React.useRef('')
   const committedUserItemsRef = React.useRef(new Set<string>())
+  const committedAssistantResponsesRef = React.useRef(new Set<string>())
+  const lastRealtimeUserTextRef = React.useRef('')
+  const lastRealtimeUserTextAtRef = React.useRef(0)
+  const lastRealtimeAssistantTextRef = React.useRef('')
+  const lastRealtimeAssistantTextAtRef = React.useRef(0)
   const voiceModeRef = React.useRef<VoiceMode>('idle')
   const dictationStoppingRef = React.useRef(false)
   const dictationStopTimeoutRef = React.useRef<number | null>(null)
@@ -530,6 +535,7 @@ export function PublicChatWidget({
     dictationTranscriptRef.current = ''
     dictationStoppingRef.current = false
     committedUserItemsRef.current.clear()
+    committedAssistantResponsesRef.current.clear()
     voiceModeRef.current = 'idle'
 
     setVoiceMode('idle')
@@ -548,6 +554,92 @@ export function PublicChatWidget({
         .filter(Boolean)
         .join(' ') || ''
     )
+  }
+
+  function shouldSkipRecentRealtimeText({
+    text,
+    lastTextRef,
+    lastTextAtRef,
+    windowMs = 5000
+  }: {
+    text: string
+    lastTextRef: React.MutableRefObject<string>
+    lastTextAtRef: React.MutableRefObject<number>
+    windowMs?: number
+  }) {
+    const normalizedText = normalizeTranscript(text)
+    const now = Date.now()
+
+    if (
+      normalizedText &&
+      normalizedText === lastTextRef.current &&
+      now - lastTextAtRef.current < windowMs
+    ) {
+      return true
+    }
+
+    lastTextRef.current = normalizedText
+    lastTextAtRef.current = now
+
+    return false
+  }
+
+  function appendRealtimeUserMessage(text: string) {
+    const normalizedText = normalizeTranscript(text)
+
+    if (!normalizedText) return
+
+    if (
+      shouldSkipRecentRealtimeText({
+        text: normalizedText,
+        lastTextRef: lastRealtimeUserTextRef,
+        lastTextAtRef: lastRealtimeUserTextAtRef
+      })
+    ) {
+      return
+    }
+
+    setLiveUserTranscript(normalizedText)
+    setMessages(current => [
+      ...current,
+      {
+        id: uid(),
+        role: 'user',
+        content: normalizedText
+      }
+    ])
+
+    void sendLeadFromRealtimeTranscript(normalizedText)
+  }
+
+  function appendRealtimeAssistantMessage(text: string, responseId?: string) {
+    const normalizedText = normalizeTranscript(text)
+
+    if (!normalizedText) return
+
+    if (responseId) {
+      if (committedAssistantResponsesRef.current.has(responseId)) return
+      committedAssistantResponsesRef.current.add(responseId)
+    }
+
+    if (
+      shouldSkipRecentRealtimeText({
+        text: normalizedText,
+        lastTextRef: lastRealtimeAssistantTextRef,
+        lastTextAtRef: lastRealtimeAssistantTextAtRef
+      })
+    ) {
+      return
+    }
+
+    setMessages(current => [
+      ...current,
+      {
+        id: uid(),
+        role: 'assistant',
+        content: normalizedText
+      }
+    ])
   }
 
   function handleVoiceAssistantEvent(event: RealtimeEvent) {
@@ -584,17 +676,7 @@ export function PublicChatWidget({
 
       if (!text) return
 
-      setLiveUserTranscript(text)
-      setMessages(current => [
-        ...current,
-        {
-          id: uid(),
-          role: 'user',
-          content: text
-        }
-      ])
-
-      void sendLeadFromRealtimeTranscript(text)
+      appendRealtimeUserMessage(text)
       return
     }
 
@@ -617,16 +699,7 @@ export function PublicChatWidget({
         event.transcript || event.text || assistantTranscriptRef.current
       )
 
-      if (text) {
-        setMessages(current => [
-          ...current,
-          {
-            id: uid(),
-            role: 'assistant',
-            content: text
-          }
-        ])
-      }
+      appendRealtimeAssistantMessage(text, event.response?.id)
 
       assistantTranscriptRef.current = ''
       setLiveAssistantTranscript('')
@@ -637,15 +710,8 @@ export function PublicChatWidget({
     if (event.type === 'response.done') {
       const text = extractTranscriptFromResponse(event)
 
-      if (text && !assistantTranscriptRef.current) {
-        setMessages(current => [
-          ...current,
-          {
-            id: uid(),
-            role: 'assistant',
-            content: text
-          }
-        ])
+      if (text) {
+        appendRealtimeAssistantMessage(text, event.response?.id)
       }
 
       assistantTranscriptRef.current = ''
@@ -731,7 +797,6 @@ export function PublicChatWidget({
       const remoteAudio = document.createElement('audio')
 
       remoteAudio.autoplay = true
-      // remoteAudio.playsInline = true
       remoteAudio.muted = false
       remoteAudio.volume = 1
 
@@ -840,6 +905,11 @@ export function PublicChatWidget({
     setVoiceMode('assistant')
     assistantTranscriptRef.current = ''
     committedUserItemsRef.current.clear()
+    committedAssistantResponsesRef.current.clear()
+    lastRealtimeUserTextRef.current = ''
+    lastRealtimeUserTextAtRef.current = 0
+    lastRealtimeAssistantTextRef.current = ''
+    lastRealtimeAssistantTextAtRef.current = 0
 
     /*
      * Запуск происходит по клику пользователя, поэтому здесь можно безопасно
