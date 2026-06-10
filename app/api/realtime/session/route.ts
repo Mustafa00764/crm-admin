@@ -73,7 +73,7 @@ export async function POST(request: Request) {
             }
           },
           output: {
-            voice: process.env.OPENAI_REALTIME_VOICE || 'coral'
+            voice: process.env.OPENAI_REALTIME_VOICE || 'shimmer'
           }
         }
       })
