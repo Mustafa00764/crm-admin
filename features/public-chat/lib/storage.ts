@@ -21,7 +21,7 @@ export function getDefaultMessages(currentSite: string): PublicChatMessage[] {
       'Здравствуйте! Я Анна 😊 Подскажу по материалам и помогу с выбором.',
 
     profnastilvtashkente:
-      'Здравствуйте! Я Анна 😊 Подскажу по профнастилу, металлочерепице и комплектующим.',
+      'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?',
 
     default:
       'Здравствуйте! Я Анна 😊 Подскажу по материалам, помогу с выбором и передам заявку менеджеру.'
