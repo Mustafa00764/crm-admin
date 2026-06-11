@@ -66,10 +66,24 @@
    * 1. Узбекский
    * 2. Русский
    */
-  const tooltipMessages = [
-    'Savolingiz bormi? Yozing, yordam beraman 😊',
-    'Есть вопросы? Напишите, мы онлайн 😊'
+
+  const sitesList = [
+    {
+      id: 'profnastilmoskva',
+      messages: [
+        'Savolingiz bormi? Yozing, yordam beraman 😊',
+        'Есть вопросы? Напишите, мы онлайн 😊'
+      ]
+    },
+    {
+      id: 'evroshtaketnikmoskva',
+      messages: [
+        'Есть вопросы? Напишите, я помогу 😊',
+        'Нужна помощь с выбором? Мы онлайн 😊'
+      ]
+    }
   ]
+  const tooltipMessages = sitesList.filter(site => site.id === siteId).messages
 
   /**
    * currentTooltipText хранит последний показанный текст.
@@ -104,7 +118,6 @@
     height: openedHeight + buttonSize + 24 + 'px',
     background: 'transparent',
     pointerEvents: 'none'
-
   })
 
   /**

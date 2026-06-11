@@ -775,3 +775,86 @@ export function PublicChatWidget({
     </div>
   )
 }
+
+export const arr = [
+  {
+    id: 'default_assistant_greeting',
+    role: 'assistant',
+    content:
+      'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?'
+  },
+  {
+    id: 'msg_1781004795922_3a764a628193d8',
+    role: 'user',
+    content: 'lol',
+    attachments: []
+  },
+  {
+    id: 'msg_1781004802885_b2260e7667235',
+    role: 'assistant',
+    content: 'На русском или на узбекском удобнее? :)'
+  },
+  {
+    id: 'msg_1781005225360_b1cb0ead781fd',
+    role: 'user',
+    content: 'привет',
+    attachments: []
+  },
+  {
+    id: 'msg_1781005233276_17e9b95d1c71a8',
+    role: 'assistant',
+    content: 'Привет! Чем могу помочь по профнастилу или металлочерепице? 😊'
+  },
+  {
+    id: 'msg_1781005235861_e298553932e8f',
+    role: 'user',
+    content: 'ого',
+    attachments: []
+  },
+  {
+    id: 'msg_1781005244078_3dbf6d221ee638',
+    role: 'assistant',
+    content:
+      'Супер! Есть вопросы по материалам или что-то конкретное подобрать надо? 😊'
+  },
+  {
+    id: 'default_assistant_greeting',
+    role: 'assistant',
+    content:
+      'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?'
+  },
+  {
+    id: 'msg_1781004795922_3a764a628193d8',
+    role: 'user',
+    content: 'lol',
+    attachments: []
+  },
+  {
+    id: 'msg_1781004802885_b2260e7667235',
+    role: 'assistant',
+    content: 'На русском или на узбекском удобнее? :)'
+  },
+  {
+    id: 'msg_1781005225360_b1cb0ead781fd',
+    role: 'user',
+    content: 'привет',
+    attachments: []
+  },
+  {
+    id: 'msg_1781005233276_17e9b95d1c71a8',
+    role: 'assistant',
+    content: 'Привет! Чем могу помочь по профнастилу или металлочерепице? 😊'
+  },
+  {
+    id: 'msg_1781005235861_e298553932e8f',
+    role: 'user',
+    content: 'ого',
+    attachments: []
+  },
+  {
+    id: 'msg_1781005244078_3dbf6d221ee638',
+    role: 'assistant',
+    content:
+      'Супер! Есть вопросы по материалам или что-то конкретное подобрать надо? 😊'
+  }
+]
