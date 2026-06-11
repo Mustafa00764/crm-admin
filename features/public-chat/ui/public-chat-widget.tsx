@@ -69,7 +69,8 @@ export function PublicChatWidget({
     setHasHydrated,
     shouldBlockChat
   } = useChatState({
-    leadFormSubmitted
+    leadFormSubmitted,
+    pageUrl
   })
 
   const { messagesEndRef, fileInputRef, textareaRef } = useChatRefs()

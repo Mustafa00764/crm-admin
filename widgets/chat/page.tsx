@@ -13,11 +13,9 @@ export default async function WidgetChatPage({
 }: WidgetChatPageProps) {
   const params = await searchParams
 
-  return (
-    <PublicChatWidget
-      siteId={params.siteId || 'evroshtaketnikmoskva'}
-      theme={params.theme || 'light'}
-      pageUrl={params.pageUrl || ''}
-    />
-  )
+  const siteId = params.siteId || 'evroshtaketnikmoskva'
+  const theme = params.theme || 'light'
+  const pageUrl = params.pageUrl || ''
+
+  return <PublicChatWidget siteId={siteId} theme={theme} pageUrl={pageUrl} />
 }
