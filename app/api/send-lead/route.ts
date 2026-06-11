@@ -111,7 +111,7 @@ export async function POST(req: Request) {
     const formattedComment = formatComment(body.comment)
 
     const { data, error } = await resend.emails.send({
-      from: 'Заявки сайта <noreply@profnastilvtashkente.uz>',
+      from: 'onboarding@resend.dev',
       to: 'profnastilvtashkente@gmail.com',
       subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
