@@ -113,7 +113,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'max534103@gmail.com',
+      to: 'profnastilvtashkente@gmail.com',
       subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
