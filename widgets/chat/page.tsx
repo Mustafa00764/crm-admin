@@ -1,19 +1,23 @@
-import { PublicChatWidget } from "@/features/public-chat/ui/public-chat-widget"
+import { PublicChatWidget } from '@/features/public-chat/ui/public-chat-widget'
 
-export default function Page({
-  searchParams
-}: {
-  searchParams: {
+type WidgetChatPageProps = {
+  searchParams: Promise<{
     siteId?: string
     theme?: string
     pageUrl?: string
-  }
-}) {
+  }>
+}
+
+export default async function WidgetChatPage({
+  searchParams
+}: WidgetChatPageProps) {
+  const params = await searchParams
+
   return (
     <PublicChatWidget
-      siteId={searchParams.siteId ?? 'default'}
-      theme={searchParams.theme ?? 'dark'}
-      pageUrl={searchParams.pageUrl ?? ''}
+      siteId={params.siteId || 'evroshtaketnikmoskva'}
+      theme={params.theme || 'light'}
+      pageUrl={params.pageUrl || ''}
     />
   )
 }

@@ -16,7 +16,7 @@ export function useChatState({ leadFormSubmitted }: UseChatStateParams) {
   const [pending, setPending] = useState(false)
   const { currentSite } = useCurrentSite()
 
-  const [messages, setMessages] = useState<PublicChatMessage[]>(
+  const [messages, setMessages] = useState<PublicChatMessage[]>(() =>
     getDefaultMessages(currentSite)
   )
 
