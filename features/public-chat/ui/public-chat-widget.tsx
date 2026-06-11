@@ -70,7 +70,7 @@ export function PublicChatWidget({
     shouldBlockChat
   } = useChatState({
     leadFormSubmitted,
-    pageUrl
+    siteId
   })
 
   const { messagesEndRef, fileInputRef, textareaRef } = useChatRefs()

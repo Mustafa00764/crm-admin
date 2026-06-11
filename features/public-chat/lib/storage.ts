@@ -14,25 +14,21 @@ export function getLeadFormSubmittedKey(siteId: string) {
 }
 
 export function getDefaultMessages(currentSite: string): PublicChatMessage[] {
-  let content: string = ''
+  const siteId = currentSite?.trim() || 'default'
 
-  switch (true) {
-    case currentSite === 'evroshtaketnikmoskva':
-      content =
-        'Здравствуйте! Я Анна 😊 Подскажу по материалам и помогу с выбором.'
-      break
-    case currentSite === 'profnastilvtashkente':
-      content =
-        'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?'
-      break
-    case currentSite === 'default':
-      content =
-        'Здравствуйте! Я Анна 😊 Подскажу по материалам, помогу с выбором и передам заявку менеджеру.'
-      break
+  const messagesBySite: Record<string, string> = {
+    evroshtaketnikmoskva:
+      'Здравствуйте! Я Анна 😊 Подскажу по материалам и помогу с выбором.',
+
+    profnastilvtashkente:
+      'Здравствуйте! Я Анна 😊 Подскажу по профнастилу, металлочерепице и комплектующим.',
+
     default:
-      content =
-        'Здравствуйте! Я Анна 😊 Подскажу по материалам, помогу с выбором и передам заявку менеджеру.'
+      'Здравствуйте! Я Анна 😊 Подскажу по материалам, помогу с выбором и передам заявку менеджеру.'
   }
+
+  const content = messagesBySite[siteId] || messagesBySite.default
+
   return [
     {
       id: DEFAULT_ASSISTANT_MESSAGE_ID,

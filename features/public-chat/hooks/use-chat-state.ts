@@ -8,15 +8,15 @@ import { REQUIRED_FORM_AFTER_USER_MESSAGES } from '../config/public-chat-config'
 
 type UseChatStateParams = {
   leadFormSubmitted: boolean
-  pageUrl: string
+  siteId: string
 }
 
-export function useChatState({ leadFormSubmitted, pageUrl }: UseChatStateParams) {
+export function useChatState({ leadFormSubmitted, siteId }: UseChatStateParams) {
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
 
   const [messages, setMessages] = useState<PublicChatMessage[]>(() =>
-    getDefaultMessages(pageUrl)
+    getDefaultMessages(siteId)
   )
 
   const [attachments, setAttachments] = useState<PublicChatAttachment[]>([])
