@@ -45,3 +45,8 @@ export type RealtimeEvent = {
 export type VoiceMode = 'idle' | 'assistant' | 'dictation'
 
 export type DictationLanguage = 'ru' | 'uz' | 'en' | 'auto'
+
+export type Site = {
+  id: string
+  messages: string[]
+}

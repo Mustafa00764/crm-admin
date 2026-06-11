@@ -1,3 +1,4 @@
+
 ;(function () {
   /**
    * currentScript — это <script>, через который подключили виджет.
@@ -83,13 +84,10 @@
       ]
     }
   ]
-  const tooltipMessages = sitesList.filter(site => site.id === siteId)[0]
-    .messages
-  console.log(
-    tooltipMessages,
-    'sitesList:',
-    sitesList.filter(site => site.id === siteId)
-  )
+
+  const currentSite = sitesList.filter(site => site.id === siteId)[0]
+
+  const tooltipMessages = currentSite.messages
 
   /**
    * currentTooltipText хранит последний показанный текст.

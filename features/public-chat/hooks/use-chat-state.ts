@@ -5,6 +5,7 @@ import type {
 } from '../model/chat.types'
 import { getDefaultMessages } from '../lib/storage'
 import { REQUIRED_FORM_AFTER_USER_MESSAGES } from '../config/public-chat-config'
+import { useCurrentSite } from '@/shared/hooks/use-current-site'
 
 type UseChatStateParams = {
   leadFormSubmitted: boolean
@@ -13,9 +14,11 @@ type UseChatStateParams = {
 export function useChatState({ leadFormSubmitted }: UseChatStateParams) {
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(false)
+  const { currentSite } = useCurrentSite()
 
-  const [messages, setMessages] =
-    useState<PublicChatMessage[]>(getDefaultMessages)
+  const [messages, setMessages] = useState<PublicChatMessage[]>(
+    getDefaultMessages(currentSite)
+  )
 
   const [attachments, setAttachments] = useState<PublicChatAttachment[]>([])
   const [emojiOpen, setEmojiOpen] = useState(false)
