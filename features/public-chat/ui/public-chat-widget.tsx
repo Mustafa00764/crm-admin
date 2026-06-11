@@ -24,7 +24,6 @@ import { useChatStorage } from '../hooks/use-chat-storage'
 import { useRealtimeVoice } from '../hooks/use-realtime-voice'
 import {
   formatPhone,
-  getPhoneCountryBySite,
   getPhoneCountryByValue,
   isValidPhone,
   sendLeadFromRealtimeTranscript
@@ -43,6 +42,8 @@ export function PublicChatWidget({
   theme: string
   pageUrl: string
 }) {
+  console.log(siteId);
+  
   const {
     phoneError,
     setPhoneError,
