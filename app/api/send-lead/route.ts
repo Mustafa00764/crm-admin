@@ -7,7 +7,6 @@ export const runtime = 'nodejs'
 
 // Лучше хранить ключ в .env.local:
 // RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx
-const resend = new Resend('re_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ')
 
 type SendLeadBody = {
   clientName?: string
@@ -26,6 +25,21 @@ type SendLeadBody = {
           size: number
         }>
       }
+}
+
+type EmailType = {
+  email: string
+  key: string
+}
+
+const profnastilvtashkente: EmailType = {
+  email: 'profnastilvtashkente@gmail.com',
+  key: 're_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ'
+}
+
+const evroshtaketnikmoskva: EmailType = {
+  email: 'evroshtaketnikmoskvachat@gmail.com',
+  key: 're_R6pEraTb_8m7SDT3ywTmKujrwAmnx7hXa'
 }
 
 function escapeHtml(value: unknown) {
@@ -110,9 +124,16 @@ export async function POST(req: Request) {
 
     const formattedComment = formatComment(body.comment)
 
+    const site =
+      formattedComment.siteId === 'profnastilvtashkente'
+        ? profnastilvtashkente
+        : evroshtaketnikmoskva
+
+    const resend = new Resend(site.key)
+
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'profnastilvtashkente@gmail.com',
+      to: site.email,
       subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
