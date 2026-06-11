@@ -1,6 +1,6 @@
 import type { LeadFormData, PublicChatMessage } from '../model/chat.types'
 import { uid } from './uid'
-import { isValidUzPhone } from './phone'
+import { isValidPhone } from './phone'
 import { Dispatch, SetStateAction } from 'react'
 
 type SubmitLeadFormParams = {
@@ -31,7 +31,7 @@ export async function submitLeadForm({
     return
   }
 
-  if (!isValidUzPhone(phone)) {
+  if (!isValidPhone(phone)) {
     setPhoneError('Введите номер в формате +998 XX XXX XX XX')
     return
   }

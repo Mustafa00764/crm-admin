@@ -42,8 +42,6 @@ export function PublicChatWidget({
   theme: string
   pageUrl: string
 }) {
-  console.log(siteId);
-  
   const {
     phoneError,
     setPhoneError,
@@ -440,8 +438,8 @@ export function PublicChatWidget({
                 }}
                 placeholder={
                   siteId === 'profnastilvtashkente'
-                    ? '+998 90 123 45 67 или +7 999 123 45 67'
-                    : '+7 999 123 45 67 или +998 90 123 45 67'
+                    ? '+998 90 123 45 67'
+                    : '+7 999 123 45 67'
                 }
                 className={cn(
                   'h-10 rounded-xl border px-3 text-sm outline-none transition',
@@ -453,7 +451,7 @@ export function PublicChatWidget({
                 )}
               />
 
-              {phoneError ? (
+              {!!phoneError ? (
                 <p className="px-1 text-xs text-red-500">{phoneError}</p>
               ) : null}
             </div>
