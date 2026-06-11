@@ -24,6 +24,7 @@ import { useChatStorage } from '../hooks/use-chat-storage'
 import { useRealtimeVoice } from '../hooks/use-realtime-voice'
 import {
   formatPhone,
+  getPhoneCountryByValue,
   isValidPhone,
   sendLeadFromRealtimeTranscript
 } from '../lib/phone'
@@ -406,14 +407,11 @@ export function PublicChatWidget({
                 value={leadForm.phone}
                 inputMode="tel"
                 autoComplete="tel"
-                maxLength={siteId === 'profnastilvtashkente' ? 17 : 18}
+                maxLength={18}
                 onChange={event => {
-                  const country =
-                    siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
-                  const formattedPhone = formatPhone(
-                    event.target.value,
-                    country
-                  )
+                  const rawValue = event.target.value
+                  const country = getPhoneCountryByValue(rawValue, siteId)
+                  const formattedPhone = formatPhone(rawValue, country)
 
                   setLeadForm(current => ({
                     ...current,
@@ -425,8 +423,7 @@ export function PublicChatWidget({
                   }
                 }}
                 onBlur={() => {
-                  const country =
-                    siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+                  const country = getPhoneCountryByValue(leadForm.phone, siteId)
 
                   if (
                     leadForm.phone &&

@@ -153,6 +153,16 @@ export function isValidPhone(value: string, country: PhoneCountry = 'ru') {
   return isValidRuPhone(value)
 }
 
+export function getPhoneCountryByValue(value: string, siteId: string): 'ru' | 'uz' {
+  const digits = value.replace(/\D/g, '')
+
+  if (digits.startsWith('998')) return 'uz'
+  if (digits.startsWith('7')) return 'ru'
+  if (digits.startsWith('8')) return 'ru'
+
+  return siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+}
+
 export async function sendLeadFromRealtimeTranscript(
   text: string,
   pageUrl: string,
