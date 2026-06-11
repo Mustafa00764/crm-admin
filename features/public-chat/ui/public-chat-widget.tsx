@@ -574,7 +574,7 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="w-full h-8 flex items-center justify-between gap-2 mb-1.5">
+        <div className="w-full max-h-8 h-auto flex items-center justify-between gap-2 mb-1.5">
           {!realtimePanelOpen && siteId === 'profnastilvtashkente' ? (
             <div
               className={cn(
