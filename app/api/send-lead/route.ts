@@ -7,7 +7,7 @@ export const runtime = 'nodejs'
 
 // Лучше хранить ключ в .env.local:
 // RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx
-const resend = new Resend('re_cck4yn6G_BVzYCkYppPjEKYNcq8QacY8Z')
+const resend = new Resend('re_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ')
 
 type SendLeadBody = {
   clientName?: string
@@ -100,7 +100,6 @@ function formatComment(comment: SendLeadBody['comment']) {
 
 export async function POST(req: Request) {
   try {
-
     const body = (await req.json()) as SendLeadBody
 
     const phone = body.phone?.trim()
@@ -112,7 +111,7 @@ export async function POST(req: Request) {
     const formattedComment = formatComment(body.comment)
 
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'Заявки сайта <noreply@profnastilvtashkente.uz>',
       to: 'profnastilvtashkente@gmail.com',
       subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
