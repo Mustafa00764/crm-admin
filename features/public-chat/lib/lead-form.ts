@@ -31,11 +31,6 @@ export async function submitLeadForm({
     return
   }
 
-  if (!isValidPhone(phone)) {
-    setPhoneError('Введите номер в формате +998 XX XXX XX XX')
-    return
-  }
-
   try {
     await fetch('/api/send-lead', {
       method: 'POST',
