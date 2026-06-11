@@ -77,7 +77,7 @@
 
   const sitesList = [
     {
-      id: 'profnastilmoskva',
+      id: 'profnastilvtashkente',
       messages: [
         'Savolingiz bormi? Yozing, yordam beraman 😊',
         'Есть вопросы? Напишите, мы онлайн 😊'
@@ -92,9 +92,9 @@
     }
   ]
 
-  const currentSite = sitesList.find(site => site.id === siteId)
+  const currentSite = sitesList.find(site => site.id === siteId) || defaultMessage
 
-  const tooltipMessages = currentSite.messages || defaultMessage
+  const tooltipMessages = currentSite.messages 
 
   /**
    * currentTooltipText хранит последний показанный текст.
