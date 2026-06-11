@@ -83,9 +83,13 @@
       ]
     }
   ]
-  const tooltipMessages = sitesList.filter(site => site.id === siteId).messages
-  console.log(tooltipMessages, 'sitesList:',sitesList.filter(site => site.id === siteId));
-  
+  const tooltipMessages = sitesList.filter(site => site.id === siteId)[0]
+    .messages
+  console.log(
+    tooltipMessages,
+    'sitesList:',
+    sitesList.filter(site => site.id === siteId)
+  )
 
   /**
    * currentTooltipText хранит последний показанный текст.
