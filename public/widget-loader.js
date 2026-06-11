@@ -1,4 +1,3 @@
-
 ;(function () {
   /**
    * currentScript — это <script>, через который подключили виджет.
@@ -68,6 +67,14 @@
    * 2. Русский
    */
 
+  const defaultMessage = {
+    id: 'default',
+    messages: [
+      'Есть вопросы? Напишите, я помогу 😊',
+      'Нужна помощь с выбором? Мы онлайн 😊'
+    ]
+  }
+
   const sitesList = [
     {
       id: 'profnastilmoskva',
@@ -85,9 +92,9 @@
     }
   ]
 
-  const currentSite = sitesList.filter(site => site.id === siteId)[0]
+  const currentSite = sitesList.find(site => site.id === siteId)
 
-  const tooltipMessages = currentSite.messages
+  const tooltipMessages = currentSite.messages || defaultMessage
 
   /**
    * currentTooltipText хранит последний показанный текст.
