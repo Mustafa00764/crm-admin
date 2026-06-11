@@ -124,6 +124,9 @@ export async function POST(req: Request) {
 
     const formattedComment = formatComment(body.comment)
 
+    console.log('formattedComment', formattedComment)
+    console.log('body', body)
+
     const site =
       formattedComment.siteId === 'profnastilvtashkente'
         ? profnastilvtashkente
@@ -137,7 +140,7 @@ export async function POST(req: Request) {
       subject: 'Новая заявка с сайта profnastilvtashkente',
       html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
-      <h2>Новая заявка с сайта profnastilvtashkente.uz</h2>
+      <h2>Новая заявка с сайта ${formattedComment.siteId}</h2>
 
       <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
 
