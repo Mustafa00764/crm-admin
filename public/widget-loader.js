@@ -31,6 +31,7 @@
   let position = currentScript.getAttribute('data-position') || 'left'
   let theme = currentScript.getAttribute('data-theme') || 'light'
 
+  console.log('LOADER SITE ID:', siteId)
   /**
    * Основные размеры.
    *
@@ -92,9 +93,10 @@
     }
   ]
 
-  const currentSite = sitesList.find(site => site.id === siteId) || defaultMessage
+  const currentSite =
+    sitesList.find(site => site.id === siteId) || defaultMessage
 
-  const tooltipMessages = currentSite.messages 
+  const tooltipMessages = currentSite.messages
 
   /**
    * currentTooltipText хранит последний показанный текст.
@@ -316,6 +318,8 @@
     encodeURIComponent(theme) +
     '&pageUrl=' +
     encodeURIComponent(window.location.href)
+
+  console.log('IFRAME URL:', iframe.src)
 
   iframe.title = 'Online Chat'
   iframe.allow = 'microphone'
