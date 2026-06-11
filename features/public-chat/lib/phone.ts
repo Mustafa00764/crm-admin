@@ -1,6 +1,6 @@
 type PhoneCountry = 'uz' | 'ru'
 
-function getPhoneCountryBySite(siteId?: string): PhoneCountry {
+export function getPhoneCountryBySite(siteId?: string): PhoneCountry {
   if (siteId === 'profnastilvtashkente') return 'uz'
   if (siteId === 'evroshtaketnikmoskva') return 'ru'
 
@@ -98,7 +98,7 @@ export function formatUzPhone(value: string) {
 }
 
 export function formatRuPhone(value: string) {
-  let digits = normalizeDigits(value)
+  let digits = value.replace(/\D/g, '')
 
   if (digits.startsWith('8')) {
     digits = `7${digits.slice(1)}`
@@ -153,14 +153,27 @@ export function isValidPhone(value: string, country: PhoneCountry = 'ru') {
   return isValidRuPhone(value)
 }
 
-export function getPhoneCountryByValue(value: string, siteId: string): 'ru' | 'uz' {
+export function getPhoneCountryByValue(
+  value: string,
+  siteId?: string
+): 'ru' | 'uz' {
   const digits = value.replace(/\D/g, '')
 
   if (digits.startsWith('998')) return 'uz'
   if (digits.startsWith('7')) return 'ru'
   if (digits.startsWith('8')) return 'ru'
 
-  return siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+  return getPhoneCountryBySite(siteId)
+}
+
+export function formatAnyPhone(value: string) {
+  const country = getPhoneCountryByValue(value)
+
+  if (country === 'uz') {
+    return formatUzPhone(value)
+  }
+
+  return formatRuPhone(value)
 }
 
 export async function sendLeadFromRealtimeTranscript(

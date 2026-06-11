@@ -24,6 +24,8 @@ import { useChatStorage } from '../hooks/use-chat-storage'
 import { useRealtimeVoice } from '../hooks/use-realtime-voice'
 import {
   formatPhone,
+  getPhoneCountryBySite,
+  getPhoneCountryByValue,
   isValidPhone,
   sendLeadFromRealtimeTranscript
 } from '../lib/phone'
@@ -406,14 +408,11 @@ export function PublicChatWidget({
                 value={leadForm.phone}
                 inputMode="tel"
                 autoComplete="tel"
-                maxLength={siteId === 'profnastilvtashkente' ? 17 : 18}
+                maxLength={18}
                 onChange={event => {
-                  const country =
-                    siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
-                  const formattedPhone = formatPhone(
-                    event.target.value,
-                    country
-                  )
+                  const rawValue = event.target.value
+                  const country = getPhoneCountryByValue(rawValue, siteId)
+                  const formattedPhone = formatPhone(rawValue, country)
 
                   setLeadForm(current => ({
                     ...current,
@@ -425,8 +424,7 @@ export function PublicChatWidget({
                   }
                 }}
                 onBlur={() => {
-                  const country =
-                    siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+                  const country = getPhoneCountryByValue(leadForm.phone, siteId)
 
                   if (
                     leadForm.phone &&
@@ -441,8 +439,8 @@ export function PublicChatWidget({
                 }}
                 placeholder={
                   siteId === 'profnastilvtashkente'
-                    ? '+998 90 123 45 67'
-                    : '+7 999 123 45 67'
+                    ? '+998 90 123 45 67 или +7 999 123 45 67'
+                    : '+7 999 123 45 67 или +998 90 123 45 67'
                 }
                 className={cn(
                   'h-10 rounded-xl border px-3 text-sm outline-none transition',
