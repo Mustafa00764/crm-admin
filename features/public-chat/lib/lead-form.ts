@@ -31,6 +31,15 @@ export async function submitLeadForm({
     return
   }
 
+  const currentSite = siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+
+  if (!isValidPhone(phone, currentSite)) {
+    if (currentSite === 'uz')
+      setPhoneError('Введите номер в формате +998 XX XXX XX XX')
+
+    return setPhoneError('Введите номер в формате +7 XXX XXX XX XX')
+  }
+
   try {
     await fetch('/api/send-lead', {
       method: 'POST',
