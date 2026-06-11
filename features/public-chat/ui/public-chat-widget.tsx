@@ -605,7 +605,7 @@ export function PublicChatWidget({
             </div>
           ) : null}
 
-          {!realtimePanelOpen && formState === 'close' ? (
+          {(leadFormOpen || shouldBlockChat) && formState === 'close' ? (
             <Button
               variant={'ghost'}
               size={'lg'}
