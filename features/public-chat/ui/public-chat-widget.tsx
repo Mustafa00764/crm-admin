@@ -574,7 +574,7 @@ export function PublicChatWidget({
           </div>
         ) : null}
 
-        <div className="w-full max-h-8 h-auto flex items-center justify-between gap-2 mb-1.5">
+        <div className="w-full max-h-8 h-auto flex items-center gap-2 mb-1.5">
           {!realtimePanelOpen && siteId === 'profnastilvtashkente' ? (
             <div
               className={cn(
@@ -610,7 +610,7 @@ export function PublicChatWidget({
               variant={'ghost'}
               size={'lg'}
               onClick={() => setFormState('open')}
-              className="w-8 h-8 rounded-full border-none text-white bg-[#08b7ef]/80 hover:bg-[#08b7ef]!"
+              className="w-8 h-8 rounded-full border-none text-white bg-[#08b7ef]/80 hover:bg-[#08b7ef]! ml-auto"
             >
               <ClipboardList className="w-6 h-6" />
             </Button>
