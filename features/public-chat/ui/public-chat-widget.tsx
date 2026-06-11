@@ -578,7 +578,7 @@ export function PublicChatWidget({
           {!realtimePanelOpen && siteId === 'profnastilvtashkente' ? (
             <div
               className={cn(
-                'flex h-full items-center gap-2 px-1 text-[11px]',
+                'flex max-h-8 h-full items-center gap-2 px-1 text-[11px]',
                 theme === 'light' ? 'text-slate-500' : 'text-white/45'
               )}
             >
