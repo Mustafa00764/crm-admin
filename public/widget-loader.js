@@ -31,7 +31,6 @@
   let position = currentScript.getAttribute('data-position') || 'left'
   let theme = currentScript.getAttribute('data-theme') || 'light'
 
-  console.log('LOADER SITE ID:', siteId)
   /**
    * Основные размеры.
    *
@@ -318,8 +317,6 @@
     encodeURIComponent(theme) +
     '&pageUrl=' +
     encodeURIComponent(window.location.href)
-
-  console.log('IFRAME URL:', iframe.src)
 
   iframe.title = 'Online Chat'
   iframe.allow = 'microphone'

@@ -1,4 +1,17 @@
-export function extractPhone(text: string): string | null {
+type PhoneCountry = 'uz' | 'ru'
+
+function getPhoneCountryBySite(siteId?: string): PhoneCountry {
+  if (siteId === 'profnastilvtashkente') return 'uz'
+  if (siteId === 'evroshtaketnikmoskva') return 'ru'
+
+  return 'ru'
+}
+
+function normalizeDigits(value: string) {
+  return value.replace(/\D/g, '')
+}
+
+function extractUzPhone(text: string): string | null {
   const phoneRegex =
     /(?:\+?\s*998[\s\-()]*)?(?:\d{2}[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2})/
 
@@ -6,7 +19,7 @@ export function extractPhone(text: string): string | null {
 
   if (!match) return null
 
-  const digits = match[0].replace(/\D/g, '')
+  const digits = normalizeDigits(match[0])
 
   if (digits.startsWith('998') && digits.length === 12) {
     return `+${digits}`
@@ -19,8 +32,49 @@ export function extractPhone(text: string): string | null {
   return null
 }
 
+function extractRuPhone(text: string): string | null {
+  const phoneRegex =
+    /(?:\+?\s*7|8)?[\s\-()]*(?:\d{3}[\s\-()]*)\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/
+
+  const match = text.match(phoneRegex)
+
+  if (!match) return null
+
+  let digits = normalizeDigits(match[0])
+
+  if (digits.length === 11 && digits.startsWith('8')) {
+    digits = `7${digits.slice(1)}`
+  }
+
+  if (digits.length === 11 && digits.startsWith('7')) {
+    return `+${digits}`
+  }
+
+  if (digits.length === 10) {
+    return `+7${digits}`
+  }
+
+  return null
+}
+
+export function extractPhone(
+  text: string,
+  countryOrSiteId: PhoneCountry | string = 'ru'
+): string | null {
+  const country =
+    countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
+      ? countryOrSiteId
+      : getPhoneCountryBySite(countryOrSiteId)
+
+  if (country === 'uz') {
+    return extractUzPhone(text)
+  }
+
+  return extractRuPhone(text)
+}
+
 export function formatUzPhone(value: string) {
-  let digits = value.replace(/\D/g, '')
+  let digits = normalizeDigits(value)
 
   if (digits.startsWith('998')) {
     digits = digits.slice(3)
@@ -43,13 +97,68 @@ export function formatUzPhone(value: string) {
   return result
 }
 
+export function formatRuPhone(value: string) {
+  let digits = normalizeDigits(value)
+
+  if (digits.startsWith('8')) {
+    digits = `7${digits.slice(1)}`
+  }
+
+  if (digits.startsWith('7')) {
+    digits = digits.slice(1)
+  }
+
+  digits = digits.slice(0, 10)
+
+  const code = digits.slice(0, 3)
+  const part1 = digits.slice(3, 6)
+  const part2 = digits.slice(6, 8)
+  const part3 = digits.slice(8, 10)
+
+  let result = '+7'
+
+  if (code) result += ` ${code}`
+  if (part1) result += ` ${part1}`
+  if (part2) result += ` ${part2}`
+  if (part3) result += ` ${part3}`
+
+  return result
+}
+
+export function formatPhone(value: string, country: PhoneCountry = 'ru') {
+  if (country === 'uz') return formatUzPhone(value)
+
+  return formatRuPhone(value)
+}
+
 export function isValidUzPhone(value: string) {
-  const digits = value.replace(/\D/g, '')
+  const digits = normalizeDigits(value)
+
   return digits.startsWith('998') && digits.length === 12
 }
 
-export async function sendLeadFromRealtimeTranscript(text: string, pageUrl: string, siteId: string) {
-  const phone = extractPhone(text)
+export function isValidRuPhone(value: string) {
+  let digits = normalizeDigits(value)
+
+  if (digits.startsWith('8') && digits.length === 11) {
+    digits = `7${digits.slice(1)}`
+  }
+
+  return digits.startsWith('7') && digits.length === 11
+}
+
+export function isValidPhone(value: string, country: PhoneCountry = 'ru') {
+  if (country === 'uz') return isValidUzPhone(value)
+
+  return isValidRuPhone(value)
+}
+
+export async function sendLeadFromRealtimeTranscript(
+  text: string,
+  pageUrl: string,
+  siteId: string
+) {
+  const phone = extractPhone(text, siteId)
 
   if (!phone) return
 

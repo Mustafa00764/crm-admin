@@ -23,8 +23,8 @@ import { useChatState } from '../hooks/use-chat-state'
 import { useChatStorage } from '../hooks/use-chat-storage'
 import { useRealtimeVoice } from '../hooks/use-realtime-voice'
 import {
-  formatUzPhone,
-  isValidUzPhone,
+  formatPhone,
+  isValidPhone,
   sendLeadFromRealtimeTranscript
 } from '../lib/phone'
 import { useCallback } from 'react'
@@ -406,9 +406,14 @@ export function PublicChatWidget({
                 value={leadForm.phone}
                 inputMode="tel"
                 autoComplete="tel"
-                maxLength={17}
+                maxLength={siteId === 'profnastilvtashkente' ? 17 : 18}
                 onChange={event => {
-                  const formattedPhone = formatUzPhone(event.target.value)
+                  const country =
+                    siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+                  const formattedPhone = formatPhone(
+                    event.target.value,
+                    country
+                  )
 
                   setLeadForm(current => ({
                     ...current,
@@ -420,11 +425,25 @@ export function PublicChatWidget({
                   }
                 }}
                 onBlur={() => {
-                  if (leadForm.phone && !isValidUzPhone(leadForm.phone)) {
-                    setPhoneError('Введите номер в формате +998 XX XXX XX XX')
+                  const country =
+                    siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
+
+                  if (
+                    leadForm.phone &&
+                    !isValidPhone(leadForm.phone, country)
+                  ) {
+                    setPhoneError(
+                      country === 'uz'
+                        ? 'Введите номер в формате +998 XX XXX XX XX'
+                        : 'Введите номер в формате +7 XXX XXX XX XX'
+                    )
                   }
                 }}
-                placeholder="+998 90 123 45 67"
+                placeholder={
+                  siteId === 'profnastilvtashkente'
+                    ? '+998 90 123 45 67'
+                    : '+7 999 123 45 67'
+                }
                 className={cn(
                   'h-10 rounded-xl border px-3 text-sm outline-none transition',
                   phoneError
