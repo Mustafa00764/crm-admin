@@ -13,6 +13,8 @@ type SubmitLeadFormParams = {
   setLeadFormOpen: Dispatch<SetStateAction<boolean>>
   setFormState: Dispatch<SetStateAction<'open' | 'close'>>
   setMessages: Dispatch<SetStateAction<PublicChatMessage[]>>
+  isPending: boolean
+  setIsPending: Dispatch<SetStateAction<boolean>>
 }
 
 export async function submitLeadForm({
@@ -24,7 +26,9 @@ export async function submitLeadForm({
   setLeadFormSubmitted,
   setLeadFormOpen,
   setFormState,
-  setMessages
+  setMessages,
+  isPending,
+  setIsPending
 }: SubmitLeadFormParams) {
   const phone = leadForm.phone.trim()
 
@@ -43,6 +47,8 @@ export async function submitLeadForm({
     }
     return
   }
+
+  setIsPending(true)
 
   try {
     await fetch('/api/send-lead', {
@@ -65,6 +71,8 @@ export async function submitLeadForm({
     })
   } catch (error) {
     console.error('Lead form send error:', error)
+  } finally {
+    setIsPending(false)
   }
 
   setLeadFormSubmitted(true)

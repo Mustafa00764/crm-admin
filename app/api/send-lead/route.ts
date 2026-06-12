@@ -200,13 +200,14 @@ export async function POST(req: Request) {
               : 'Не указана'
           }</p>
 
+          <p><b>Прикрепленные файлы:</b></p>
+          ${formattedComment.attachmentsHtml}
+
           <p><b>Чат с клиентом:</b></p>
           <div style="max-width: 400px; width: 100%; background-color: rgba(8,183,239,0.04); padding: 12px; border-radius: 16px;">
             ${chatMessages}
           </div>
 
-          <p><b>Прикрепленные файлы:</b></p>
-          ${formattedComment.attachmentsHtml}
         </div>
       `
     })

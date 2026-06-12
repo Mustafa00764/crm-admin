@@ -8,6 +8,7 @@ export function useLeadForm() {
   const [formState, setFormState] = useState<'open' | 'close'>('open')
   const [leadFormSubmitted, setLeadFormSubmitted] = useState(false)
   const [leadForm, setLeadForm] = useState<LeadFormData>(DEFAULT_LEAD_FORM)
+  const [isPending, setIsPending] = useState<boolean>(false)
 
   return {
     phoneError,
@@ -23,6 +24,9 @@ export function useLeadForm() {
     setLeadFormSubmitted,
 
     leadForm,
-    setLeadForm
+    setLeadForm,
+
+    isPending,
+    setIsPending
   }
 }

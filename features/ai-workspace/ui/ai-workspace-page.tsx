@@ -680,11 +680,11 @@ export function AIWorkspacePage() {
 
         <div className="grid h-[calc(100vh-52px)] grid-cols-[280px_1fr_310px] gap-3 p-3">
           <aside className="cf-panel flex min-h-0 flex-col">
-            <div className="border-b border-[var(--cf-border)] p-3">
-              <div className="h-9 rounded-md bg-[var(--cf-button)]" />
+            <div className="border-b border-(--cf-border) p-3">
+              <div className="h-9 rounded-md bg-(--cf-button)" />
             </div>
 
-            <div className="p-4 text-[12px] text-[var(--cf-text-muted)]">
+            <div className="p-4 text-[12px] text-(--cf-text-muted)">
               Loading chats...
             </div>
           </aside>
