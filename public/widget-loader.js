@@ -75,7 +75,7 @@
   const sitesList = [
     {
       id: 'profnastilvtashkente',
-      messages: ['Savol bormi? Yozing 😊', 'Yordam kerakmi? Yozing 😊']
+      messages: ['Savol bormi? Yozing 😊', 'Есть вопросы? Пишите 😊']
     },
     {
       id: 'evroshtaketnikmoskva',
@@ -504,7 +504,8 @@
     /**
      * Цвет tooltip зависит от темы сайта.
      */
-    background: theme === 'light' ? 'rgba(234,231,231,1)' : 'rgba(234,231,231,1)',
+    background:
+      theme === 'light' ? 'rgba(234,231,231,1)' : 'rgba(234,231,231,1)',
     color: theme === 'light' ? '#0f172a' : '#ffffff',
 
     /**
