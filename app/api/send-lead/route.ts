@@ -41,7 +41,7 @@ const sites: Record<string, SiteConfig> = {
     apiKey:
       process.env.RESEND_API_KEY_PROFNASTILVTASHKENTE ||
       're_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ',
-    from: 'Заявки сайта <noreply@profnastilvtashkente.uz>'
+    from: 'onboarding@resend.dev'
   },
 
   evroshtaketnikmoskva: {
@@ -49,7 +49,7 @@ const sites: Record<string, SiteConfig> = {
     apiKey:
       process.env.RESEND_API_KEY_EVROSHTAKETNIKMOSKVA ||
       're_R6pEraTb_8m7SDT3ywTmKujrwAmnx7hXa',
-    from: 'Заявки сайта <noreply@evroshtaketnikmoskva.ru>'
+    from: 'onboarding@resend.dev'
   }
 }
 
