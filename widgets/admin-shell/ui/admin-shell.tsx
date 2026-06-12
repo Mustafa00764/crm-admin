@@ -1,12 +1,24 @@
 import { PublicChatWidget } from '@/features/public-chat/ui/public-chat-widget'
 import { AdminNavMenu } from './admin-nav-menu'
 import { AdminSidebar } from './admin-sidebar'
+import { useEffect } from 'react'
 
 type AdminShellProps = {
   children: React.ReactNode
 }
 
 export function AdminShell({ children }: AdminShellProps) {
+  const isLogin = (): boolean => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('login') === 'F4@xN8!wP3#sY7qD'
+  }
+
+  useEffect(() => {
+    localStorage.setItem('login', '')
+  }, [])
+
+  if (!isLogin) return
+
   return (
     <div className="crm-page min-h-screen h-auto pb-24 lg:pb-0">
       <div className="flex relative min-h-screen">
