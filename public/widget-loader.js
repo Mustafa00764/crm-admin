@@ -208,7 +208,7 @@
      * Виджет слева и чуть выше нижнего края экрана.
      */
     root.style.left = offset + 'px'
-    root.style.bottom = '9%'
+    root.style.bottom = '10%'
   }
 
   /**
