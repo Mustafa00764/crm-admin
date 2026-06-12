@@ -38,13 +38,17 @@ type SiteConfig = {
 const sites: Record<string, SiteConfig> = {
   profnastilvtashkente: {
     email: 'profnastilvtashkente@gmail.com',
-    apiKey: process.env.RESEND_API_KEY_PROFNASTILVTASHKENTE || '',
+    apiKey:
+      process.env.RESEND_API_KEY_PROFNASTILVTASHKENTE ||
+      're_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ',
     from: 'Заявки сайта <noreply@profnastilvtashkente.uz>'
   },
 
   evroshtaketnikmoskva: {
     email: 'evroshtaketnikmoskvachat@gmail.com',
-    apiKey: process.env.RESEND_API_KEY_EVROSHTAKETNIKMOSKVA || '',
+    apiKey:
+      process.env.RESEND_API_KEY_EVROSHTAKETNIKMOSKVA ||
+      're_R6pEraTb_8m7SDT3ywTmKujrwAmnx7hXa',
     from: 'Заявки сайта <noreply@evroshtaketnikmoskva.ru>'
   }
 }
@@ -158,7 +162,7 @@ export async function POST(req: Request) {
     const formattedComment = formatComment(body.comment)
     const siteId = formattedComment.siteId
 
-    const site = sites[siteId] || sites.evroshtaketnikmoskva
+    const site = sites[siteId]
 
     if (!site.apiKey) {
       return NextResponse.json(
