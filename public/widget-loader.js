@@ -504,7 +504,7 @@
     /**
      * Цвет tooltip зависит от темы сайта.
      */
-    background: theme === 'light' ? '#ffffff' : '#090b10',
+    background: theme === 'light' ? '#ffffff' : 'rgba(234,231,231,1)',
     color: theme === 'light' ? '#0f172a' : '#ffffff',
 
     /**
