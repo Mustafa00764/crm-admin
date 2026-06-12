@@ -80,7 +80,7 @@
       id: 'profnastilvtashkente',
       messages: [
         'Savolingiz bormi? Yozing 😊',
-        'Есть вопросы? Напишите, мы онлайн 😊'
+        'Есть вопросы? Напишите, я помогу 😊'
       ]
     },
     {
@@ -284,10 +284,10 @@
         max-width: calc(100vw - 128px) !important;
         width: auto;
         font-size: 12px !important;
-        line-height: 1.35 !important;
+        line-height: 1.15 !important;
         white-space: normal !important;
         left: 72px !important;
-        padding: 8px 12px !important;
+        padding: 8px 10px !important;
       }
     }
   `
