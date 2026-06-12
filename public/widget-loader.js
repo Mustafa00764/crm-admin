@@ -287,6 +287,7 @@
         line-height: 1.35 !important;
         white-space: normal !important;
         left: 72px !important;
+        padding: 6px 10px !important;
       }
     }
   `
