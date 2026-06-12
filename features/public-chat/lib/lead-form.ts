@@ -7,6 +7,7 @@ type SubmitLeadFormParams = {
   leadForm: LeadFormData
   pageUrl: string
   siteId: string
+  messages: PublicChatMessage[]
   setPhoneError: Dispatch<SetStateAction<string>>
   setLeadFormSubmitted: Dispatch<SetStateAction<boolean>>
   setLeadFormOpen: Dispatch<SetStateAction<boolean>>
@@ -18,6 +19,7 @@ export async function submitLeadForm({
   leadForm,
   pageUrl,
   siteId,
+  messages,
   setPhoneError,
   setLeadFormSubmitted,
   setLeadFormOpen,
@@ -34,10 +36,12 @@ export async function submitLeadForm({
   const currentSite = siteId === 'profnastilvtashkente' ? 'uz' : 'ru'
 
   if (!isValidPhone(phone, currentSite)) {
-    if (currentSite === 'uz')
+    if (currentSite === 'uz') {
       setPhoneError('Введите номер в формате +998 XX XXX XX XX')
-
-    return setPhoneError('Введите номер в формате +7 XXX XXX XX XX')
+    } else {
+      setPhoneError('Введите номер в формате +7 XXX XXX XX XX')
+    }
+    return
   }
 
   try {
@@ -50,6 +54,7 @@ export async function submitLeadForm({
         phone,
         clientName: leadForm.name,
         deliveryCity: leadForm.city,
+        messages,
         comment: {
           text: leadForm.comment || 'Нет',
           pageUrl,

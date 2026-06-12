@@ -5,14 +5,16 @@ import { Resend } from 'resend'
 
 export const runtime = 'nodejs'
 
-// Лучше хранить ключ в .env.local:
-// RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx
-
 type SendLeadBody = {
   clientName?: string
   phone?: string
   product?: string
   deliveryCity?: string
+  messages?: Array<{
+    id: string
+    content: string
+    role: 'user' | 'assistant'
+  }>
   comment?:
     | string
     | {
@@ -27,25 +29,24 @@ type SendLeadBody = {
       }
 }
 
-type EmailType = {
+type SiteConfig = {
   email: string
-  key: string
+  apiKey: string
+  from: string
 }
 
-type MessagesList = {
-  id: string
-  content: string
-  role: string
-}
+const sites: Record<string, SiteConfig> = {
+  profnastilvtashkente: {
+    email: 'profnastilvtashkente@gmail.com',
+    apiKey: process.env.RESEND_API_KEY_PROFNASTILVTASHKENTE || '',
+    from: 'Заявки сайта <noreply@profnastilvtashkente.uz>'
+  },
 
-const profnastilvtashkente: EmailType = {
-  email: 'profnastilvtashkente@gmail.com',
-  key: 're_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ'
-}
-
-const evroshtaketnikmoskva: EmailType = {
-  email: 'evroshtaketnikmoskvachat@gmail.com',
-  key: 're_R6pEraTb_8m7SDT3ywTmKujrwAmnx7hXa'
+  evroshtaketnikmoskva: {
+    email: 'evroshtaketnikmoskvachat@gmail.com',
+    apiKey: process.env.RESEND_API_KEY_EVROSHTAKETNIKMOSKVA || '',
+    from: 'Заявки сайта <noreply@evroshtaketnikmoskva.ru>'
+  }
 }
 
 function escapeHtml(value: unknown) {
@@ -60,13 +61,8 @@ function escapeHtml(value: unknown) {
 function formatFileSize(size: number) {
   if (!Number.isFinite(size)) return 'не указан'
 
-  if (size < 1024) {
-    return `${size} B`
-  }
-
-  if (size < 1024 * 1024) {
-    return `${Math.round(size / 1024)} KB`
-  }
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`
 
   return `${(size / 1024 / 1024).toFixed(1)} MB`
 }
@@ -76,8 +72,8 @@ function formatComment(comment: SendLeadBody['comment']) {
     return {
       text: 'Не указан',
       pageUrl: '',
-      siteId: '',
-      attachmentsHtml: ''
+      siteId: 'evroshtaketnikmoskva',
+      attachmentsHtml: 'Нет'
     }
   }
 
@@ -85,8 +81,8 @@ function formatComment(comment: SendLeadBody['comment']) {
     return {
       text: comment,
       pageUrl: '',
-      siteId: '',
-      attachmentsHtml: ''
+      siteId: 'evroshtaketnikmoskva',
+      attachmentsHtml: 'Нет'
     }
   }
 
@@ -113,9 +109,40 @@ function formatComment(comment: SendLeadBody['comment']) {
   return {
     text: comment.text || 'Не указан',
     pageUrl: comment.pageUrl || '',
-    siteId: comment.siteId || '',
+    siteId: comment.siteId || 'evroshtaketnikmoskva',
     attachmentsHtml
   }
+}
+
+function formatChatMessages(messages?: SendLeadBody['messages']) {
+  if (!messages?.length) return '<p>Нет сообщений</p>'
+
+  return messages
+    .map(message => {
+      const isAssistant = message.role === 'assistant'
+
+      return `
+        <div style="
+          width: 100%;
+          margin-bottom: 12px;
+          display: flex;
+          justify-content: ${isAssistant ? 'flex-start' : 'flex-end'};
+        ">
+          <div style="
+            max-width: 80%;
+            padding: 8px 12px;
+            font-size: 14px;
+            line-height: 20px;
+            border-radius: 11px;
+            color: ${isAssistant ? '#111827' : '#ffffff'};
+            background-color: ${isAssistant ? '#f1f5f9' : '#08b7ef'};
+          ">
+            ${escapeHtml(message.content)}
+          </div>
+        </div>
+      `
+    })
+    .join('')
 }
 
 export async function POST(req: Request) {
@@ -129,62 +156,56 @@ export async function POST(req: Request) {
     }
 
     const formattedComment = formatComment(body.comment)
+    const siteId = formattedComment.siteId
 
-    const messages = JSON.parse(
-      sessionStorage.getItem(
-        `public-chat-${formattedComment.siteId}-messages`
-      ) || ''
-    )
+    const site = sites[siteId] || sites.evroshtaketnikmoskva
 
-    const chatMessages = messages?.reduce((acc: string, mes: MessagesList) => {
-      return (acc += `<div style='width: 100%; position: relative; margin-bottom: 12px; display: flex; ${mes.role === 'assistant' ? 'justify-content: start;' : 'justify-content: end;'}'><div style='max-width: 80%; padding: 8px 12px; font-size: 14px; line-height: 20px; border-radius: 11px; ${mes.role === 'assistant' ? 'color: lab(7.78673% 1.82345 -15.0537); background-color: lab(96.286% -.852436 -2.46847);' : 'color: #fff; background-color: #08b7ef;'} '>${mes.content}</div></div>`)
-    }, '')
+    if (!site.apiKey) {
+      return NextResponse.json(
+        { error: 'Не указан RESEND API KEY для сайта' },
+        { status: 500 }
+      )
+    }
 
-    const site =
-      formattedComment.siteId === 'profnastilvtashkente'
-        ? profnastilvtashkente
-        : evroshtaketnikmoskva
+    const resend = new Resend(site.apiKey)
 
-    const resend = new Resend(site.key)
+    const chatMessages = formatChatMessages(body.messages)
 
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: site.email,
-      subject: 'Новая заявка с сайта profnastilvtashkente',
+      from: site.from,
+      to: [site.email],
+      subject: `Новая заявка с сайта ${siteId}`,
       html: `
-    <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
-      <h2>Новая заявка с сайта ${formattedComment.siteId}</h2>
+        <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
+          <h2>Новая заявка с сайта ${escapeHtml(siteId)}</h2>
 
-      <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
+          <p><b>Телефон:</b> ${escapeHtml(phone)}</p>
 
-      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
+          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
 
-      <p><b>Комментарий клиента:</b></p>
-      <p>${escapeHtml(formattedComment.text)}</p>
+          <p><b>Комментарий клиента:</b></p>
+          <p>${escapeHtml(formattedComment.text)}</p>
 
-      <p><b>Site ID:</b> ${escapeHtml(formattedComment.siteId || 'Не указан')}</p>
+          <p><b>Site ID:</b> ${escapeHtml(siteId)}</p>
 
-      <p><b>Страница:</b> ${
-        formattedComment.pageUrl
-          ? `<a href="${escapeHtml(formattedComment.pageUrl)}">${escapeHtml(
-              formattedComment.pageUrl
-            )}</a>`
-          : 'Не указана'
-      }</p>
+          <p><b>Страница:</b> ${
+            formattedComment.pageUrl
+              ? `<a href="${escapeHtml(formattedComment.pageUrl)}">${escapeHtml(
+                  formattedComment.pageUrl
+                )}</a>`
+              : 'Не указана'
+          }</p>
 
-      <p><b>Чат с клиентом:</b></p>
-      <div style='max-width: 400px; width: 100%; height: auto; display: flex; flex-direction: column; align-items: start;'>
-        ${chatMessages}
-      </div>
+          <p><b>Чат с клиентом:</b></p>
+          <div style="max-width: 400px; width: 100%; display: flex; flex-direction: column; align-items: start;">
+            ${chatMessages}
+          </div>
 
-      <p><b>Прикрепленные файлы:</b></p>
-      ${formattedComment.attachmentsHtml}
-    </div>
-  `
+          <p><b>Прикрепленные файлы:</b></p>
+          ${formattedComment.attachmentsHtml}
+        </div>
+      `
     })
-
-    console.log('Resend data:', data)
-    console.log('Resend error:', error)
 
     if (error) {
       console.error('Resend error:', error)
@@ -196,7 +217,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      success: true
+      success: true,
+      data
     })
   } catch (error) {
     console.error('Send lead route error:', error)

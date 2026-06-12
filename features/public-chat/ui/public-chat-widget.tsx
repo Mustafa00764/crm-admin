@@ -481,6 +481,7 @@ export function PublicChatWidget({
                   leadForm,
                   pageUrl,
                   siteId,
+                  messages,
                   setPhoneError,
                   setLeadFormSubmitted,
                   setLeadFormOpen,
