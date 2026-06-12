@@ -8,10 +8,7 @@ type AdminShellProps = {
 }
 
 export function AdminShell({ children }: AdminShellProps) {
-  const isLogin = (): boolean => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('login') === 'F4@xN8!wP3#sY7qD'
-  }
+  const isLogin = localStorage.getItem('login') === 'F4@xN8!wP3#sY7qD' || false
 
   useEffect(() => {
     localStorage.setItem('login', '')
