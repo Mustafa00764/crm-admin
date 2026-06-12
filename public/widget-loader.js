@@ -69,26 +69,17 @@
 
   const defaultMessage = {
     id: 'default',
-    messages: [
-      'Есть вопросы? Напишите, я помогу 😊',
-      'Нужна помощь с выбором? Мы онлайн 😊'
-    ]
+    messages: ['Есть вопросы? Пишите 😊', 'Помочь с выбором? Мы онлайн 😊']
   }
 
   const sitesList = [
     {
       id: 'profnastilvtashkente',
-      messages: [
-        'Savolingiz bormi? Yozing 😊',
-        'Есть вопросы? Напишите, я помогу 😊'
-      ]
+      messages: ['Savol bormi? Yozing 😊', 'Yordam kerakmi? Yozing 😊']
     },
     {
       id: 'evroshtaketnikmoskva',
-      messages: [
-        'Есть вопросы? Напишите, я помогу 😊',
-        'Нужна помощь с выбором? Мы онлайн 😊'
-      ]
+      messages: ['Есть вопросы? Пишите 😊', 'Помочь с выбором? Мы онлайн 😊']
     }
   ]
 
@@ -288,7 +279,6 @@
         white-space: normal !important;
         left: 72px !important;
         padding: 8px 10px !important;
-        bottom: 11px !important;
       }
     }
   `
