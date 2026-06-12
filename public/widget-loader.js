@@ -208,7 +208,7 @@
      * Виджет слева и чуть выше нижнего края экрана.
      */
     root.style.left = offset + 'px'
-    root.style.bottom = '10%'
+    root.style.bottom = '9%'
   }
 
   /**
@@ -283,11 +283,11 @@
       #omni-crm-tooltip {
         max-width: calc(100vw - 128px) !important;
         width: auto;
-        font-size: 11px !important;
+        font-size: 12px !important;
         line-height: 1.35 !important;
         white-space: normal !important;
         left: 72px !important;
-        padding: 6px 10px !important;
+        padding: 8px 12px !important;
       }
     }
   `
