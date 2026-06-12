@@ -201,7 +201,7 @@ export async function POST(req: Request) {
           }</p>
 
           <p><b>Чат с клиентом:</b></p>
-          <div style="max-width: 400px; width: 100%;">
+          <div style="max-width: 400px; width: 100%; background-color: rgba(8,183,239,0.04); padding: 12px; border-radius: 16px;">
             ${chatMessages}
           </div>
 
