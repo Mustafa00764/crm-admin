@@ -288,6 +288,7 @@
         white-space: normal !important;
         left: 72px !important;
         padding: 8px 10px !important;
+        bottom: 11px !important;
       }
     }
   `
