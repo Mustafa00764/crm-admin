@@ -32,6 +32,12 @@ type EmailType = {
   key: string
 }
 
+type MessagesList = {
+  id: string
+  content: string
+  role: string
+}
+
 const profnastilvtashkente: EmailType = {
   email: 'profnastilvtashkente@gmail.com',
   key: 're_2ZQ6c12d_61Egbri6Gf1JbGcsBpcwjXcJ'
@@ -124,8 +130,15 @@ export async function POST(req: Request) {
 
     const formattedComment = formatComment(body.comment)
 
-    console.log('formattedComment', formattedComment)
-    console.log('body', body)
+    const messages = JSON.parse(
+      sessionStorage.getItem(
+        `public-chat-${formattedComment.siteId}-messages`
+      ) || ''
+    )
+
+    const chatMessages = messages?.reduce((acc: string, mes: MessagesList) => {
+      return (acc += `<div style='width: 100%; position: relative; margin-bottom: 12px; display: flex; ${mes.role === 'assistant' ? 'justify-content: start;' : 'justify-content: end;'}'><div style='max-width: 80%; padding: 8px 12px; font-size: 14px; line-height: 20px; border-radius: 11px; ${mes.role === 'assistant' ? 'color: lab(7.78673% 1.82345 -15.0537); background-color: lab(96.286% -.852436 -2.46847);' : 'color: #fff; background-color: #08b7ef;'} '>${mes.content}</div></div>`)
+    }, '')
 
     const site =
       formattedComment.siteId === 'profnastilvtashkente'
@@ -158,6 +171,11 @@ export async function POST(req: Request) {
             )}</a>`
           : 'Не указана'
       }</p>
+
+      <p><b>Чат с клиентом:</b></p>
+      <div style='max-width: 400px; width: 100%; height: auto; display: flex; flex-direction: column; align-items: start;'>
+        ${chatMessages}
+      </div>
 
       <p><b>Прикрепленные файлы:</b></p>
       ${formattedComment.attachmentsHtml}
