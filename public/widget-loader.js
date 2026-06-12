@@ -79,7 +79,7 @@
     {
       id: 'profnastilvtashkente',
       messages: [
-        'Savolingiz bormi? Yozing, yordam beraman 😊',
+        'Savolingiz bormi? Yozing 😊',
         'Есть вопросы? Напишите, мы онлайн 😊'
       ]
     },
