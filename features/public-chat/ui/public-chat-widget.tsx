@@ -248,7 +248,7 @@ export function PublicChatWidget({
           >
             <div
               className={cn(
-                'max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-5',
+                'max-w-[82%] rounded-2xl px-3 py-2 text-sm leading-5 text-wrap',
                 message.role === 'user'
                   ? 'bg-[#08b7ef] text-white'
                   : theme === 'light'
