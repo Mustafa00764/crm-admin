@@ -130,7 +130,6 @@ function formatChatMessages(messages?: SendLeadBody['messages']) {
           width: 100%;
           margin-bottom: 12px;
           display: flex;
-          justify-content: ${isAssistant ? 'flex-start' : 'flex-end'};
         ">
           <div style="
             max-width: 80%;
@@ -140,6 +139,7 @@ function formatChatMessages(messages?: SendLeadBody['messages']) {
             border-radius: 11px;
             color: ${isAssistant ? '#111827' : '#ffffff'};
             background-color: ${isAssistant ? '#f1f5f9' : '#08b7ef'};
+            margin-left: ${isAssistant ? '0' : 'auto'}
           ">
             ${escapeHtml(message.content)}
           </div>
