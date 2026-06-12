@@ -281,9 +281,9 @@
        * - уменьшается размер шрифта.
        */
       #omni-crm-tooltip {
-        max-width: calc(100vw - 96px) !important;
+        max-width: calc(100vw - 128px) !important;
         width: auto;
-        font-size: 13px !important;
+        font-size: 11px !important;
         line-height: 1.35 !important;
         white-space: normal !important;
         left: 72px !important;
