@@ -232,7 +232,7 @@ export function PublicChatWidget({
       <div
         ref={messagesEndRef}
         className={cn(
-          'min-h-0 transition-all flex-1 space-y-3 overflow-auto p-3 scrollbar-thin scrollbar-thumb-rounded scrollbar-track-transparent',
+          'min-h-0 w-full transition-all flex-1 space-y-3 overflow-x-hidden p-3 scrollbar-thin scrollbar-thumb-rounded scrollbar-track-transparent',
           theme === 'light'
             ? 'scrollbar-thumb-black/10'
             : 'scrollbar-thumb-white/20'
