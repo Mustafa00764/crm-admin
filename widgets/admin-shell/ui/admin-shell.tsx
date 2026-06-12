@@ -1,4 +1,3 @@
-import { PublicChatWidget } from '@/features/public-chat/ui/public-chat-widget'
 import { AdminNavMenu } from './admin-nav-menu'
 import { AdminSidebar } from './admin-sidebar'
 
@@ -15,7 +14,7 @@ export function AdminShell({ children }: AdminShellProps) {
       </div>
       <AdminNavMenu />
 
-      <PublicChatWidget siteId={'default'} theme={'light'} pageUrl={''} />
+      {/* <PublicChatWidget siteId={'default'} theme={'light'} pageUrl={''} /> */}
     </div>
   )
 }
