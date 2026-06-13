@@ -57,19 +57,31 @@ function extractRuPhone(text: string): string | null {
   return null
 }
 
+// export function extractPhone(
+//   text: string,
+//   countryOrSiteId: PhoneCountry | string = 'ru'
+// ): string | null {
+//   const country =
+//     countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
+//       ? countryOrSiteId
+//       : getPhoneCountryBySite(countryOrSiteId)
+
+//   if (country === 'uz') {
+//     return extractUzPhone(text)
+//   }
+
+//   return extractRuPhone(text)
+// }
+
 export function extractPhone(
   text: string,
   countryOrSiteId: PhoneCountry | string = 'ru'
 ): string | null {
-  const country =
-    countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
-      ? countryOrSiteId
-      : getPhoneCountryBySite(countryOrSiteId)
+  // Сначала пробуем вытащить узбекский — он более специфичный
+  const uzPhone = extractUzPhone(text)
+  if (uzPhone) return uzPhone
 
-  if (country === 'uz') {
-    return extractUzPhone(text)
-  }
-
+  // Только если узбекского нет — пробуем русский
   return extractRuPhone(text)
 }
 
