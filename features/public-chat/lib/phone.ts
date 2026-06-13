@@ -57,49 +57,33 @@ function extractRuPhone(text: string): string | null {
   return null
 }
 
-// export function extractPhone(
-//   text: string,
-//   countryOrSiteId: PhoneCountry | string = 'ru'
-// ): string | null {
-//   const country =
-//     countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
-//       ? countryOrSiteId
-//       : getPhoneCountryBySite(countryOrSiteId)
-
-//   if (country === 'uz') {
-//     return extractUzPhone(text)
-//   }
-
-//   return extractRuPhone(text)
-// }
-
 export function extractPhone(
   text: string,
   countryOrSiteId?: PhoneCountry | string
 ): string | null {
   // Автоопределение если страна не указана
-  if (!countryOrSiteId) {
+  // if (!countryOrSiteId) {
     const uzPhone = extractUzPhone(text)
     if (uzPhone) return uzPhone
     return extractRuPhone(text)
-  }
+  // }
 
-  const country =
-    countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
-      ? countryOrSiteId
-      : getPhoneCountryBySite(countryOrSiteId)
+  // const country =
+  //   countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
+  //     ? countryOrSiteId
+  //     : getPhoneCountryBySite(countryOrSiteId)
 
-  if (country === 'uz') {
-    return extractUzPhone(text)
-  }
+  // if (country === 'uz') {
+  //   return extractUzPhone(text)
+  // }
 
-  // Страна ru, но номер узбекский — не парсим как русский
-  const digits = text.replace(/\D/g, '')
-  if (digits.startsWith('998')) {
-    return null
-  }
+  // // Страна ru, но номер узбекский — не парсим как русский
+  // const digits = text.replace(/\D/g, '')
+  // if (digits.startsWith('998')) {
+  //   return null
+  // }
 
-  return extractRuPhone(text)
+  // return extractRuPhone(text)
 }
 
 export function formatUzPhone(value: string) {
