@@ -93,6 +93,10 @@ export function extractPhone(
     return null // это узбекский номер, не парсим как русский
   }
 
+  const uzPhone = extractUzPhone(text)
+  if (uzPhone) return uzPhone
+
+  // Только если узбекского нет — пробуем русский
   return extractRuPhone(text)
 }
 
