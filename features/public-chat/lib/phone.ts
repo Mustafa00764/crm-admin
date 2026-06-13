@@ -31,14 +31,13 @@ function extractUzPhone(text: string): string | null {
 
   return null
 }
-function extractRuPhone(text: string): string | null {
-  // Исключаем строки где перед цифрами идёт 998
-  if (/998\d{9}/.test(text.replace(/\D/g, ''))) return null
 
+function extractRuPhone(text: string): string | null {
   const phoneRegex =
     /(?:\+?\s*7|8)?[\s\-()]*(?:\d{3}[\s\-()]*)\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/
 
   const match = text.match(phoneRegex)
+
   if (!match) return null
 
   let digits = normalizeDigits(match[0])
@@ -67,15 +66,8 @@ export function extractPhone(
       ? countryOrSiteId
       : getPhoneCountryBySite(countryOrSiteId)
 
-  // Если явно указан uz — только узбекский парсер
   if (country === 'uz') {
     return extractUzPhone(text)
-  }
-
-  // Даже если страна ru — сначала проверяем, не узбекский ли номер
-  const digits = text.replace(/\D/g, '')
-  if (digits.startsWith('998')) {
-    return null // это узбекский номер, не парсим как русский
   }
 
   return extractRuPhone(text)
