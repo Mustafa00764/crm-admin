@@ -183,6 +183,8 @@ export function PublicChatWidget({
       : 'border-white/10 bg-[#202124] text-white'
   )
 
+
+
   const composerHint =
     voiceMode === 'assistant'
       ? liveAssistantTranscript ||

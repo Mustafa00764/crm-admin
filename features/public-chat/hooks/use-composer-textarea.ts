@@ -15,8 +15,12 @@ export function useComposerTextarea({
 }: UseComposerTextareaParams) {
   useLayoutEffect(() => {
     const textarea = textareaRef.current
-
     if (!textarea) return
+
+    if (!input && !liveUserTranscript && !liveAssistantTranscript) {
+      textarea.style.height = 'auto'
+      return
+    }
 
     textarea.style.height = 'auto'
     textarea.style.height = `${Math.min(textarea.scrollHeight, 112)}px`
