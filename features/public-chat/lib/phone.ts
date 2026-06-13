@@ -75,28 +75,30 @@ function extractRuPhone(text: string): string | null {
 
 export function extractPhone(
   text: string,
-  countryOrSiteId: PhoneCountry | string = 'ru'
+  countryOrSiteId?: PhoneCountry | string
 ): string | null {
+  // Автоопределение если страна не указана
+  if (!countryOrSiteId) {
+    const uzPhone = extractUzPhone(text)
+    if (uzPhone) return uzPhone
+    return extractRuPhone(text)
+  }
+
   const country =
     countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
       ? countryOrSiteId
       : getPhoneCountryBySite(countryOrSiteId)
 
-  // Если явно указан uz — только узбекский парсер
   if (country === 'uz') {
     return extractUzPhone(text)
   }
 
-  // Даже если страна ru — сначала проверяем, не узбекский ли номер
+  // Страна ru, но номер узбекский — не парсим как русский
   const digits = text.replace(/\D/g, '')
   if (digits.startsWith('998')) {
-    return null // это узбекский номер, не парсим как русский
+    return null
   }
 
-  const uzPhone = extractUzPhone(text)
-  if (uzPhone) return uzPhone
-
-  // Только если узбекского нет — пробуем русский
   return extractRuPhone(text)
 }
 
