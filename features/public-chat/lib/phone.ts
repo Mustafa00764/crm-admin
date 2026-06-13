@@ -77,11 +77,22 @@ export function extractPhone(
   text: string,
   countryOrSiteId: PhoneCountry | string = 'ru'
 ): string | null {
-  // Сначала пробуем вытащить узбекский — он более специфичный
-  const uzPhone = extractUzPhone(text)
-  if (uzPhone) return uzPhone
+  const country =
+    countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
+      ? countryOrSiteId
+      : getPhoneCountryBySite(countryOrSiteId)
 
-  // Только если узбекского нет — пробуем русский
+  // Если явно указан uz — только узбекский парсер
+  if (country === 'uz') {
+    return extractUzPhone(text)
+  }
+
+  // Даже если страна ru — сначала проверяем, не узбекский ли номер
+  const digits = text.replace(/\D/g, '')
+  if (digits.startsWith('998')) {
+    return null // это узбекский номер, не парсим как русский
+  }
+
   return extractRuPhone(text)
 }
 
