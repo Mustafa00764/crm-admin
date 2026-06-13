@@ -257,6 +257,7 @@ export function useChatActions({
             },
             body: JSON.stringify({
               phone,
+              messages,
               comment: {
                 text,
                 pageUrl,
