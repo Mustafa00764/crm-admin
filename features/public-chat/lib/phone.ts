@@ -16,7 +16,6 @@ function extractUzPhone(text: string): string | null {
     /(?:\+?\s*998[\s\-()]*)?(?:\d{2}[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2})/
 
   const match = text.match(phoneRegex)
-
   if (!match) return null
 
   const digits = normalizeDigits(match[0])
@@ -25,6 +24,7 @@ function extractUzPhone(text: string): string | null {
     return `+${digits}`
   }
 
+  // Только строго 9 цифр — не больше, не меньше
   if (digits.length === 9) {
     return `+998${digits}`
   }
@@ -37,7 +37,6 @@ function extractRuPhone(text: string): string | null {
     /(?:\+?\s*7|8)?[\s\-()]*(?:\d{3}[\s\-()]*)\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/
 
   const match = text.match(phoneRegex)
-
   if (!match) return null
 
   let digits = normalizeDigits(match[0])
@@ -50,6 +49,7 @@ function extractRuPhone(text: string): string | null {
     return `+${digits}`
   }
 
+  // Только строго 10 цифр
   if (digits.length === 10) {
     return `+7${digits}`
   }
@@ -61,29 +61,33 @@ export function extractPhone(
   text: string,
   countryOrSiteId?: PhoneCountry | string
 ): string | null {
-  // Автоопределение если страна не указана
-  // if (!countryOrSiteId) {
-    const uzPhone = extractUzPhone(text)
-    if (uzPhone) return uzPhone
+  const digits = normalizeDigits(text)
+
+  // Однозначно узбекский — есть префикс 998
+  if (digits.startsWith('998') && digits.length === 12) {
+    return extractUzPhone(text)
+  }
+
+  // Однозначно русский — есть префикс 7 или 8
+  if (digits.startsWith('7') && digits.length === 11) {
     return extractRuPhone(text)
-  // }
+  }
 
-  // const country =
-  //   countryOrSiteId === 'uz' || countryOrSiteId === 'ru'
-  //     ? countryOrSiteId
-  //     : getPhoneCountryBySite(countryOrSiteId)
+  if (digits.startsWith('8') && digits.length === 11) {
+    return extractRuPhone(text)
+  }
 
-  // if (country === 'uz') {
-  //   return extractUzPhone(text)
-  // }
+  // Без префикса — различаем по длине: 9 цифр = узбекский, 10 цифр = русский
+  if (digits.length === 9) {
+    return extractUzPhone(text)
+  }
 
-  // // Страна ru, но номер узбекский — не парсим как русский
-  // const digits = text.replace(/\D/g, '')
-  // if (digits.startsWith('998')) {
-  //   return null
-  // }
+  if (digits.length === 10) {
+    return extractRuPhone(text)
+  }
 
-  // return extractRuPhone(text)
+  // Не удалось определить
+  return null
 }
 
 export function formatUzPhone(value: string) {
