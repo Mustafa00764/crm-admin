@@ -78,7 +78,7 @@ export function useComposerTextarea({
     return () => {
       resizeObserver.disconnect()
     }
-  }, [textareaRef])
+  }, [textareaRef, size, setSize])
 
   const isComposerExpanded = useMemo(() => {
     return input.length > 12 || input.includes('\n')
