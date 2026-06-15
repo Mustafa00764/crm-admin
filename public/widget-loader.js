@@ -558,7 +558,8 @@
     /**
      * Расположение tooltip справа от кнопки.
      */
-    right: buttonSize + 12 + 'px',
+    right: position === 'right' ? buttonSize + 12 + 'px' : '',
+    left: position === 'left' ? buttonSize + 12 + 'px' : '',
     bottom: '13px',
 
     /**
