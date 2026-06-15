@@ -640,6 +640,7 @@
     padding: '0',
     margin: '0',
     display: 'none',
+    opacity: '0',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#ffffff',
@@ -657,6 +658,8 @@
     resizeHandle.style.transform = 'scale(1.12)'
     resizeHandle.style.background = 'rgba(37, 99, 235, .95)'
     resizeHandle.style.boxShadow = '0 10px 26px rgba(0, 0, 0, .35)'
+    resizeHandle.style.opacity = '1'
+
   })
 
   resizeHandle.addEventListener('mouseleave', function () {
