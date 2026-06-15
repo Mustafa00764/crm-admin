@@ -59,7 +59,7 @@
   let maxOpenedWidth = 460
   let maxOpenedHeight = 680
 
-  let offset = 20
+  let offset = 30
   let opened = false
 
   /**
