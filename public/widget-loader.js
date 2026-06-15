@@ -714,8 +714,8 @@
     }
 
     if (position === 'top-left') {
-      resizeHandle.style.right = '-12px'
-      resizeHandle.style.bottom = '-12px'
+      resizeHandle.style.right = '-8px'
+      resizeHandle.style.bottom = '-8px'
       resizeHandle.style.cursor = 'nwse-resize'
       return
     }
@@ -728,8 +728,8 @@
     }
 
     if (position === 'center') {
-      resizeHandle.style.right = '-12px'
-      resizeHandle.style.bottom = '-12px'
+      resizeHandle.style.right = '-8px'
+      resizeHandle.style.bottom = '-8px'
       resizeHandle.style.cursor = 'nwse-resize'
       return
     }
@@ -738,8 +738,8 @@
      * Позиция left по умолчанию:
      * ручка находится в правом верхнем углу.
      */
-    resizeHandle.style.right = '-12px'
-    resizeHandle.style.top = '-12px'
+    resizeHandle.style.right = '-8px'
+    resizeHandle.style.top = '-8px'
     resizeHandle.style.cursor = 'nesw-resize'
   }
 
