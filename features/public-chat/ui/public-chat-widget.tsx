@@ -691,7 +691,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={stopVoiceMode}
                 disabled={voiceConnecting}
-                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px] font-medium transition hover:bg-[#16c3fb] disabled:opacity-60"
+                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px] font-medium transition truncate hover:bg-[#16c3fb] disabled:opacity-60"
               >
                 <span className="flex items-end gap-0.75">
                   <span className="h-2.5 w-1 rounded-full bg-white animate-pulse" />
@@ -700,7 +700,7 @@ export function PublicChatWidget({
                   <span className="h-1.5 w-1 rounded-full bg-white/80" />
                 </span>
 
-                {voiceConnecting ? 'Подключение...' : 'Завершить'}
+                {voiceConnecting ? 'Подключ' : 'Завершить'}
               </button>
             </div>
           </div>
