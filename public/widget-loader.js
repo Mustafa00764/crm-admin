@@ -262,7 +262,7 @@
     root.style.transform = 'none'
 
     if (position === 'right') {
-      root.style.right = offset + 'px'
+      root.style.right = offset + 5 + 'px'
       root.style.bottom = offset + 'px'
       return
     }
