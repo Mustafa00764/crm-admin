@@ -262,8 +262,8 @@
     root.style.transform = 'none'
 
     if (position === 'right') {
-      root.style.right = offset + 5 + 'px'
-      root.style.bottom = offset + 'px'
+      root.style.right = '3vw'
+      root.style.bottom = '3vh'
       return
     }
 
