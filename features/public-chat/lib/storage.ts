@@ -18,7 +18,7 @@ export function getDefaultMessages(currentSite: string): PublicChatMessage[] {
 
   const messagesBySite: Record<string, string> = {
     evroshtaketnikmoskva:
-      'Здравствуйте! Я Анна 😊 Подскажу по материалам и помогу с выбором.',
+      'Здравствуйте! Вы можете пообщаться со мной, нажав на кнопку в левом нижнем углу, или просто написать сообщение 😊',
 
     profnastilvtashkente:
       'Assalomu alaykum! Men Anna 😊 Sizga rus tilida gaplashish qulaymi yoki o‘zbek tilidami? Здравствуйте! Я Анна 😊 Вам удобнее общаться на русском или на узбекском?',
