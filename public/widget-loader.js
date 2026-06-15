@@ -558,7 +558,7 @@
     /**
      * Расположение tooltip справа от кнопки.
      */
-    left: buttonSize + 12 + 'px',
+    right: buttonSize + 12 + 'px',
     bottom: '13px',
 
     /**
