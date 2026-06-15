@@ -80,10 +80,8 @@ export function useComposerTextarea({
     }
   }, [textareaRef, size, setSize])
 
-  const isComposerExpanded = useMemo(() => {
-    const num = Math.round(size / 8)
-    return input.length > num || input.includes('\n')
-  }, [input, size])
+  const isComposerExpanded =
+    input.length > Math.round(size / 8) || input.includes('\n')
 
   return {
     size,
