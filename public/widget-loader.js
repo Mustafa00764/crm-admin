@@ -669,24 +669,25 @@
   })
 
   resizeHandle.innerHTML = `
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-      class="resize-icon"
-    >
-      <path d="M15 3h6v6" />
-      <path d="M9 21H3v-6" />
-      <path d="M21 3l-7 7" />
-      <path d="M3 21l7-7" />
-    </svg>
+    <span id="resize-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M15 3h6v6" />
+        <path d="M9 21H3v-6" />
+        <path d="M21 3l-7 7" />
+        <path d="M3 21l7-7" />
+      </svg>
+    </span>
   `
 
   /**
@@ -702,7 +703,7 @@
    * с учетом текущей позиции виджета.
    */
   function updateResizeHandlePlacement() {
-    let resizeIcon = document.querySelector('.resize-icon')
+    let resizeIcon = document.getElementById('resize-icon')
     resizeHandle.style.left = 'auto'
     resizeHandle.style.right = 'auto'
     resizeHandle.style.top = 'auto'
