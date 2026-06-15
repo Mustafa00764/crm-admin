@@ -208,7 +208,13 @@ export function PublicChatWidget({
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center rounded-full w-10 h-10 bg-[#08b7ef] text-white">
-            <Mic className="h-6 w-6" />
+            <Image
+              unoptimized
+              width={40}
+              height={40}
+              src="/images/assistant-2.png"
+              alt="assistant photo"
+            />
           </div>
 
           <div className="flex flex-col gap-1">
@@ -676,7 +682,7 @@ export function PublicChatWidget({
               </div>
             </div>
 
-            <div className="w-full relative flex shrink-0 items-center gap-2">
+            <div className="relative flex shrink-0 items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-slate-900">
                 {voiceMode === 'assistant' ? (
                   <AudioLines className="h-5 w-5" />
@@ -698,7 +704,9 @@ export function PublicChatWidget({
                   <span className="h-1.5 w-1 rounded-full bg-white/80" />
                 </span>
 
-                <span className='w-full h-4 truncate'>{voiceConnecting ? 'Подключение...' : 'Завершить'}</span>
+                <span className="w-full h-4 truncate">
+                  {voiceConnecting ? 'Подключение...' : 'Завершить'}
+                </span>
               </button>
             </div>
           </div>
