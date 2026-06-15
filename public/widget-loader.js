@@ -460,7 +460,8 @@
 
   Object.assign(button.style, {
     position: 'absolute',
-    right: '0',
+    right: position === 'right' ? '0' : '',
+    left: position === 'left' ? '0' : '',
     bottom: '0',
     width: buttonSize + 'px',
     height: buttonSize + 'px',
