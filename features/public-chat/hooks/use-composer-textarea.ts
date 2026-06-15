@@ -1,4 +1,4 @@
-import { type RefObject, useLayoutEffect, useState } from 'react'
+import { type RefObject, useEffect, useLayoutEffect, useState } from 'react'
 
 type UseComposerTextareaParams = {
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -13,7 +13,7 @@ export function useComposerTextarea({
   liveUserTranscript,
   liveAssistantTranscript
 }: UseComposerTextareaParams) {
-  const [size, setSize] = useState(0)
+  const [size, setSize] = useState<number>(0)
 
   /**
    * Автоматическое изменение высоты textarea.
@@ -37,54 +37,21 @@ export function useComposerTextarea({
   /**
    * Получение и отслеживание ширины textarea.
    */
-  useLayoutEffect(() => {
+  useEffect(() => {
     const textarea = textareaRef.current
 
     if (!textarea) return
 
-    let animationFrameId: number | null = null
+    const nextSize = Math.round(textarea.offsetWidth)
 
-    const updateSize = () => {
-      const nextSize = Math.round(textarea.offsetWidth)
-
-      if (animationFrameId !== null) {
-        cancelAnimationFrame(animationFrameId)
-      }
-
-      animationFrameId = requestAnimationFrame(() => {
-        setSize(currentSize => {
-          if (currentSize === nextSize) {
-            return currentSize
-          }
-
-          return nextSize
-        })
-      })
-    }
-
-    // Первоначальное измерение.
-    updateSize()
-
-    const resizeObserver = new ResizeObserver(() => {
-      updateSize()
-    })
-
-    resizeObserver.observe(textarea)
-
-    return () => {
-      resizeObserver.disconnect()
-
-      if (animationFrameId !== null) {
-        cancelAnimationFrame(animationFrameId)
-      }
-    }
-  }, [textareaRef])
+    setSize(nextSize)
+  }, [textareaRef, size])
 
   /**
    * Пока ширина ещё не измерена,
    * используем минимальное значение 12.
    */
-  const charactersPerLine = size > 0 ? Math.max(12, Math.round(size / 8)) : 12
+  const charactersPerLine = Math.max(12, Math.round(size / 8))
 
   const isComposerExpanded =
     input.length > charactersPerLine || input.includes('\n')
