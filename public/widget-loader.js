@@ -680,6 +680,7 @@
       stroke-linecap="round"
       stroke-linejoin="round"
       aria-hidden="true"
+      class="resize-icon"
     >
       <path d="M15 3h6v6" />
       <path d="M9 21H3v-6" />
@@ -701,6 +702,7 @@
    * с учетом текущей позиции виджета.
    */
   function updateResizeHandlePlacement() {
+    let resizeIcon = document.querySelector('.resize-icon')
     resizeHandle.style.left = 'auto'
     resizeHandle.style.right = 'auto'
     resizeHandle.style.top = 'auto'
@@ -710,6 +712,7 @@
       resizeHandle.style.left = '-8px'
       resizeHandle.style.top = '-8px'
       resizeHandle.style.cursor = 'nwse-resize'
+      resizeIcon.style.transform = 'rotate(45deg)'
       return
     }
 
