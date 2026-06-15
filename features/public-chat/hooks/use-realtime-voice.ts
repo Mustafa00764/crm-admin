@@ -643,10 +643,13 @@ export function useRealtimeVoice({
   }
 
   useEffect(() => {
+    setTimeout(()=>{
+      setVoiceError('')
+    }, 2500)
     return () => {
       cleanupRealtime(false)
     }
-  }, [cleanupRealtime])
+  }, [cleanupRealtime,voiceError])
 
   return {
     voiceMode,
