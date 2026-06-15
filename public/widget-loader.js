@@ -56,8 +56,8 @@
   let minOpenedHeight = 360
 
   // Пользователь не сможет увеличить окно больше этих значений.
-  let maxOpenedWidth = 900
-  let maxOpenedHeight = 900
+  let maxOpenedWidth = 460
+  let maxOpenedHeight = 680
 
   let offset = 20
   let opened = false
@@ -75,10 +75,16 @@
       openedWidth = savedSize.width
     }
 
-    if (savedSize && Number.isFinite(savedSize.height) && savedSize.height > 0) {
+    if (
+      savedSize &&
+      Number.isFinite(savedSize.height) &&
+      savedSize.height > 0
+    ) {
       openedHeight = savedSize.height
     }
   } catch (error) {
+    console.error(error)
+
     /**
      * В некоторых браузерах localStorage может быть запрещен.
      * В таком случае виджет продолжит работать без сохранения размера.
@@ -118,7 +124,10 @@
     },
     {
       id: 'evroshtaketnikmoskva',
-      messages: ['Обращайтесь в любом формате 😊', 'Помочь с выбором? Мы онлайн 😊']
+      messages: [
+        'Обращайтесь в любом формате 😊',
+        'Помочь с выбором? Мы онлайн 😊'
+      ]
     }
   ]
 
@@ -194,14 +203,10 @@
    * поэтому отдельно учитываем это при вычислении максимальной высоты.
    */
   function getPanelHeight() {
-    let bottomSpace = position === 'left'
-      ? Math.max(offset, window.innerHeight * 0.1)
-      : offset
+    let bottomSpace =
+      position === 'left' ? Math.max(offset, window.innerHeight * 0.1) : offset
 
-    let availableHeight = Math.max(
-      0,
-      window.innerHeight - bottomSpace - offset
-    )
+    let availableHeight = Math.max(0, window.innerHeight - bottomSpace - offset)
 
     let allowedMaxHeight = Math.min(maxOpenedHeight, availableHeight)
     let allowedMinHeight = Math.min(minOpenedHeight, allowedMaxHeight)
@@ -224,6 +229,8 @@
         })
       )
     } catch (error) {
+      console.error(error)
+
       /**
        * Ошибка сохранения не должна ломать сам виджет.
        */
@@ -609,7 +616,6 @@
     pointerEvents: 'none'
   })
 
-
   /**
    * resizeHandle — ручка изменения размера открытого окна чата.
    *
@@ -627,8 +633,8 @@
   Object.assign(resizeHandle.style, {
     position: 'absolute',
     zIndex: '5',
-    width: '34px',
-    height: '34px',
+    width: '32px',
+    height: '32px',
     borderRadius: '999px',
     border: '1px solid rgba(255, 255, 255, .9)',
     padding: '0',
@@ -642,7 +648,21 @@
     pointerEvents: 'auto',
     touchAction: 'none',
     userSelect: 'none',
-    cursor: 'nwse-resize'
+    cursor: 'nwse-resize',
+    transition:
+      'transform .18s ease, background .18s ease, box-shadow .18s ease'
+  })
+
+  resizeHandle.addEventListener('mouseenter', function () {
+    resizeHandle.style.transform = 'scale(1.12)'
+    resizeHandle.style.background = 'rgba(37, 99, 235, .95)'
+    resizeHandle.style.boxShadow = '0 10px 26px rgba(0, 0, 0, .35)'
+  })
+
+  resizeHandle.addEventListener('mouseleave', function () {
+    resizeHandle.style.transform = 'scale(1)'
+    resizeHandle.style.background = 'rgba(15, 23, 42, .82)'
+    resizeHandle.style.boxShadow = '0 6px 18px rgba(0, 0, 0, .25)'
   })
 
   resizeHandle.innerHTML = `
