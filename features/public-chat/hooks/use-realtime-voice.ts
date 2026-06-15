@@ -645,7 +645,7 @@ export function useRealtimeVoice({
   useEffect(() => {
     setTimeout(()=>{
       setVoiceError('')
-    }, 2500)
+    }, 4000)
     return () => {
       cleanupRealtime(false)
     }
