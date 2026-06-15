@@ -633,8 +633,8 @@
   Object.assign(resizeHandle.style, {
     position: 'absolute',
     zIndex: '5',
-    width: '32px',
-    height: '32px',
+    width: '30px',
+    height: '30px',
     borderRadius: '999px',
     border: '1px solid rgba(255, 255, 255, .9)',
     padding: '0',
@@ -655,17 +655,17 @@
   })
 
   resizeHandle.addEventListener('mouseenter', function () {
-    resizeHandle.style.transform = 'scale(1.12)'
+    resizeHandle.style.transform = 'scale(1.08)'
     resizeHandle.style.background = 'rgba(37, 99, 235, .95)'
     resizeHandle.style.boxShadow = '0 10px 26px rgba(0, 0, 0, .35)'
     resizeHandle.style.opacity = '1'
-
   })
 
   resizeHandle.addEventListener('mouseleave', function () {
     resizeHandle.style.transform = 'scale(1)'
     resizeHandle.style.background = 'rgba(15, 23, 42, .82)'
     resizeHandle.style.boxShadow = '0 6px 18px rgba(0, 0, 0, .25)'
+    resizeHandle.style.opacity = '0'
   })
 
   resizeHandle.innerHTML = `
