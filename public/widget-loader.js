@@ -32,19 +32,58 @@
   let theme = currentScript.getAttribute('data-theme') || 'light'
 
   /**
-   * Основные размеры.
+   * Единые размеры виджета для всех сайтов.
+   *
+   * Эти значения задаются непосредственно внутри loader-файла.
+   * Поэтому в HTML-подключение не нужно добавлять data-атрибуты
+   * для ширины, высоты, минимального или максимального размера.
    *
    * buttonSize — размер круглой кнопки ассистента.
-   * openedWidth — ширина открытого окна чата.
-   * openedHeight — высота открытого окна чата.
-   * offset — отступ от края экрана.
-   * opened — состояние: чат открыт или закрыт.
+   * openedWidth — текущая ширина открытого окна чата.
+   * openedHeight — текущая высота открытого окна чата.
+   * minOpenedWidth / minOpenedHeight — минимальный размер.
+   * maxOpenedWidth / maxOpenedHeight — максимальный размер.
+   * offset — отступ виджета от края окна браузера.
    */
   let buttonSize = 60
+
+  // Все виджеты впервые открываются с одинаковым размером 380 × 620 px.
   let openedWidth = 380
   let openedHeight = 620
+
+  // Пользователь не сможет уменьшить окно меньше этих значений.
+  let minOpenedWidth = 280
+  let minOpenedHeight = 360
+
+  // Пользователь не сможет увеличить окно больше этих значений.
+  let maxOpenedWidth = 900
+  let maxOpenedHeight = 900
+
   let offset = 20
   let opened = false
+
+  /**
+   * Сохраняем размер отдельно для каждого сайта.
+   * После перезагрузки страницы пользователь получит тот же размер окна.
+   */
+  let sizeStorageKey = 'omni-crm-chat-size:' + siteId
+
+  try {
+    let savedSize = JSON.parse(sessionStorage.getItem(sizeStorageKey) || 'null')
+
+    if (savedSize && Number.isFinite(savedSize.width) && savedSize.width > 0) {
+      openedWidth = savedSize.width
+    }
+
+    if (savedSize && Number.isFinite(savedSize.height) && savedSize.height > 0) {
+      openedHeight = savedSize.height
+    }
+  } catch (error) {
+    /**
+     * В некоторых браузерах localStorage может быть запрещен.
+     * В таком случае виджет продолжит работать без сохранения размера.
+     */
+  }
 
   /**
    * Настройки tooltip.
@@ -129,20 +168,66 @@
    * Если экран меньше openedWidth,
    * окно не выходит за пределы экрана.
    */
+  /**
+   * clamp(value, min, max)
+   *
+   * Ограничивает число допустимым диапазоном.
+   * Это не дает пользователю сделать чат слишком маленьким
+   * или растянуть его за пределы экрана.
+   */
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max)
+  }
+
   function getPanelWidth() {
-    return Math.min(openedWidth, window.innerWidth - offset * 2)
+    let availableWidth = Math.max(0, window.innerWidth - offset * 2)
+    let allowedMaxWidth = Math.min(maxOpenedWidth, availableWidth)
+    let allowedMinWidth = Math.min(minOpenedWidth, allowedMaxWidth)
+
+    return clamp(openedWidth, allowedMinWidth, allowedMaxWidth)
   }
 
   /**
    * getPanelHeight() считает адаптивную высоту окна чата.
    *
-   * Учитываем:
-   * - высоту кнопки;
-   * - отступы;
-   * - высоту экрана.
+   * Для стандартной позиции left нижний отступ равен 10% высоты окна,
+   * поэтому отдельно учитываем это при вычислении максимальной высоты.
    */
   function getPanelHeight() {
-    return Math.min(openedHeight, window.innerHeight - buttonSize - offset * 3)
+    let bottomSpace = position === 'left'
+      ? Math.max(offset, window.innerHeight * 0.1)
+      : offset
+
+    let availableHeight = Math.max(
+      0,
+      window.innerHeight - bottomSpace - offset
+    )
+
+    let allowedMaxHeight = Math.min(maxOpenedHeight, availableHeight)
+    let allowedMinHeight = Math.min(minOpenedHeight, allowedMaxHeight)
+
+    return clamp(openedHeight, allowedMinHeight, allowedMaxHeight)
+  }
+
+  /**
+   * saveCurrentSize()
+   *
+   * Сохраняет выбранный пользователем размер между перезагрузками страницы.
+   */
+  function saveCurrentSize() {
+    try {
+      sessionStorage.setItem(
+        sizeStorageKey,
+        JSON.stringify({
+          width: openedWidth,
+          height: openedHeight
+        })
+      )
+    } catch (error) {
+      /**
+       * Ошибка сохранения не должна ломать сам виджет.
+       */
+    }
   }
 
   /**
@@ -260,9 +345,7 @@
      */
     @media (max-width: 480px) {
       #omni-crm-chat-widget-root {
-        left: 12px !important;
-        right: 12px !important;
-        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
       }
 
       /**
@@ -526,6 +609,268 @@
     pointerEvents: 'none'
   })
 
+
+  /**
+   * resizeHandle — ручка изменения размера открытого окна чата.
+   *
+   * Пользователь может:
+   * - зажать ее мышью и потянуть;
+   * - потянуть пальцем на сенсорном экране;
+   * - использовать стрелки клавиатуры, когда ручка в фокусе.
+   */
+  let resizeHandle = document.createElement('button')
+  resizeHandle.type = 'button'
+  resizeHandle.id = 'omni-crm-resize-handle'
+  resizeHandle.setAttribute('aria-label', 'Изменить размер окна чата')
+  resizeHandle.title = 'Потяните, чтобы изменить размер окна'
+
+  Object.assign(resizeHandle.style, {
+    position: 'absolute',
+    zIndex: '5',
+    width: '34px',
+    height: '34px',
+    borderRadius: '999px',
+    border: '1px solid rgba(255, 255, 255, .9)',
+    padding: '0',
+    margin: '0',
+    display: 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#ffffff',
+    background: 'rgba(15, 23, 42, .82)',
+    boxShadow: '0 6px 18px rgba(0, 0, 0, .25)',
+    pointerEvents: 'auto',
+    touchAction: 'none',
+    userSelect: 'none',
+    cursor: 'nwse-resize'
+  })
+
+  resizeHandle.innerHTML = `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M9 21H3v-6" />
+      <path d="M21 3l-7 7" />
+      <path d="M3 21l7-7" />
+    </svg>
+  `
+
+  /**
+   * Состояние текущего drag-resize.
+   */
+  let resizeState = null
+  let previousBodyUserSelect = ''
+
+  /**
+   * updateResizeHandlePlacement()
+   *
+   * Ставит ручку в тот угол, из которого удобно растягивать чат
+   * с учетом текущей позиции виджета.
+   */
+  function updateResizeHandlePlacement() {
+    resizeHandle.style.left = 'auto'
+    resizeHandle.style.right = 'auto'
+    resizeHandle.style.top = 'auto'
+    resizeHandle.style.bottom = 'auto'
+
+    if (position === 'right') {
+      resizeHandle.style.left = '-12px'
+      resizeHandle.style.top = '-12px'
+      resizeHandle.style.cursor = 'nwse-resize'
+      return
+    }
+
+    if (position === 'top-left') {
+      resizeHandle.style.right = '-12px'
+      resizeHandle.style.bottom = '-12px'
+      resizeHandle.style.cursor = 'nwse-resize'
+      return
+    }
+
+    if (position === 'top-right') {
+      resizeHandle.style.left = '-12px'
+      resizeHandle.style.bottom = '-12px'
+      resizeHandle.style.cursor = 'nesw-resize'
+      return
+    }
+
+    if (position === 'center') {
+      resizeHandle.style.right = '-12px'
+      resizeHandle.style.bottom = '-12px'
+      resizeHandle.style.cursor = 'nwse-resize'
+      return
+    }
+
+    /**
+     * Позиция left по умолчанию:
+     * ручка находится в правом верхнем углу.
+     */
+    resizeHandle.style.right = '-12px'
+    resizeHandle.style.top = '-12px'
+    resizeHandle.style.cursor = 'nesw-resize'
+  }
+
+  /**
+   * applyOpenedPanelSize()
+   *
+   * Применяет текущие openedWidth/openedHeight к root и iframe.
+   * Вызывается при открытии, изменении размера и resize окна браузера.
+   */
+  function applyOpenedPanelSize() {
+    let panelWidth = getPanelWidth()
+    let panelHeight = getPanelHeight()
+
+    Object.assign(root.style, {
+      width: panelWidth + 'px',
+      height: panelHeight + 'px'
+    })
+
+    Object.assign(iframe.style, {
+      left: '0',
+      right: 'auto',
+      top: 'auto',
+      bottom: '0',
+      width: panelWidth + 'px',
+      height: panelHeight + 'px',
+      borderRadius: window.innerWidth <= 480 ? '16px' : '18px'
+    })
+
+    updateResizeHandlePlacement()
+    applyPosition()
+  }
+
+  function getHorizontalResizeDirection() {
+    return position === 'right' || position === 'top-right' ? -1 : 1
+  }
+
+  function getVerticalResizeDirection() {
+    return position === 'left' || position === 'right' ? -1 : 1
+  }
+
+  function onResizePointerMove(event) {
+    if (!resizeState) return
+
+    let horizontalDelta =
+      (event.clientX - resizeState.startX) * resizeState.horizontalDirection
+
+    let verticalDelta =
+      (event.clientY - resizeState.startY) * resizeState.verticalDirection
+
+    openedWidth = resizeState.startWidth + horizontalDelta
+    openedHeight = resizeState.startHeight + verticalDelta
+
+    /**
+     * getPanelWidth/getPanelHeight дополнительно ограничат размеры
+     * минимальными, максимальными и доступной областью экрана.
+     */
+    openedWidth = getPanelWidth()
+    openedHeight = getPanelHeight()
+
+    applyOpenedPanelSize()
+  }
+
+  function finishResize(event) {
+    if (!resizeState) return
+
+    if (
+      event &&
+      Number.isFinite(event.pointerId) &&
+      resizeHandle.hasPointerCapture &&
+      resizeHandle.hasPointerCapture(event.pointerId)
+    ) {
+      resizeHandle.releasePointerCapture(event.pointerId)
+    }
+
+    resizeState = null
+    iframe.style.pointerEvents = 'auto'
+    document.body.style.userSelect = previousBodyUserSelect
+
+    window.removeEventListener('pointermove', onResizePointerMove)
+    window.removeEventListener('pointerup', finishResize)
+    window.removeEventListener('pointercancel', finishResize)
+
+    saveCurrentSize()
+  }
+
+  resizeHandle.addEventListener('pointerdown', function (event) {
+    // Ручное изменение размера доступно всегда, кроме режима full.
+    if (!opened || position === 'full') return
+
+    event.preventDefault()
+
+    resizeState = {
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: getPanelWidth(),
+      startHeight: getPanelHeight(),
+      horizontalDirection: getHorizontalResizeDirection(),
+      verticalDirection: getVerticalResizeDirection()
+    }
+
+    previousBodyUserSelect = document.body.style.userSelect
+    document.body.style.userSelect = 'none'
+
+    /**
+     * Пока пользователь тянет ручку, временно отключаем события iframe.
+     * Иначе iframe может перехватить указатель у родительской страницы.
+     */
+    iframe.style.pointerEvents = 'none'
+
+    if (resizeHandle.setPointerCapture) {
+      resizeHandle.setPointerCapture(event.pointerId)
+    }
+
+    window.addEventListener('pointermove', onResizePointerMove)
+    window.addEventListener('pointerup', finishResize)
+    window.addEventListener('pointercancel', finishResize)
+  })
+
+  /**
+   * Доступное изменение размера с клавиатуры.
+   * Обычная стрелка меняет размер на 10 px,
+   * Shift + стрелка — на 40 px.
+   */
+  resizeHandle.addEventListener('keydown', function (event) {
+    if (!opened || position === 'full') return
+
+    let step = event.shiftKey ? 40 : 10
+    let handled = true
+
+    if (event.key === 'ArrowRight') {
+      openedWidth += step
+    } else if (event.key === 'ArrowLeft') {
+      openedWidth -= step
+    } else if (event.key === 'ArrowDown') {
+      openedHeight += step
+    } else if (event.key === 'ArrowUp') {
+      openedHeight -= step
+    } else {
+      handled = false
+    }
+
+    if (!handled) return
+
+    event.preventDefault()
+
+    openedWidth = getPanelWidth()
+    openedHeight = getPanelHeight()
+
+    applyOpenedPanelSize()
+    saveCurrentSize()
+  })
+
+  updateResizeHandlePlacement()
+
   /**
    * showTooltip(text)
    *
@@ -667,6 +1012,8 @@
      * чат открывается на весь экран.
      */
     if (position === 'full') {
+      resizeHandle.style.display = 'none'
+
       Object.assign(root.style, {
         left: '0',
         right: '0',
@@ -694,23 +1041,8 @@
      * Обычный режим открытия.
      * Чат открывается небольшим окном.
      */
-    let panelWidth = getPanelWidth()
-    let panelHeight = getPanelHeight()
-
-    Object.assign(root.style, {
-      width: panelWidth + 'px',
-      height: panelHeight + 'px'
-    })
-
-    Object.assign(iframe.style, {
-      left: '0',
-      bottom: '0',
-      width: panelWidth + 'px',
-      height: panelHeight + 'px',
-      borderRadius: window.innerWidth <= 480 ? '16px' : '18px'
-    })
-
-    applyPosition()
+    resizeHandle.style.display = 'flex'
+    applyOpenedPanelSize()
   }
 
   /**
@@ -727,6 +1059,13 @@
 
     iframe.style.display = 'none'
     button.style.display = 'block'
+    resizeHandle.style.display = 'none'
+
+    /**
+     * Если чат закрыли во время изменения размера,
+     * корректно завершаем resize-сессию.
+     */
+    finishResize()
 
     let panelWidth = getPanelWidth()
     let panelHeight = getPanelHeight()
@@ -839,6 +1178,7 @@
    */
   root.appendChild(iframe)
   root.appendChild(tooltip)
+  root.appendChild(resizeHandle)
   root.appendChild(button)
 
   /**
