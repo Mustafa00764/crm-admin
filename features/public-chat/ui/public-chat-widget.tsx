@@ -752,7 +752,7 @@ export function PublicChatWidget({
                     ? 'Заполните форму...'
                     : 'Введите...'
                 }
-                className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
+                className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[13.5px] leading-5 text-slate-900 outline-none placeholder:text-black/45 placeholder:text-[13px] disabled:opacity-60"
               />
             </div>
 
