@@ -617,7 +617,7 @@ export function PublicChatWidget({
               <Keyboard className="h-3 w-3" />
               <span>Язык диктовки:</span>
 
-              <div className="flex h-full overflow-hidden rounded-full border border-current/15">
+              <div className="flex h-full overflow-y-hidden rounded-full border border-current/15">
                 {DICTATION_LANGUAGES.map(language => (
                   <button
                     key={language.value}
@@ -750,7 +750,7 @@ export function PublicChatWidget({
                 placeholder={
                   shouldBlockChat
                     ? 'Заполните форму...'
-                    : 'Введите сообщение...'
+                    : 'Введите...'
                 }
                 className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[14px] leading-5 text-slate-900 outline-none placeholder:text-black/45 disabled:opacity-60"
               />
