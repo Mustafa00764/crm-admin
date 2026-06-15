@@ -707,8 +707,8 @@
     resizeHandle.style.bottom = 'auto'
 
     if (position === 'right') {
-      resizeHandle.style.left = '-12px'
-      resizeHandle.style.top = '-12px'
+      resizeHandle.style.left = '-8px'
+      resizeHandle.style.top = '-8px'
       resizeHandle.style.cursor = 'nwse-resize'
       return
     }
