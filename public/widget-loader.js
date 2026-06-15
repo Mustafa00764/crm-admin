@@ -712,7 +712,7 @@
       resizeHandle.style.left = '-8px'
       resizeHandle.style.top = '-8px'
       resizeHandle.style.cursor = 'nwse-resize'
-      resizeHandle.style.transform = 'rotate(45deg)'
+      resizeHandle.style.transform = 'rotate(-90deg)'
       return
     }
 
