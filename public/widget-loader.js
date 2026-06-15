@@ -721,8 +721,8 @@
     }
 
     if (position === 'top-right') {
-      resizeHandle.style.left = '-12px'
-      resizeHandle.style.bottom = '-12px'
+      resizeHandle.style.left = '-8px'
+      resizeHandle.style.bottom = '-8px'
       resizeHandle.style.cursor = 'nesw-resize'
       return
     }
