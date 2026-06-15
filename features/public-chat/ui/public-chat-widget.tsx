@@ -617,14 +617,14 @@ export function PublicChatWidget({
               <Keyboard className="h-3 w-3" />
               <span>Язык диктовки:</span>
 
-              <div className="flex h-full overflow-y-hidden rounded-full border border-current/15">
+              <div className="flex h-full overflow-hidden rounded-full border border-current/15">
                 {DICTATION_LANGUAGES.map(language => (
                   <button
                     key={language.value}
                     type="button"
                     onClick={() => setDictationLanguage(language.value)}
                     className={cn(
-                      'h-full px-3 text-[11px] transition font-medium',
+                      'h-full px-2 text-[10px] transition font-medium',
                       dictationLanguage === language.value
                         ? 'bg-[#08b7ef] text-white'
                         : 'hover:bg-current/10'
