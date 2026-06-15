@@ -689,7 +689,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={stopVoiceMode}
                 disabled={voiceConnecting}
-                className="max-w-full w-full h-9 flex items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px leading-4 font-medium transition hover:bg-[#16c3fb] disabled:opacity-60"
+                className=" h-9 flex items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px leading-4 font-medium transition hover:bg-[#16c3fb] disabled:opacity-60"
               >
                 <span className="flex items-end gap-0.75">
                   <span className="h-2.5 w-1 rounded-full bg-white animate-pulse" />
