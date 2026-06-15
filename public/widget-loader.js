@@ -669,7 +669,6 @@
   })
 
   resizeHandle.innerHTML = `
-    <span id="resize-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18"
@@ -687,7 +686,6 @@
         <path d="M21 3l-7 7" />
         <path d="M3 21l7-7" />
       </svg>
-    </span>
   `
 
   /**
@@ -703,7 +701,6 @@
    * с учетом текущей позиции виджета.
    */
   function updateResizeHandlePlacement() {
-    let resizeIcon = document.getElementById('resize-icon')
     resizeHandle.style.left = 'auto'
     resizeHandle.style.right = 'auto'
     resizeHandle.style.top = 'auto'
@@ -713,7 +710,7 @@
       resizeHandle.style.left = '-8px'
       resizeHandle.style.top = '-8px'
       resizeHandle.style.cursor = 'nwse-resize'
-      resizeIcon.style.transform = 'rotate(45deg)'
+      resizeHandle.style.transform = 'rotate(45deg)'
       return
     }
 
