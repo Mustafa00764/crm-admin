@@ -196,7 +196,7 @@ export function PublicChatWidget({
   return (
     <div
       className={cn(
-        'max-w-120 min-h-0 fixed top-0 left-0 max-h-full flex h-full w-full flex-col overflow-hidden pointer-events-auto',
+        'max-w-120 min-h-0 fixed top-0 left-0 max-h-full flex h-full w-full flex-col overflow-x-hidden pointer-events-auto',
         theme === 'light'
           ? 'bg-white text-slate-950'
           : 'bg-[#090b10] text-white'
@@ -598,7 +598,7 @@ export function PublicChatWidget({
                 key={emoji}
                 type="button"
                 onClick={() => addEmoji(emoji)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-lg hover:bg-black/10"
+                className="flex h-6 w-6 items-center justify-center rounded-lg text-lg hover:bg-black/10"
               >
                 {emoji}
               </button>
@@ -691,7 +691,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={stopVoiceMode}
                 disabled={voiceConnecting}
-                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-5 text-[14px] font-semibold text-s transition hover:bg-[#16c3fb] disabled:opacity-60"
+                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px] font-medium transition hover:bg-[#16c3fb] disabled:opacity-60"
               >
                 <span className="flex items-end gap-0.75">
                   <span className="h-2.5 w-1 rounded-full bg-white animate-pulse" />
