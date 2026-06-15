@@ -183,8 +183,6 @@ export function PublicChatWidget({
       : 'border-white/10 bg-[#202124] text-white'
   )
 
-
-
   const composerHint =
     voiceMode === 'assistant'
       ? liveAssistantTranscript ||
@@ -691,7 +689,7 @@ export function PublicChatWidget({
                 type="button"
                 onClick={stopVoiceMode}
                 disabled={voiceConnecting}
-                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px] font-medium transition truncate hover:bg-[#16c3fb] disabled:opacity-60"
+                className="flex h-9 items-center gap-2 rounded-full bg-[#08b7ef] px-3 text-[13px] font-medium transition hover:bg-[#16c3fb] disabled:opacity-60"
               >
                 <span className="flex items-end gap-0.75">
                   <span className="h-2.5 w-1 rounded-full bg-white animate-pulse" />
@@ -700,7 +698,7 @@ export function PublicChatWidget({
                   <span className="h-1.5 w-1 rounded-full bg-white/80" />
                 </span>
 
-                {voiceConnecting ? 'Подключение...' : 'Завершить'}
+                <span className='w-full truncate'>{voiceConnecting ? 'Подключение...' : 'Завершить'}</span>
               </button>
             </div>
           </div>
@@ -748,9 +746,7 @@ export function PublicChatWidget({
                   }
                 }}
                 placeholder={
-                  shouldBlockChat
-                    ? 'Заполните форму...'
-                    : 'Введите...'
+                  shouldBlockChat ? 'Заполните форму...' : 'Введите...'
                 }
                 className="min-h-9 w-full max-h-45 resize-none overflow-y-auto border-0 bg-transparent px-1 py-2 text-[13.5px] leading-5 text-slate-900 outline-none placeholder:text-black/45 placeholder:text-[13px] disabled:opacity-60"
               />
