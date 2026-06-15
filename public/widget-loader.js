@@ -362,12 +362,12 @@
        * - уменьшается размер шрифта.
        */
       #omni-crm-tooltip {
-        max-width: calc(100vw - 160px) !important;
+        max-width: calc(100vw - 64px) !important;
         width: auto;
         font-size: 12px !important;
         line-height: 1.15 !important;
         white-space: normal !important;
-        left: 72px !important;
+        right: 72px !important;
         padding: 8px 10px !important;
       }
     }
