@@ -32,6 +32,7 @@ import { useCallback } from 'react'
 import { isImageFile } from '../lib/attachments'
 import { submitLeadForm } from '../lib/lead-form'
 import { DICTATION_LANGUAGES, QUICK_EMOJIS } from '../config/public-chat-config'
+import { linkifyText } from './linkify-text'
 
 export function PublicChatWidget({
   siteId,
@@ -202,7 +203,7 @@ export function PublicChatWidget({
     >
       <div
         className={cn(
-          'flex h-14 items-center justify-between border-b px-4',
+          'flex h-14 items-center justify-between border-b px-4 py-2',
           theme === 'light' ? 'border-black/10' : 'border-white/10'
         )}
       >
@@ -287,7 +288,9 @@ export function PublicChatWidget({
                 </div>
               ) : null}
 
-              {message.content ? <div>{message.content}</div> : null}
+              {message.content ? (
+                <div>{linkifyText(message.content)}</div>
+              ) : null}
             </div>
           </div>
         ))}
