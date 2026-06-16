@@ -1,4 +1,10 @@
-import { type RefObject, useLayoutEffect, useMemo } from 'react'
+import {
+  type RefObject,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  useEffect
+} from 'react'
 
 type UseComposerTextareaParams = {
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -13,6 +19,34 @@ export function useComposerTextarea({
   liveUserTranscript,
   liveAssistantTranscript
 }: UseComposerTextareaParams) {
+  const [textareaWidth, setTextareaWidth] = useState(0)
+  const [fontSize, setFontSize] = useState(14) // значение по умолчанию
+
+  // Отслеживаем изменение ширины и размера шрифта textarea
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const updateMetrics = () => {
+      setTextareaWidth(textarea.clientWidth)
+      const computedStyle = window.getComputedStyle(textarea)
+      const size = parseFloat(computedStyle.fontSize) || 14
+      setFontSize(size)
+    }
+
+    updateMetrics() // начальное значение
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateMetrics()
+    })
+    resizeObserver.observe(textarea)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [textareaRef]) // зависимость только от ref
+
+  // Автоматическая регулировка высоты – только по содержимому
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
@@ -27,8 +61,11 @@ export function useComposerTextarea({
   }, [textareaRef, input, liveUserTranscript, liveAssistantTranscript])
 
   const isComposerExpanded = useMemo(() => {
-    return input.length > 20 || input.includes('\n')
-  }, [input])
+    // Вычисляем порог на основе ширины и размера шрифта (без обращения к рефу)
+    const charWidth = fontSize * 0.6
+    const threshold = Math.max(10, Math.floor(textareaWidth / charWidth))
+    return input.length > threshold || input.includes('\n')
+  }, [input, textareaWidth, fontSize])
 
   return {
     isComposerExpanded
