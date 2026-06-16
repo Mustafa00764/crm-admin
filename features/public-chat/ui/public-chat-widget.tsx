@@ -717,7 +717,7 @@ export function PublicChatWidget({
               composerClass,
               isComposerExpanded
                 ? 'grid grid-cols-1 gap-1'
-                : 'grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2'
+                : 'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2'
             )}
           >
             {!isComposerExpanded ? (
