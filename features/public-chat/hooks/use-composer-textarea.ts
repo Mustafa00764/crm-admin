@@ -1,4 +1,4 @@
-import { type RefObject, useLayoutEffect, useState } from 'react'
+import { type RefObject, useEffect, useLayoutEffect, useState } from 'react'
 
 type UseComposerTextareaParams = {
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -37,7 +37,7 @@ export function useComposerTextarea({
   /**
    * Получение и отслеживание ширины textarea.
    */
-  useLayoutEffect(() => {
+  useEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
     setSize(textarea.offsetWidth)
