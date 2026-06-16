@@ -289,7 +289,7 @@ export function PublicChatWidget({
               ) : null}
 
               {message.content ? (
-                <div>{linkifyText(message.content)}</div>
+                <div className='break-all'>{linkifyText(message.content)}</div>
               ) : null}
             </div>
           </div>
