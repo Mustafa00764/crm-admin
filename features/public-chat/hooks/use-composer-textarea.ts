@@ -40,19 +40,7 @@ export function useComposerTextarea({
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
-
-    // Ставим начальное значение сразу
     setSize(textarea.offsetWidth)
-
-    // Следим за изменениями размера (например при ресайзе окна)
-    const observer = new ResizeObserver(entries => {
-      const width = entries[0]?.contentRect.width
-      if (width) setSize(width)
-    })
-
-    observer.observe(textarea)
-
-    return () => observer.disconnect()
   }, [textareaRef])
 
   /**
