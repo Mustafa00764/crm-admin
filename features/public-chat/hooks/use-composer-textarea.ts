@@ -3,7 +3,8 @@ import {
   useLayoutEffect,
   useMemo,
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from 'react'
 
 type UseComposerTextareaParams = {
@@ -20,24 +21,37 @@ export function useComposerTextarea({
   liveAssistantTranscript
 }: UseComposerTextareaParams) {
   const [textareaWidth, setTextareaWidth] = useState(0)
-  const [fontSize, setFontSize] = useState(14) // значение по умолчанию
+  const [fontSize, setFontSize] = useState(14)
 
-  // Отслеживаем изменение ширины и размера шрифта textarea
+  // Храним предыдущие значения для сравнения
+  const prevMetricsRef = useRef({ width: 0, fontSize: 0 })
+
+  // Отслеживаем ширину и размер шрифта – обновляем только при реальном изменении
   useEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
 
     const updateMetrics = () => {
-      setTextareaWidth(textarea.clientWidth)
+      const newWidth = textarea.clientWidth
       const computedStyle = window.getComputedStyle(textarea)
-      const size = parseFloat(computedStyle.fontSize) || 14
-      setFontSize(size)
+      const newFontSize = parseFloat(computedStyle.fontSize) || 14
+
+      const prev = prevMetricsRef.current
+      if (newWidth !== prev.width) {
+        prev.width = newWidth
+        setTextareaWidth(newWidth)
+      }
+      if (newFontSize !== prev.fontSize) {
+        prev.fontSize = newFontSize
+        setFontSize(newFontSize)
+      }
     }
 
     updateMetrics() // начальное значение
 
     const resizeObserver = new ResizeObserver(() => {
-      updateMetrics()
+      // Группируем частые вызовы в один кадр, чтобы избежать лишних перерендеров
+      requestAnimationFrame(updateMetrics)
     })
     resizeObserver.observe(textarea)
 
@@ -46,7 +60,7 @@ export function useComposerTextarea({
     }
   }, [textareaRef]) // зависимость только от ref
 
-  // Автоматическая регулировка высоты – только по содержимому
+  // Автоматическая регулировка высоты – только по содержимому, без зависимости от ширины
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
@@ -61,7 +75,6 @@ export function useComposerTextarea({
   }, [textareaRef, input, liveUserTranscript, liveAssistantTranscript])
 
   const isComposerExpanded = useMemo(() => {
-    // Вычисляем порог на основе ширины и размера шрифта (без обращения к рефу)
     const charWidth = fontSize * 0.6
     const threshold = Math.max(10, Math.floor(textareaWidth / charWidth))
     return input.length > threshold || input.includes('\n')
