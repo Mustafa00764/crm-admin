@@ -15,54 +15,37 @@ export function useComposerTextarea({
 }: UseComposerTextareaParams) {
   const [charactersPerLine, setCharactersPerLine] = useState<number>(30)
 
-  /**
-   * Следим за шириной textarea через ResizeObserver.
-   * Textarea не мигает потому что высоту мы не трогаем здесь.
-   */
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
 
-    const updateCharactersPerLine = (width: number) => {
-      if (width > 0) {
-        setCharactersPerLine(Math.round(width / 8))
-      }
+    const update = (width: number) => {
+      if (width > 0) setCharactersPerLine(Math.round(width / 8))
     }
 
-    // Начальное значение
-    updateCharactersPerLine(textarea.offsetWidth)
+    update(textarea.offsetWidth)
 
     const observer = new ResizeObserver(entries => {
       const width = entries[0]?.contentRect.width
-      if (width) updateCharactersPerLine(width)
+      if (width) update(width)
     })
 
     observer.observe(textarea)
-
     return () => observer.disconnect()
   }, [textareaRef])
 
-  /**
-   * Автоматическое изменение высоты textarea.
-   */
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
 
     textarea.style.height = 'auto'
-
-    if (!input && !liveUserTranscript && !liveAssistantTranscript) {
-      return
-    }
-
-    const nextHeight = Math.min(textarea.scrollHeight, 112)
-    textarea.style.height = `${nextHeight}px`
+    if (!input && !liveUserTranscript && !liveAssistantTranscript) return
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 112)}px`
   }, [textareaRef, input, liveUserTranscript, liveAssistantTranscript])
 
+  // Просто вычисляем — без state, без ref, без эффектов
   const isComposerExpanded =
-    input.length > charactersPerLine || input.includes('\n')
+    input.includes('\n') || input.length > charactersPerLine
 
-  return {
-    isComposerExpanded
-  }
+  return { isComposerExpanded }
 }
