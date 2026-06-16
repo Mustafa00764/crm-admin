@@ -197,8 +197,8 @@ export function PublicChatWidget({
       className={cn(
         'max-w-120 min-h-0 fixed top-0 left-0 max-h-full flex h-full w-full flex-col overflow-x-hidden pointer-events-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-track-transparent',
         theme === 'light'
-          ? 'bg-white text-slate-950'
-          : 'bg-[#090b10] text-white'
+          ? 'bg-white text-slate-950 scrollbar-thumb-black/10'
+          : 'bg-[#090b10] text-white scrollbar-thumb-white/20'
       )}
     >
       <div
