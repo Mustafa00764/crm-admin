@@ -16,16 +16,31 @@ export function useComposerTextarea({
   const [charactersPerLine, setCharactersPerLine] = useState<number>(30)
 
   /**
-   * Считаем ширину один раз при маунте.
+   * Следим за шириной textarea через ResizeObserver.
+   * Textarea не мигает потому что высоту мы не трогаем здесь.
    */
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
-    const width = textarea.offsetWidth
-    if (width > 0) {
-      setCharactersPerLine(Math.round(width / 8))
+
+    const updateCharactersPerLine = (width: number) => {
+      if (width > 0) {
+        setCharactersPerLine(Math.round(width / 8))
+      }
     }
-  }, [textareaRef]) // только при маунте, зависимостей больше нет
+
+    // Начальное значение
+    updateCharactersPerLine(textarea.offsetWidth)
+
+    const observer = new ResizeObserver(entries => {
+      const width = entries[0]?.contentRect.width
+      if (width) updateCharactersPerLine(width)
+    })
+
+    observer.observe(textarea)
+
+    return () => observer.disconnect()
+  }, [textareaRef])
 
   /**
    * Автоматическое изменение высоты textarea.
