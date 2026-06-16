@@ -27,7 +27,7 @@ export function useComposerTextarea({
   }, [textareaRef, input, liveUserTranscript, liveAssistantTranscript])
 
   const isComposerExpanded = useMemo(() => {
-    return input.length > 12 || input.includes('\n')
+    return input.length > 20 || input.includes('\n')
   }, [input])
 
   return {
