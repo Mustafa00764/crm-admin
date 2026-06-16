@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useLayoutEffect, useState } from 'react'
+import { type RefObject, useLayoutEffect, useState } from 'react'
 
 type UseComposerTextareaParams = {
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -13,14 +13,25 @@ export function useComposerTextarea({
   liveUserTranscript,
   liveAssistantTranscript
 }: UseComposerTextareaParams) {
-  const [size, setSize] = useState<number>(0)
+  const [charactersPerLine, setCharactersPerLine] = useState<number>(30)
+
+  /**
+   * Считаем ширину один раз при маунте.
+   */
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+    const width = textarea.offsetWidth
+    if (width > 0) {
+      setCharactersPerLine(Math.round(width / 8))
+    }
+  }, [textareaRef]) // только при маунте, зависимостей больше нет
 
   /**
    * Автоматическое изменение высоты textarea.
    */
   useLayoutEffect(() => {
     const textarea = textareaRef.current
-
     if (!textarea) return
 
     textarea.style.height = 'auto'
@@ -30,29 +41,13 @@ export function useComposerTextarea({
     }
 
     const nextHeight = Math.min(textarea.scrollHeight, 112)
-
     textarea.style.height = `${nextHeight}px`
   }, [textareaRef, input, liveUserTranscript, liveAssistantTranscript])
 
-  /**
-   * Получение и отслеживание ширины textarea.
-   */
-  useEffect(() => {
-    const textarea = textareaRef.current
-    if (!textarea) return
-    setSize(textarea.offsetWidth)
-  }, [textareaRef, input])
-
-  /**
-   * Пока ширина ещё не измерена,
-   * используем минимальное значение 8.
-   */
-  const charactersPerLine = Math.round(size / 12)
-
-  const isComposerExpanded = input.length > charactersPerLine // || input.includes('\n')
+  const isComposerExpanded =
+    input.length > charactersPerLine || input.includes('\n')
 
   return {
-    size,
     isComposerExpanded
   }
 }
