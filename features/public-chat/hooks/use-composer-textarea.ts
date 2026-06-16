@@ -3,8 +3,7 @@ import {
   useLayoutEffect,
   useMemo,
   useState,
-  useEffect,
-  useRef
+  useEffect
 } from 'react'
 
 type UseComposerTextareaParams = {
@@ -23,44 +22,32 @@ export function useComposerTextarea({
   const [textareaWidth, setTextareaWidth] = useState(0)
   const [fontSize, setFontSize] = useState(14)
 
-  // Храним предыдущие значения для сравнения
-  const prevMetricsRef = useRef({ width: 0, fontSize: 0 })
-
-  // Отслеживаем ширину и размер шрифта – обновляем только при реальном изменении
+  // Измеряем ширину и шрифт только при монтировании и при изменении размера окна
   useEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
 
-    const updateMetrics = () => {
-      const newWidth = textarea.clientWidth
+    const measure = () => {
+      const width = textarea.clientWidth
       const computedStyle = window.getComputedStyle(textarea)
-      const newFontSize = parseFloat(computedStyle.fontSize) || 14
-
-      const prev = prevMetricsRef.current
-      if (newWidth !== prev.width) {
-        prev.width = newWidth
-        setTextareaWidth(newWidth)
-      }
-      if (newFontSize !== prev.fontSize) {
-        prev.fontSize = newFontSize
-        setFontSize(newFontSize)
-      }
+      const size = parseFloat(computedStyle.fontSize) || 14
+      setTextareaWidth(width)
+      setFontSize(size)
     }
 
-    updateMetrics() // начальное значение
+    measure()
 
-    const resizeObserver = new ResizeObserver(() => {
-      // Группируем частые вызовы в один кадр, чтобы избежать лишних перерендеров
-      requestAnimationFrame(updateMetrics)
-    })
-    resizeObserver.observe(textarea)
+    const handleResize = () => {
+      measure()
+    }
 
+    window.addEventListener('resize', handleResize)
     return () => {
-      resizeObserver.disconnect()
+      window.removeEventListener('resize', handleResize)
     }
-  }, [textareaRef]) // зависимость только от ref
+  }, [textareaRef]) // Зависимость только от ref – выполняется один раз при монтировании
 
-  // Автоматическая регулировка высоты – только по содержимому, без зависимости от ширины
+  // Автоматическая регулировка высоты – только по содержимому
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
@@ -75,6 +62,10 @@ export function useComposerTextarea({
   }, [textareaRef, input, liveUserTranscript, liveAssistantTranscript])
 
   const isComposerExpanded = useMemo(() => {
+    // Если ширина ещё не измерена – используем запасной порог 20 символов
+    if (textareaWidth === 0) {
+      return input.length > 20 || input.includes('\n')
+    }
     const charWidth = fontSize * 0.6
     const threshold = Math.max(10, Math.floor(textareaWidth / charWidth))
     return input.length > threshold || input.includes('\n')
