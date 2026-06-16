@@ -39,11 +39,7 @@ export function useComposerTextarea({
    */
   useLayoutEffect(() => {
     const textarea = textareaRef.current
-
-    if (!textarea) return
-
-    const nextSize = Math.round(textarea.offsetWidth)
-
+    const nextSize = textarea?.offsetWidth || 12
     setSize(nextSize)
   }, [textareaRef, size, setSize])
 
@@ -51,7 +47,7 @@ export function useComposerTextarea({
    * Пока ширина ещё не измерена,
    * используем минимальное значение 12.
    */
-  const charactersPerLine = Math.max(12, Math.round(size / 8))
+  const charactersPerLine = Math.max(8, Math.round(size / 8))
 
   const isComposerExpanded =
     input.length > charactersPerLine || input.includes('\n')
