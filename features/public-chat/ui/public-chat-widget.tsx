@@ -624,7 +624,7 @@ export function PublicChatWidget({
               <Keyboard className="h-3 w-3" />
               <span className='leading-3'>Язык диктовки:</span>
 
-              <div className="flex h-full overflow-hidden rounded-full border border-current/15">
+              <div className="flex h-full overflow-y-hidden rounded-full border border-current/15">
                 {DICTATION_LANGUAGES.map(language => (
                   <button
                     key={language.value}
