@@ -47,7 +47,7 @@ export function useComposerTextarea({
    * Пока ширина ещё не измерена,
    * используем минимальное значение 8.
    */
-  const charactersPerLine = Math.max(8, Math.round(size / 8))
+  const charactersPerLine = Math.max(8, Math.round(size / 12))
 
   const isComposerExpanded =
     input.length > charactersPerLine || input.includes('\n')
