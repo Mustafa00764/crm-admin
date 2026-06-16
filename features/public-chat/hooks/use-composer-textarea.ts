@@ -45,7 +45,7 @@ export function useComposerTextarea({
     const nextSize = Math.round(textarea.offsetWidth)
 
     setSize(nextSize)
-  }, [textareaRef, size])
+  }, [textareaRef, size, setSize])
 
   /**
    * Пока ширина ещё не измерена,
