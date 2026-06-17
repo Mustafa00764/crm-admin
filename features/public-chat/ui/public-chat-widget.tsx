@@ -708,7 +708,7 @@ export function PublicChatWidget({
                 </span>
 
                 <span className="w-full h-4 truncate">
-                  {voiceConnecting ? 'Подключение...' : 'Завершить'}
+                  {voiceConnecting ? 'Запуск…' : 'Завершить'}
                 </span>
               </button>
             </div>
