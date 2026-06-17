@@ -123,6 +123,13 @@
       messages: ['Savol bormi? Yozing 😊', 'Есть вопросы? Пишите 😊']
     },
     {
+      id: 'profnastilvspb',
+      messages: [
+        'Обращайтесь в любом формате 😊',
+        'Помочь с выбором? Мы онлайн 😊'
+      ]
+    },
+    {
       id: 'evroshtaketnikmoskva',
       messages: [
         'Обращайтесь в любом формате 😊',

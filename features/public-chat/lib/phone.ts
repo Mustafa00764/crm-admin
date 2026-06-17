@@ -2,6 +2,7 @@ type PhoneCountry = 'uz' | 'ru'
 
 export function getPhoneCountryBySite(siteId?: string): PhoneCountry {
   if (siteId === 'profnastilvtashkente') return 'uz'
+  if (siteId === 'profnastilvspb') return 'ru'
   if (siteId === 'evroshtaketnikmoskva') return 'ru'
 
   return 'ru'
