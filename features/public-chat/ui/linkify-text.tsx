@@ -19,7 +19,7 @@ export function linkifyText(text: string): ReactNode[] {
     const href = url.startsWith('www.') ? `https://${url}` : url
 
     return (
-      <span key={`${url}-${index}`} className='break-all'>
+      <span key={`${url}-${index}`} className='wrap-anywhere'>
         <a
           href={href}
           target="_blank"
