@@ -36,6 +36,13 @@ type SiteConfig = {
 }
 
 const sites: Record<string, SiteConfig> = {
+  profnastilvspb: {
+    email: 'profnastilvspb2@gmail.com',
+    apiKey:
+      process.env.RESEND_API_KEY_PROFNASTILVSPB ||
+      're_SHrZ6nvB_4oaoNdaxnwK9eTXRzFTvPyyP',
+    from: 'onboarding@resend.dev'
+  },
   profnastilvtashkente: {
     email: 'profnastilvtashkente@gmail.com',
     apiKey:
