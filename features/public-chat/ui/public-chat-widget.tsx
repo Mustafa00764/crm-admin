@@ -675,7 +675,7 @@ export function PublicChatWidget({
 
             <div className="min-w-0 flex-1">
               <div className="truncate text-[16px] font-medium text-slate-900">
-                {voiceConnecting ? 'Подключение...' : composerHint}
+                {voiceConnecting ? 'Запуск…' : composerHint}
               </div>
 
               <div className="mt-0.5 truncate text-xs text-slate-900/45">
