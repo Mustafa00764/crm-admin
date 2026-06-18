@@ -43,6 +43,33 @@ const sites: Record<string, SiteConfig> = {
       're_SHrZ6nvB_4oaoNdaxnwK9eTXRzFTvPyyP',
     from: 'onboarding@resend.dev'
   },
+  profnastilmoskva: {
+    email: 'proflistpanel947@gmail.com',
+    apiKey:
+      process.env.RESEND_API_KEY_PROFNASTILMOSKVA ||
+      're_MAJUjQw2_MQ1jMgXfdaRsLs5CxJsVSdw1',
+    from: 'onboarding@resend.dev'
+  },
+  pkmm: {
+    email: 'pkmmm7705@gmail.com',
+    apiKey:
+      process.env.RESEND_API_KEY_PKMM || 're_Tkjv28Ps_4PMoGZjdpSsEF3BdJ16DttCZ',
+    from: 'onboarding@resend.dev'
+  },
+  sandwichpanelsvspb: {
+    email: 'sendwichpanelvspb@gmail.com',
+    apiKey:
+      process.env.RESEND_API_KEY_SANDWICHPANELSVSPB ||
+      're_XFbUyWqU_3EXNs1t4X3oXGCyAhJfmsttz',
+    from: 'onboarding@resend.dev'
+  },
+  sendvichpanel: {
+    email: 'sendvichprommetallokonstrukcii@gmail.com',
+    apiKey:
+      process.env.RESEND_API_KEY_SANDVICHPANEL ||
+      're_i4vHTN73_5sj5d6CgBsq4eAaNJWCjLXMz',
+    from: 'onboarding@resend.dev'
+  },
   profnastilvtashkente: {
     email: 'profnastilvtashkente@gmail.com',
     apiKey:
