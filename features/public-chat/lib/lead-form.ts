@@ -27,7 +27,7 @@ export async function submitLeadForm({
   setLeadFormOpen,
   setFormState,
   setMessages,
-  isPending,
+  // isPending,
   setIsPending
 }: SubmitLeadFormParams) {
   const phone = leadForm.phone.trim()

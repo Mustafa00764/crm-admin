@@ -8,6 +8,7 @@ export function getPhoneCountryBySite(siteId?: string): PhoneCountry {
   if (siteId === 'pkmm') return 'ru'
   if (siteId === 'evroshtaketnikmoskva') return 'ru'
   if (siteId === 'sendvichpanel') return 'ru'
+  if (siteId === 'chernyjmetall') return 'ru'
 
   return 'ru'
 }

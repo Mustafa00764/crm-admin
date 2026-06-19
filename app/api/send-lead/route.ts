@@ -56,6 +56,13 @@ const sites: Record<string, SiteConfig> = {
       process.env.RESEND_API_KEY_PKMM || 're_Tkjv28Ps_4PMoGZjdpSsEF3BdJ16DttCZ',
     from: 'onboarding@resend.dev'
   },
+  chernyjmetall: {
+    email: 'chernyjmetall@gmail.com',
+    apiKey:
+      process.env.RESEND_API_KEY_CHERNYJMETALL ||
+      're_AuLkEEQp_PeJeZvbNkSmYGFp78ToVrMYH',
+    from: 'onboarding@resend.dev'
+  },
   sandwichpanelsvspb: {
     email: 'sendwichpanelvspb@gmail.com',
     apiKey:
