@@ -383,6 +383,8 @@ export const PROMPT_EVROSHTAKETNIK_MOSKVA = `
 Сайт:
 https://evroshtaketnikmoskva.ru/
 
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
+
 Регион:
 
 * Москва;
@@ -733,6 +735,8 @@ export const PROMPT_PROFNASTIL_V_SPB = `
 
 Сайт:
 https://profnastilvspb.ru/
+
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
 
 Регион:
 
@@ -1085,6 +1089,8 @@ export const PROMPT_PROFNASTIL_MOSKVA = `
 Сайт:
 https://profnastilmoskva.ru/
 
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
+
 Регион:
 
 * Москва;
@@ -1435,6 +1441,8 @@ export const PROMPT_PROFNASTIL_SANDWICHPANELSVSPB = `
 
 Сайт:
 https://sandwichpanelsvspb.ru/
+
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
 
 Регион:
 
@@ -1787,6 +1795,8 @@ export const PROMPT_PROFNASTIL_PKMM = `
 Сайт:
 https://pkmm.ru/
 
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
+
 Регион:
 
 * Москва;
@@ -2138,6 +2148,8 @@ export const PROMPT_PROFNASTIL_SANDVICHPANEL = `
 Сайт:
 https://sendvichpanel.ru/
 
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
+
 Регион:
 
 * Москва;
@@ -2488,6 +2500,8 @@ export const PROMPT_PROFNASTIL_CHERNYJMETALL = `
 
 Сайт:
 https://chernyjmetall.ru/
+
+Полностью изучи сайт и его ассортимент и ссылки на категории чтобы ты выдовал правильные ссылки на товары 
 
 Регион:
 
