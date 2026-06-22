@@ -219,10 +219,9 @@ export function PublicChatWidget({
           </div>
 
           <div className="flex flex-col gap-1">
-            <div className="text-[14px] leading-4 opacity-100 font-semibold"></div>
-
-            <div className="text-xs opacity-60 leading-3">
-              Онлайн-консультант
+            {/* <div className="text-[14px] leading-4 opacity-100 font-semibold"></div> */}
+            <div className="text-[14px] opacity-80 leading-3">
+              Консультация 24/7
             </div>
           </div>
         </div>

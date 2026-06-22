@@ -542,11 +542,22 @@
         display: block;
       "
     />
+    <svg xmlns="http://www.w3.org/2000/svg" width="${buttonSize / 1.5}" height="${buttonSize / 1.5}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>
   **/
   button.innerHTML = `
     <!-- Фото / иконка ассистента -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="${buttonSize / 1.5}" height="${buttonSize / 1.5}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>
-
+    <img
+      src="${crmUrl}/images/assistant-2.png"
+      alt="assistant"
+      style="
+        width: ${buttonSize}px;
+        height: ${buttonSize}px;
+        border-radius: 999px;
+        object-fit: cover;
+        object-position: top;
+        display: block;
+      "
+    />
     <!-- Пульсация вокруг зеленой точки -->
     <span
       style="
