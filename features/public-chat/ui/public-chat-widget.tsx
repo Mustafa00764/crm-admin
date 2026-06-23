@@ -210,10 +210,10 @@ export function PublicChatWidget({
         <div className="flex items-center gap-3">
           <div className=" w-10 h-10 flex items-center justify-center overflow-hidden rounded-full bg-[#08b7ef] text-white">
             <Image
-              unoptimized
+              // unoptimized
               width={40}
               height={40}
-              src="/images/assistant-2.png"
+              src={`/images/${siteId || 'profnastilvtashkente'}_assistant.png`}
               alt="assistant photo"
             />
           </div>
