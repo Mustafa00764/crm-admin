@@ -542,7 +542,7 @@
         height: ${buttonSize}px;
         border-radius: 999px;
         object-fit: cover;
-        object-position: 50% 70%;
+        object-position: 50% 25%;
         display: block;
       "
     />
