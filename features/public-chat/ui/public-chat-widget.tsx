@@ -208,7 +208,7 @@ export function PublicChatWidget({
         )}
       >
         <div className="flex items-center gap-3">
-          <div className=" w-10 h-10 flex items-center justify-center overflow-hidden rounded-full bg-[#08b7ef] text-white">
+          <div className=" w-10 h-10 flex items-center justify-center overflow-hidden rounded-full bg-[#08b7ef] text-white pt-2">
             <Image
               // unoptimized
               width={40}
