@@ -22,6 +22,7 @@ export function linkifyText(text: string): ReactNode[] {
       <span key={`${url}-${index}`} className='wrap-anywhere'>
         <a
           href={href}
+          target='_blank'
           rel="noopener noreferrer"
           className="text-blue-600 underline"
         >
